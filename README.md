@@ -56,13 +56,16 @@ other invironment properties such as max steps & reward treshold for 'solving' a
 
 #### Algorithm/DQN-related
 - [ ] check if we're using the semi-gradient version in the assignment
-* [ ] hyperparameter parser/config
-* [ ] result graphing
+- [x] hyperparameter parser/config [Codebase/main.py](https://github.com/MelleVessies/RL/blob/main/Codebase/main.py)
+- [ ] save results (per environment per hyperparameter settings collect return per epsiode and steps in episode)
+- [ ] result graphing
 
 ## Ask TA:
 * what does a 10 look like for a blog? - could some example of a '9.5+' grade blog be posted blogs?
 * Does it have any added value to also look at performance on continuous action spaces?
 * For MontezumaRevenge and Breakout, we have the screen as observation, thus we would need to use convolutions. Would this not make it incomparable to the DQN without convolutions for e.g the MountainCar problem?
+* should we change early termination criteria so its the same for all environments?
+
 
 #### Papers
 * [DQN-paper/target network/ Human-Level Control
