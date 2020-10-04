@@ -37,6 +37,7 @@ other invironment properties such as max steps & reward treshold for 'solving' a
 * [Monte Zumas revenge (notoriously difficult)](https://gym.openai.com/envs/MontezumaRevenge-v0/)
 
 #### Implementing tricks:
+* Double Q function
 * [experience replay](http://www.incompleteideas.net/lin-92.pdf)
 * [target network](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf), [target network]((https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN)
 * gradient clipping [see](https://abhishm.github.io/DQN/) [specific, paper source? many papers in use it when searching on scholar but there doesnt seem to be a justifying paper]
@@ -52,6 +53,8 @@ other invironment properties such as max steps & reward treshold for 'solving' a
 
 ## Ask TA:
 * what does a 10 look like for a blog? - could some example of a '9.5+' grade blog be posted blogs?
+* Does it have any added value to also look at performance on continuous action spaces?
+* For MontezumaRevenge and Breakout, we have the screen as observation, thus we would need to use convolutions. Would this not make it incomparable to the DQN without convolutions for e.g the MountainCar problem?
 
 #### Papers
 * [DQN-paper/target network/ Human-Level Control
