@@ -1,0 +1,58 @@
+{
+    "Acrobot-v1": {
+        "shape": "(6,)",
+        "dtype": "float64",
+        "action_space": "Discrete(3)",
+        "observation_space": "Box(6,)",
+        "observation_space.high": "[ 1.        1.        1.        1.       12.566371 28.274334]",
+        "observation_space.low": "[ -1.        -1.        -1.        -1.       -12.566371 -28.274334]",
+        "environment web page": "https://gym.openai.com/envs/Acrobot-v1/"
+    },
+    "CartPole-v1": {
+        "shape": "(4,)",
+        "dtype": "float64",
+        "action_space": "Discrete(2)",
+        "observation_space": "Box(4,)",
+        "observation_space.high": "[4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38]",
+        "observation_space.low": "[-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38]",
+        "environment web page": "https://gym.openai.com/envs/CartPole-v1/"
+    },
+    "MountainCar-v0": {
+        "shape": "(2,)",
+        "dtype": "float64",
+        "action_space": "Discrete(3)",
+        "observation_space": "Box(2,)",
+        "observation_space.high": "[0.6  0.07]",
+        "observation_space.low": "[-1.2  -0.07]",
+        "environment web page": "https://gym.openai.com/envs/MountainCar-v0/"
+    },
+    "MountainCarContinuous-v0": {
+        "shape": "(2,)",
+        "dtype": "float64",
+        "action_space": "Box(1,)",
+        "action_space.high": "[1.]",
+        "action_space.low": "[-1.]",
+        "observation_space": "Box(2,)",
+        "observation_space.high": "[0.6  0.07]",
+        "observation_space.low": "[-1.2  -0.07]",
+        "environment web page": "https://gym.openai.com/envs/MountainCarContinuous-v0/"
+    },
+    "Breakout-v0": {
+        "shape": "(210, 160, 3)",
+        "dtype": "uint8",
+        "action_space": "Discrete(4)",
+        "observation_space": "Box(210, 160, 3)",
+        "observation_space.high": "[[[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]\n\n [[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]\n\n [[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]\n\n ...\n\n [[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]\n\n [[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]\n\n [[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]]",
+        "observation_space.low": "[[[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]\n\n [[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]\n\n [[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]\n\n ...\n\n [[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]\n\n [[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]\n\n [[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]]",
+        "environment web page": "https://gym.openai.com/envs/Breakout-v0/"
+    },
+    "MontezumaRevenge-v0": {
+        "shape": "(210, 160, 3)",
+        "dtype": "uint8",
+        "action_space": "Discrete(18)",
+        "observation_space": "Box(210, 160, 3)",
+        "observation_space.high": "[[[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]\n\n [[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]\n\n [[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]\n\n ...\n\n [[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]\n\n [[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]\n\n [[255 255 255]\n  [255 255 255]\n  [255 255 255]\n  ...\n  [255 255 255]\n  [255 255 255]\n  [255 255 255]]]",
+        "observation_space.low": "[[[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]\n\n [[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]\n\n [[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]\n\n ...\n\n [[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]\n\n [[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]\n\n [[0 0 0]\n  [0 0 0]\n  [0 0 0]\n  ...\n  [0 0 0]\n  [0 0 0]\n  [0 0 0]]]",
+        "environment web page": "https://gym.openai.com/envs/MontezumaRevenge-v0/"
+    }
+}
