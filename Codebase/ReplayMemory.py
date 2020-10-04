@@ -4,6 +4,11 @@ class ReplayMemory:
     '''Replay memory object in which transitions can be stored for training'''
 
     def __init__(self, capacity):
+        if not isinstance(capacity, int):
+            raise ValueError(f"expected integer for capacity of replaybuffer, got {type(capacity)}")
+        if capacity < 1:
+            raise ValueError(f"expected integer larger than or equal to 1 for capacity of replaybuffer, got {capacity}")
+            
         self.capacity = capacity
         self.memory = []
 

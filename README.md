@@ -7,6 +7,8 @@
 
 ## Guide to installing the atari environments
 
+If you're feeling lucky: `pip install gym[atari]` inside the rl2020 environment, otherwise follow (with the rl2020 environment activated):
+
 First install pip for conda:
 
 `conda install pip`
@@ -25,30 +27,37 @@ you should now be able to run 'environment.py' to get a rundown of environment p
 
 specific properties can be read up on [here](https://gym.openai.com/docs/)
 other invironment properties such as max steps & reward treshold for 'solving' an environment are given in the [registry file](https://github.com/openai/gym/blob/master/gym/envs/__init__.py)
+
 ## Todo
 
 
 #### setting up environments :
-* [Acrobot (what is its difficulty?)](https://gym.openai.com/envs/Acrobot-v1/)
-* [cartpole (what is its difficulty?)](https://gym.openai.com/envs/CartPole-v1/)
-* [mountain car (what is its difficulty?)](https://gym.openai.com/envs/MountainCar-v0)
-* [mountain car continuous (what is its difficulty?)](https://gym.openai.com/envs/MountainCar-v0/)
-* [Breakout (what is its difficulty?)](https://gym.openai.com/envs/Breakout-v0/)
-* [Monte Zumas revenge (notoriously difficult)](https://gym.openai.com/envs/MontezumaRevenge-v0/)
+- [x] [Acrobot (what is its difficulty?)](https://gym.openai.com/envs/Acrobot-v1/)
+- [x] [cartpole (what is its difficulty?)](https://gym.openai.com/envs/CartPole-v1/)
+- [x] [mountain car (what is its difficulty?)](https://gym.openai.com/envs/MountainCar-v0)
+- [ ] [mountain car continuous (what is its difficulty?)](https://gym.openai.com/envs/MountainCar-v0/)
+- [ ] [Breakout (what is its difficulty?)](https://gym.openai.com/envs/Breakout-v0/)
+- [ ] [Monte Zumas revenge (notoriously difficult)](https://gym.openai.com/envs/MontezumaRevenge-v0/)
+- [ ] [other environments...](https://gym.openai.com/envs/#atari)
+
+#### policies
+- [x] EpsilonGreedy
+- [ ] EpsilongreedyContinuous(?)
+- [ ] other?
 
 #### Implementing tricks:
-* [experience replay](http://www.incompleteideas.net/lin-92.pdf)
-* [target network](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf), [target network]((https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN)
-* gradient clipping [see](https://abhishm.github.io/DQN/) [specific, paper source? many papers in use it when searching on scholar but there doesnt seem to be a justifying paper]
-* [batch sizes](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN)
-* [step size](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN)
-* find more tricks [with source]
+- [x] [experience replay](http://www.incompleteideas.net/lin-92.pdf)  (copied from assignment)
+- [ ] [target network](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf), [target network]((https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN)
+- [ ] gradient clipping [see](https://abhishm.github.io/DQN/) [specific, paper source? many papers in use it when searching on scholar but there doesnt seem to be a justifying paper]
+- [x] [batch sizes](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN) (copied from assignment)
+- [x] [step size](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN) (copied from assignment)
+- [ ] find more tricks [with source]
 
 
 #### Algorithm/DQN-related
-* check if we're using the semi-gradient version in the assignment
-* hyperparameter parser/config
-* result graphing
+- [ ] check if we're using the semi-gradient version in the assignment
+* [ ] hyperparameter parser/config
+* [ ] result graphing
 
 ## Ask TA:
 * what does a 10 look like for a blog? - could some example of a '9.5+' grade blog be posted blogs?

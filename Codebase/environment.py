@@ -33,7 +33,6 @@ def make_env_info(environments):
 
 
 
-
 if __name__ == '__main__':
     envs = ["Acrobot-v1", "CartPole-v1", "MountainCar-v0", "MountainCarContinuous-v0", "Breakout-v0", "MontezumaRevenge-v0"]
     make_env_info(envs)
