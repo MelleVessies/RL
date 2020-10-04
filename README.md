@@ -23,7 +23,8 @@ you should now be able to run 'environment.py' to get a rundown of environment p
 
 `python environment.py`
 
-
+specific properties can be read up on [here](https://gym.openai.com/docs/)
+other invironment properties such as max steps & reward treshold for 'solving' an environment are given in the [registry file](https://github.com/openai/gym/blob/master/gym/envs/__init__.py)
 ## Todo
 
 
