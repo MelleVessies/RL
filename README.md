@@ -5,6 +5,25 @@
 * [environments](https://gym.openai.com/envs/#classic_control)
 * [Overleaf](https://www.overleaf.com/5619338925gmhsmbkfvhgw)
 
+## Guide to installing the atari environments
+
+First install pip for conda:
+
+`conda install pip`
+
+then find out where your environment is located using:
+
+`conda env list`
+
+such that you can install the gym environment with the atari component:
+
+`mypath/to/environment/bin/pip install 'gym[atari]'`
+
+you should now be able to run 'environment.py' to get a rundown of environment properties output in environment-info.json
+
+`python environment.py`
+
+
 ## Todo
 
 
