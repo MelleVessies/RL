@@ -77,9 +77,12 @@ def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discou
 
     global_steps = 0  # Count the steps (do not reset at episode start, to compute epsilon)
     episode_durations = []  #
+    episode_returns = []
+    starting_positions = []
     for i in range(num_episodes):
         state = env.reset()
-
+        starting_positions.append(state.tolist())
+        all_rewards = []
         steps = 0
         done = False
         state = env.reset()
@@ -91,6 +94,7 @@ def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discou
             reward = obs[1]
             next_state = obs[0]
 
+
             memory.push([state, action, reward, next_state, done])
 
             state = next_state
@@ -98,11 +102,13 @@ def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discou
             steps += 1
 
             train(Q, memory, optimizer, batch_size, discount_factor)
+            all_rewards.append(reward)
 
             if done:
                 if i % 10 == 0:
                     print("{2} Episode {0} finished after {1} steps"
                           .format(i, steps, '\033[92m' if steps >= 195 else '\033[99m'))
                 episode_durations.append(steps)
+                episode_returns.append(sum(all_rewards))
                 # break
-    return episode_durations
+    return episode_durations, episode_returns, starting_positions
