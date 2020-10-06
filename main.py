@@ -26,7 +26,10 @@ def Box(*args):
     return False, args
 
 
-
+def set_seeds(seed):
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    random.seed(seed)
 
 
 def run_settings(args):
@@ -42,9 +45,7 @@ def run_settings(args):
     None
 
     """
-    torch.manual_seed(args.seed)
-    np.random.seed(args.seed)
-    random.seed(args.seed)
+    set_seeds(args.seed)
 
     env_infodict = json.load(open(os.path.join('environment-info', args.environment_name+".json"), 'r'))
 
@@ -76,7 +77,10 @@ def run_settings(args):
         policy = EpsilonGreedyPolicy(Q, args.epsilon)
 
     episode_durations, episode_returns, starting_states = run_episodes(train, Q, policy, memory, env, args.num_episodes, args.batch_size, args.discount_factor, args.stepsize)
-    save_data(args, episode_durations, episode_returns, starting_states)
+
+
+
+    save_data(args, episode_durations, episode_returns, starting_states, Q)
 
 
 
@@ -108,11 +112,15 @@ if __name__ == '__main__':
     # seed
     parser.add_argument('--seed', type=int, default=42, help="random seed")
 
+    # framework settings
+    parser.add_argument('--save_network', type=bool, default=False, help='Save the used Q network')
+
     # finish adding arguments
     args = parser.parse_args()
 
     run_settings(args)
     All_data = load_data()
+
     Acrobot_data = load_data(filter={"environment_name":"Acrobot-v1"})
     MountainCar_data = load_data(filter={"environment_name":"MountainCar-v0"})
 

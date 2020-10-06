@@ -1,8 +1,9 @@
 import json
 import os
+import torch
 
 
-def save_data(args, episode_durations, episode_returns, starting_states):
+def save_data(args, episode_durations, episode_returns, starting_states, Q):
     """saves a json with run results and properties of a run, like
     hyperparameters, environment etc.
 
@@ -25,7 +26,8 @@ def save_data(args, episode_durations, episode_returns, starting_states):
     None
     """
     datadict = vars(args)
-    fname = ",".join(sorted([k[0] + str(v) for k,v in datadict.items()]))
+    resdir = ",".join(sorted([k[0] + str(v) for k,v in datadict.items()]))
+    resdir = os.path.join("results", resdir)
 
     datadict["episode_durations"] = episode_durations
     datadict["episode_returns"] = episode_returns
@@ -34,8 +36,13 @@ def save_data(args, episode_durations, episode_returns, starting_states):
     if not os.path.exists("results"):
         os.mkdir("results")
 
+    if not os.path.exists(resdir):
+        os.mkdir(resdir)
 
-    with open(os.path.join("results", fname), "w+") as f:
+    if args.save_network:
+        torch.save(Q, os.path.join(resdir, 'Q.pt'))
+
+    with open(os.path.join(resdir, 'results.json'), "w+") as f:
         json.dump(datadict, f, indent=4)
 
 
@@ -86,8 +93,12 @@ def load_data(filter=None):
         Description of returned object.
 
     """
-    result_files = [f for f in os.listdir("results") if os.path.isfile(os.path.join("results", f))]
-    jsons = [json.load(open(os.path.join("results", f), "r")) for f in result_files]
+    r_dirs = [os.path.join('results', f) for f in os.listdir("results") if os.path.isdir(os.path.join("results", f))]
+    jsons = []
+    for rdir in r_dirs:
+        for f in os.listdir(rdir):
+            if os.path.isfile(os.path.join(rdir, f)) and os.path.splitext(f)[1] == '.json':
+                jsons += [json.load(open(os.path.join(rdir, f), "r"))]
 
     if not (filter is None):
         filtered_jsons = [result_json for result_json in jsons if dict_match(filter, result_json)]
