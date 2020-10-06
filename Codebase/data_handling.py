@@ -5,9 +5,9 @@ import torch
 class DataHandler:
     def __init__(self, args):
         self.args = args
-
         # These should not have any influence on where the model/data are saved/loaded
-        self.excluded_parameters = ['pretrained', 'do_train', 'create_animation']
+        self.excluded_parameters = ['pretrained', 'do_train', 'create_animation', 'skip_run_episodes']
+        self.resdir = self.results_dir = self.__settings_to_resdir(vars(self.args))
 
     def __settings_to_resdir(self, datadict):
         """ Returns the appropriate results directory for the given settings"""
@@ -48,17 +48,14 @@ class DataHandler:
         DQN
         """
 
-        datadict = vars(self.args)
         if not self.args.save_network:
             raise ValueError("Looks like you are trying to load a pretrained model without the --save-model flag. \
                               This means there is likely no pretrained model for the given settings.")
 
-        resdir = self.__settings_to_resdir(datadict)
+        if not os.path.isdir(self.resdir):
+            raise ValueError(f"Could not find results directory '{self.resdir}'. Try running without the --pretrained flag to create it")
 
-        if not os.path.isdir(resdir):
-            raise ValueError(f"Could not find results directory '{resdir}'. Try running without the --pretrained flag to create it")
-
-        modelpath = os.path.join(resdir, 'Q.pt')
+        modelpath = os.path.join(self.resdir, 'Q.pt')
 
         if not os.path.isfile(modelpath):
             raise ValueError(f"Could not find Q network in {modelpath}. Something might have gone wrong while saving the model")
@@ -85,7 +82,7 @@ class DataHandler:
         None
         """
         datadict = vars(self.args)
-        resdir = self.__settings_to_resdir(datadict)
+        resdir = self.resdir
 
         datadict["episode_durations"] = episode_durations
         datadict["episode_returns"] = episode_returns
@@ -141,3 +138,6 @@ class DataHandler:
             return filtered_jsons
         else:
             return jsons
+
+    def save_animation(self, animation):
+        animation.save(os.path.join(self.resdir, 'animation.gif'), writer='imagemagick', fps=60)

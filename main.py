@@ -81,13 +81,14 @@ def run_settings(args, datahandler):
         policy = EpsilonGreedyPolicy(Q, args.epsilon)
 
 
-    if args.num_episodes > 0:
+    if args.num_episodes > 0 and not args.skip_run_episodes:
         episode_durations, episode_returns, starting_states = run_episodes(
             train, Q, policy, memory, env, args.num_episodes, args.batch_size, args.discount_factor, args.stepsize, args.do_train)
         datahandler.save_data(episode_durations, episode_returns, starting_states, Q)
 
     if args.create_animation:
-        create_animation(env, policy)
+        animation = create_animation(env, policy)
+        datahandler.save_animation(animation)
 
 
 if __name__ == '__main__':
@@ -98,7 +99,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # env settings
     parser.add_argument('--environment_name', default='CartPole-v1', type=str, help='name of the environment according to the name listed @ https://gym.openai.com/envs/#atari')
-    parser.add_argument('--num_episodes', default=200)
+    parser.add_argument('--num_episodes', default=200, help='Number of episodes to run. Actual running of the epsiodes can be disabled by using --skip_run_episodes')
 
     # tricks
     parser.add_argument('--experience_replay_capacity', type=int, default=10000, help="size of the replay buffer, size of 1 implies only the last action is in it, which entails there is no experience rayepl")
@@ -121,6 +122,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_network', type=bool, default=False, help='Save the used Q network')
     parser.add_argument('--pretrained', type=bool, default=False, help='Load a pretrained Q network')
     parser.add_argument('--do_train', type=bool, default=True, help='Update the Q network weights while running episodes')
+    parser.add_argument('--skip_run_episodes', type=bool, default=False, help='Skips the actual running of the episodes')
     parser.add_argument('--create_animation', type=bool, default=True, help='Create and save an animation of a single episode')
 
     # finish adding arguments
