@@ -60,9 +60,12 @@
 
 
 ### other Todo
-* Find out if theres a particular reaosn some environments have a shorted default termination number of steps than others.
-* Implement a check/warning to see if settings have already been run
-* implement a check to see whether all results use the same set of hyperparameters and or filter out incomplete ones
+- [ ] Find out if theres a particular reason some environments have a shorted default termination number of steps than others.
+- [ ] Implement a check/warning to see if settings have already been run
+- [ ] implement a check to see whether all results use the same set of hyperparameters and or filter out incomplete ones
+- [ ] implement saving NNs to view result
+- [ ] implement rendering of behaviour
+- [ ] create environment file
 
 #### useful Papers
 * [DQN-paper/target network/ Human-Level Control
@@ -73,6 +76,10 @@ through Deep Reinforcement Learning.](https://storage.googleapis.com/deepmind-me
 * [Deep Reinforcement Learning that Matters](https://arxiv.org/pdf/1709.06560.pdf) #reproducibility
 * [Reproducibility of benchmarked deep reinforcement learning tasks for continuous control](https://arxiv.org/pdf/1708.04133.pdf) # hyperparameters matter
 * [What Matters In On-Policy Reinforcement Learning?](https://arxiv.org/pdf/2006.05990.pdf) #tricks for on-policy learning in continuous environments might have some useful tricks
+
+## Install box2d environment
+
+see https://medium.com/@sayanmndl21/install-openai-gym-with-box2d-and-mujoco-in-windows-10-e25ee9b5c1d5
 
 ## Guide to installing the atari environments
 

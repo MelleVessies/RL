@@ -83,12 +83,13 @@ def run_settings(args):
 
 if __name__ == '__main__':
 
-    envs = ["Acrobot-v1", "CartPole-v1", "MountainCar-v0", "MountainCarContinuous-v0", "Breakout-v0", "MontezumaRevenge-v0"]
+    envs = ["Acrobot-v1", "CartPole-v1", "MountainCar-v0", "MountainCarContinuous-v0", "Breakout-v0", "MontezumaRevenge-v0", "LunarLander-v2"]
+    
     make_env_info(envs)
 
     parser = argparse.ArgumentParser()
     # env settings
-    parser.add_argument('--environment_name', default='CartPole-v1', type=str, help='name of the environment according to the name listed @ https://gym.openai.com/envs/#atari')
+    parser.add_argument('--environment_name', default='Acrobot-v1', type=str, help='name of the environment according to the name listed @ https://gym.openai.com/envs/#atari')
     parser.add_argument('--num_episodes', default=200)
 
     # tricks
