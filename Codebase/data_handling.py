@@ -1,6 +1,7 @@
 import json
 import os
 import torch
+import time
 
 class DataHandler:
     def __init__(self, args):
@@ -140,4 +141,6 @@ class DataHandler:
             return jsons
 
     def save_animation(self, animation):
-        animation.save(os.path.join(self.resdir, 'animation.gif'), writer='imagemagick', fps=60)
+        s = time.time()
+        animation.save(os.path.join(self.resdir, 'animation.mp4'), fps=30)
+        print("took", time.time() - s)

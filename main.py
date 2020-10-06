@@ -88,7 +88,9 @@ def run_settings(args, datahandler):
 
     if args.create_animation:
         animation = create_animation(env, policy)
+        print("now saving")
         datahandler.save_animation(animation)
+        print("done")
 
 
 if __name__ == '__main__':
