@@ -1,0 +1,150 @@
+@font-face {
+    font-family: TitilliumWeb;
+    src: url("/static/fonts/TitilliumWeb-Regular.ttf") format("opentype");
+}
+
+body{
+    font-family: TitilliumWeb;
+    /*background-color: lightgray;*/
+    background-color: #EAEAEA;
+}
+
+.title{
+    text-align: center;
+    font-size: 50px;
+    width: 90%;
+    margin-left: 30px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    padding: 10px;
+    color: #E85A4F;
+    border-bottom: 5px solid #212b3a;
+}
+
+
+
+.main-menu{
+    height: 900px;
+}
+
+.main-menu-item{
+    width: 100%;
+    font-size: 30px;
+    padding: 10px;
+    text-align: center;
+    background-color: #212b3a;
+    color: white;
+    margin-top: 40%;
+    border-radius: 5px;
+
+    cursor: pointer;
+}
+
+.main-menu-item button:hover{
+    color: white;
+}
+
+.container {
+    width: 100%;
+
+    margin: 0 auto;
+    max-width: 1200px;
+    /*margin: 0 auto;*/
+}
+
+
+header {
+    background: #1a1818
+}
+
+header::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.logo{
+    height: 50px;
+    margin: 10px;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+.logo-container {
+    display: inline-block;
+    height: 100%;
+    width: 100px;
+    background-color: #afafc1;
+}
+
+nav {
+    display: inline-block;
+
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+}
+
+nav li{
+    display: inline-block;
+    margin-left: 50px;
+    padding-top: 18px;
+
+    position: relative;
+
+}
+
+nav a {
+    color: whitesmoke;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+nav a:hover{
+    color: white;
+}
+
+nav a::before{
+    content: '';
+    display: block;
+    height: 5px;
+    background: whitesmoke;
+    position: absolute;
+
+    top: 0;
+    width: 0%;
+    transition: all ease-in-out 250ms;
+}
+
+nav a:hover:before {
+    width: 100%;
+}
+
+
+.center {
+    margin: auto;
+    width: 100%;
+    padding: 10px;
+    max-width: 1200px;
+}
+
+.subtitle{
+    text-align: left;
+    font-size: 50px;
+    width: 90%;
+    margin-left: 30px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    padding: 10px;
+    color: #1a1818;
+    border-bottom: 1px solid #212b3a;
+}
+
+
+

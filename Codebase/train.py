@@ -79,7 +79,7 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True):
     return loss.item()  # Returns a Python scalar, and releases history (similar to .detach())
 
 def get_epsilon(it):
-    return max(0.05, 1 - it * 0.00095)
+    return max(0.005, 1 - it * 0.000095)
 
 def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, do_train=True):
 

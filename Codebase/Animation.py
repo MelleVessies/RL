@@ -15,12 +15,13 @@ def frames_to_animation(frames):
     plt.figure(figsize=(frames[0].shape[1] / 72.0, frames[0].shape[0] / 72.0), dpi=72)
 
     patch = plt.imshow(frames[0])
-    plt.axis('off')
+    t = plt.text(5, 20, "Step: 0")
 
-    def animate(i):
+    def animate(i, t, frame_iter):
+        t.set_text(f"Step: {next(frame_iter)}")
         patch.set_data(frames[i])
 
-    return animation.FuncAnimation(plt.gcf(), animate, frames = len(frames), interval=50)
+    return animation.FuncAnimation(plt.gcf(), animate, frames=len(frames), fargs=[t, iter(range(0, len(frames) +1))], interval=50)
 
 
 def create_animation(env, policy):

@@ -5,7 +5,6 @@ import numpy as np
 import torch
 import random
 import os
-import itertools
 
 from Codebase.DQN import DQN
 from Codebase.train import run_episodes, train
@@ -101,7 +100,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # env settings
     parser.add_argument('--environment_name', default='CartPole-v1', type=str, help='name of the environment according to the name listed @ https://gym.openai.com/envs/#atari')
-    parser.add_argument('--num_episodes', default=200, help='Number of episodes to run. Actual running of the epsiodes can be disabled by using --skip_run_episodes')
+    parser.add_argument('--num_episodes', type=int, default=200, help='Number of episodes to run. Actual running of the epsiodes can be disabled by using --skip_run_episodes')
 
     # tricks
     parser.add_argument('--experience_replay_capacity', type=int, default=10000, help="size of the replay buffer, size of 1 implies only the last action is in it, which entails there is no experience rayepl")
