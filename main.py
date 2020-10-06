@@ -12,7 +12,8 @@ from Codebase.train import run_episodes, train
 from Codebase.ReplayMemory import ReplayMemory
 from Codebase.EpsilonGreedyPolicy import EpsilonGreedyPolicy
 from Codebase.environment import make_env_info
-from Codebase.data_handling import save_data, load_data
+from Codebase.data_handling import DataHandler
+from Codebase.Animation import create_animation
 
 policy_options = ["EpsilonGreedyPolicy"]
 
@@ -32,7 +33,7 @@ def set_seeds(seed):
     random.seed(seed)
 
 
-def run_settings(args):
+def run_settings(args, datahandler):
     """collects results for a set of argparse settings.
 
     Parameters
@@ -68,7 +69,10 @@ def run_settings(args):
     if isinstance(args.clip_grad, float):
         raise ValueError("gradient clipping not yet implemented")
 
-    Q = DQN(args.num_hidden, input_size, output_size)
+    if args.pretrained:
+        Q = datahandler.load_model()
+    else:
+        Q = DQN(args.num_hidden, input_size, output_size)
     memory = ReplayMemory(args.experience_replay_capacity)
 
     if "EpsilonGreedyPolicy" == args.policy:
@@ -76,13 +80,14 @@ def run_settings(args):
             raise ValueError(f"expected float for epsilon, got {args.epsilon}")
         policy = EpsilonGreedyPolicy(Q, args.epsilon)
 
-    episode_durations, episode_returns, starting_states = run_episodes(train, Q, policy, memory, env, args.num_episodes, args.batch_size, args.discount_factor, args.stepsize)
 
+    if args.num_episodes > 0:
+        episode_durations, episode_returns, starting_states = run_episodes(
+            train, Q, policy, memory, env, args.num_episodes, args.batch_size, args.discount_factor, args.stepsize, args.do_train)
+        datahandler.save_data(episode_durations, episode_returns, starting_states, Q)
 
-
-    save_data(args, episode_durations, episode_returns, starting_states, Q)
-
-
+    if args.create_animation:
+        create_animation(env, policy)
 
 
 if __name__ == '__main__':
@@ -97,7 +102,7 @@ if __name__ == '__main__':
 
     # tricks
     parser.add_argument('--experience_replay_capacity', type=int, default=10000, help="size of the replay buffer, size of 1 implies only the last action is in it, which entails there is no experience rayepl")
-    parser.add_argument('--discount_factor', type=float, default=1.02, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
+    parser.add_argument('--discount_factor', type=float, default=0.8, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
 
     # entwork (training )settings
     parser.add_argument('--clip_grad', type=float, help='gradient clipped to size float, if < 0 (-1) there is no clipping')
@@ -114,15 +119,18 @@ if __name__ == '__main__':
 
     # framework settings
     parser.add_argument('--save_network', type=bool, default=False, help='Save the used Q network')
+    parser.add_argument('--pretrained', type=bool, default=False, help='Load a pretrained Q network')
+    parser.add_argument('--do_train', type=bool, default=True, help='Update the Q network weights while running episodes')
+    parser.add_argument('--create_animation', type=bool, default=True, help='Create and save an animation of a single episode')
 
     # finish adding arguments
     args = parser.parse_args()
+    datahandler = DataHandler(args)
+    run_settings(args, datahandler)
+    All_data = datahandler.load_data()
 
-    run_settings(args)
-    All_data = load_data()
-
-    Acrobot_data = load_data(filter={"environment_name":"Acrobot-v1"})
-    MountainCar_data = load_data(filter={"environment_name":"MountainCar-v0"})
+    Acrobot_data = datahandler.load_data(filter={"environment_name":"Acrobot-v1"})
+    MountainCar_data = datahandler.load_data(filter={"environment_name":"MountainCar-v0"})
 
     print(f"got {len(Acrobot_data)} run results for Acrobot")
     print(f"got {len(MountainCar_data)} run results for MountainCar_data")
