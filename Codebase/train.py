@@ -32,8 +32,17 @@ def compute_targets(Q, rewards, next_states, dones, discount_factor):
     """
     return rewards + discount_factor * (1- dones.int()) * Q(next_states).max(1)[0].reshape(dones.size())
 
+def episode_step(state, env, policy, memory, global_steps):
+    policy.set_epsilon(get_epsilon(global_steps))
+    action = policy.sample_action(state)
 
-def train(Q, memory, optimizer, batch_size, discount_factor):
+    next_state, reward, done, _ = env.step(action)
+    memory.push([state, action, reward, next_state, done])
+
+    return done, reward, next_state
+
+
+def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True):
     # DO NOT MODIFY THIS FUNCTION
 
     # don't learn without some decent experience
@@ -62,16 +71,17 @@ def train(Q, memory, optimizer, batch_size, discount_factor):
     loss = F.smooth_l1_loss(q_val, target)
 
     # backpropagation of loss to Neural Network (PyTorch magic)
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
+    if do_train:
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
     return loss.item()  # Returns a Python scalar, and releases history (similar to .detach())
 
 def get_epsilon(it):
     return max(0.05, 1 - it * 0.00095)
 
-def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate):
+def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, do_train=True):
 
     optimizer = optim.Adam(Q.parameters(), learn_rate)
 
@@ -79,30 +89,22 @@ def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discou
     episode_durations = []  #
     episode_returns = []
     starting_positions = []
+
     for i in range(num_episodes):
         state = env.reset()
         starting_positions.append(state.tolist())
         all_rewards = []
+
         steps = 0
-        done = False
         state = env.reset()
-        while not done:
-            policy.set_epsilon(get_epsilon(global_steps))
-            action = policy.sample_action(state)
-            obs = env.step(action)[:-1]
-            done = obs[-1]
-            reward = obs[1]
-            next_state = obs[0]
+        while True:
+            done, reward, state = episode_step(state, env, policy, memory, global_steps)
+            train(Q, memory, optimizer, batch_size, discount_factor, do_train)
 
+            all_rewards.append(reward)
 
-            memory.push([state, action, reward, next_state, done])
-
-            state = next_state
             global_steps += 1
             steps += 1
-
-            train(Q, memory, optimizer, batch_size, discount_factor)
-            all_rewards.append(reward)
 
             if done:
                 if i % 10 == 0:
@@ -110,5 +112,5 @@ def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discou
                           .format(i, steps, '\033[92m' if steps >= 195 else '\033[99m'))
                 episode_durations.append(steps)
                 episode_returns.append(sum(all_rewards))
-                # break
+                break
     return episode_durations, episode_returns, starting_positions
