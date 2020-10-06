@@ -92,9 +92,11 @@ def run_settings(args, datahandler):
 
 if __name__ == '__main__':
 
-    envs = ["Acrobot-v1", "CartPole-v1", "MountainCar-v0", "MountainCarContinuous-v0", "Breakout-v0", "MontezumaRevenge-v0", "LunarLander-v2"]
-    
-    make_env_info(envs)
+    continuous_envs = ["MountainCarContinuous-v0"]
+    rgb_envs = ["Breakout-v0", "MontezumaRevenge-v0"]
+    usable_environments = ["Acrobot-v1", "CartPole-v1", "MountainCar-v0", "LunarLander-v2"]
+
+    make_env_info(usable_environments)
 
     parser = argparse.ArgumentParser()
     # env settings
