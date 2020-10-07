@@ -111,7 +111,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=64, help='number of state action pairs used per update')
     parser.add_argument('--stepsize', type=float, default=1e-3, help='learning rate')
     parser.add_argument('--num_hidden', type=int, default=256, help='number of hidden units per hidden layer iof the network')
-    parser.add_argument('--full_gradient', type=bool, default=False, help='Use full gradient instead of semi-gradient during training')
+    parser.add_argument('--full_gradient', action="store_true", default=False, help='Use full gradient instead of semi-gradient during training')
 
 
     # policy arguments

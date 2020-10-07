@@ -68,7 +68,7 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full
     if full_gradient:
         target = compute_targets(Q, reward, next_state, done, discount_factor)
     else:
-        with torch.no_grad():  # Don't compute gradient info for the target (semi-gradient)
+        with torch.no_grad():
             target = compute_targets(Q, reward, next_state, done, discount_factor)
 
     # loss is measured from error between current and newly expected Q values
@@ -80,12 +80,12 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full
         loss.backward()
         optimizer.step()
 
-    return loss.item()  # Returns a Python scalar, and releases history (similar to .detach())
+    return loss.item()
 
 def get_epsilon(it):
     return max(0.005, 1 - it * 0.000095)
 
-def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, do_train=True):
+def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, do_train=True, full_gradient=False):
 
     optimizer = optim.Adam(Q.parameters(), learn_rate)
 
@@ -103,7 +103,7 @@ def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discou
         state = env.reset()
         while True:
             done, reward, state = episode_step(state, env, policy, memory, global_steps)
-            train(Q, memory, optimizer, batch_size, discount_factor, do_train)
+            train(Q, memory, optimizer, batch_size, discount_factor, do_train, full_gradient)
 
             all_rewards.append(reward)
 
