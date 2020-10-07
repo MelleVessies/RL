@@ -42,7 +42,7 @@ def episode_step(state, env, policy, memory, global_steps):
     return done, reward, next_state
 
 
-def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True):
+def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full_gradient=False):
     # DO NOT MODIFY THIS FUNCTION
 
     # don't learn without some decent experience
@@ -64,8 +64,12 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True):
 
     # compute the q value
     q_val = compute_q_vals(Q, state, action)
-    with torch.no_grad():  # Don't compute gradient info for the target (semi-gradient)
+
+    if full_gradient:
         target = compute_targets(Q, reward, next_state, done, discount_factor)
+    else:
+        with torch.no_grad():  # Don't compute gradient info for the target (semi-gradient)
+            target = compute_targets(Q, reward, next_state, done, discount_factor)
 
     # loss is measured from error between current and newly expected Q values
     loss = F.smooth_l1_loss(q_val, target)

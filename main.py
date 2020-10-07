@@ -82,7 +82,7 @@ def run_settings(args, datahandler):
 
     if args.num_episodes > 0 and not args.skip_run_episodes:
         episode_durations, episode_returns, starting_states = run_episodes(
-            train, Q, policy, memory, env, args.num_episodes, args.batch_size, args.discount_factor, args.stepsize, args.do_train)
+            train, Q, policy, memory, env, args.num_episodes, args.batch_size, args.discount_factor, args.stepsize, args.do_train, args.full_gradient)
         datahandler.save_data(episode_durations, episode_returns, starting_states, Q)
 
     if args.create_animation:
@@ -106,11 +106,13 @@ if __name__ == '__main__':
     parser.add_argument('--experience_replay_capacity', type=int, default=10000, help="size of the replay buffer, size of 1 implies only the last action is in it, which entails there is no experience rayepl")
     parser.add_argument('--discount_factor', type=float, default=0.8, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
 
-    # entwork (training )settings
+    # nentwork (training )settings
     parser.add_argument('--clip_grad', type=float, help='gradient clipped to size float, if < 0 (-1) there is no clipping')
     parser.add_argument('--batch_size', type=int, default=64, help='number of state action pairs used per update')
     parser.add_argument('--stepsize', type=float, default=1e-3, help='learning rate')
     parser.add_argument('--num_hidden', type=int, default=256, help='number of hidden units per hidden layer iof the network')
+    parser.add_argument('--full_gradient', type=bool, default=False, help='Use full gradient instead of semi-gradient during training')
+
 
     # policy arguments
     parser.add_argument('--policy', type=str, default="EpsilonGreedyPolicy", help='choice betweem ["EpsilonGreedyPolicy"]')
