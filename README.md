@@ -37,6 +37,7 @@
 
 #### Algorithm/DQN-related
 - [x] check if we're using the semi-gradient version in the assignment
+- [x] implement choice of full/semi-gradient
 - [x] hyperparameter parser/config [Codebase/main.py](https://github.com/MelleVessies/RL/blob/main/main.py)
 - [x] save results )
     * saved is json format, see see main.py/load_data, main.py/save_data
