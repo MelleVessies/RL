@@ -65,6 +65,7 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train, full_grad
     # compute the q value
     q_val = compute_q_vals(Q, state, action)
 
+    # Note that full gradient in tandem with Double Q learning is a bit wacky.
     if full_gradient:
         target = compute_targets(Q, reward, next_state, done, discount_factor)
     else:
