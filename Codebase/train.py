@@ -83,7 +83,7 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full
     return loss.item()
 
 def get_epsilon(it):
-    return max(0.005, 1 - it * 0.000095)
+    return max(0.05, 1 - (0.95/10000))
 
 def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, do_train=True, full_gradient=False):
 
