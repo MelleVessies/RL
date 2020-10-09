@@ -1,6 +1,5 @@
 from matplotlib import animation
 import matplotlib.pyplot as plt
-from Codebase.train import episode_step
 
 """
 Ensure you have imagemagick installed with 
@@ -12,19 +11,20 @@ Credits:
 https://gist.github.com/botforge/64cbb71780e6208172bbf03cd9293553
 
 """
-def save_frames_as_gif(frames, path='./', filename='gym_animation.gif'):
+def frames_to_animation(frames):
     plt.figure(figsize=(frames[0].shape[1] / 72.0, frames[0].shape[0] / 72.0), dpi=72)
 
     patch = plt.imshow(frames[0])
-    plt.axis('off')
+    t = plt.text(5, 20, "Step: 0")
 
-    def animate(i):
+    def animate(i, t, frame_iter):
+        t.set_text(f"Step: {next(frame_iter)}")
         patch.set_data(frames[i])
 
-    anim = animation.FuncAnimation(plt.gcf(), animate, frames = len(frames), interval=50)
-    anim.save(path + filename, writer='imagemagick', fps=60)
+    return animation.FuncAnimation(plt.gcf(), animate, frames=len(frames), fargs=[t, iter(range(0, len(frames) +1))], interval=50)
 
-def create_animation(env, policy, savePath = None):
+
+def create_animation(env, policy):
     state = env.reset()
     frames = []
     for t in range(1000):
@@ -35,4 +35,5 @@ def create_animation(env, policy, savePath = None):
         if done:
             break
     env.close()
-    save_frames_as_gif(frames)
+
+    return frames_to_animation(frames)

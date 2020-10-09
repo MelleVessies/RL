@@ -1,0 +1,55 @@
+<!-- base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>{% block title %}{% endblock %}</title>
+
+	<!-- Bootstrap core CSS -->
+	<link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom css -->
+    <link rel="stylesheet" href="/static/css/main.css" type="text/css" />
+
+    <!-- Jquery -->
+    <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous">
+    </script>
+</head>
+
+<header>
+        <div class="container">
+            <div class="logo-container">
+                <img src="static/img/gym_logo.svg" alt="logo" class="logo">
+            </div>
+            <nav>
+                <ul>
+                    <li class="menu-item-id" ><a href="#home">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+</header>
+
+
+<body>
+	<main role="main">
+        <div class="page-content">
+
+        </div>
+	</main>
+</body>
+</html>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script type="text/javascript" src="/static/js/main.js"></script>
+<script type="text/javascript" src="/static/js/iro.min.js"></script>
+
+<script type="text/javascript">
+    renderPageContent('#home');
+</script>

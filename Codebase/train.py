@@ -32,8 +32,8 @@ def compute_targets(Q, rewards, next_states, dones, discount_factor):
     """
     return rewards + discount_factor * (1- dones.int()) * Q(next_states).max(1)[0].reshape(dones.size())
 
-def episode_step(state, env, policy, memory, global_steps):
-    policy.set_epsilon(get_epsilon(global_steps))
+def episode_step(state, env, policy, memory, global_steps, eps_min, eps_steps_till_min):
+    policy.set_epsilon(get_epsilon(global_steps, eps_min, eps_steps_till_min))
     action = policy.sample_action(state)
 
     next_state, reward, done, _ = env.step(action)
@@ -42,7 +42,7 @@ def episode_step(state, env, policy, memory, global_steps):
     return done, reward, next_state
 
 
-def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True):
+def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full_gradient=False):
     # DO NOT MODIFY THIS FUNCTION
 
     # don't learn without some decent experience
@@ -64,8 +64,12 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True):
 
     # compute the q value
     q_val = compute_q_vals(Q, state, action)
-    with torch.no_grad():  # Don't compute gradient info for the target (semi-gradient)
+
+    if full_gradient:
         target = compute_targets(Q, reward, next_state, done, discount_factor)
+    else:
+        with torch.no_grad():
+            target = compute_targets(Q, reward, next_state, done, discount_factor)
 
     # loss is measured from error between current and newly expected Q values
     loss = F.smooth_l1_loss(q_val, target)
@@ -76,12 +80,13 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True):
         loss.backward()
         optimizer.step()
 
-    return loss.item()  # Returns a Python scalar, and releases history (similar to .detach())
+    return loss.item()
 
-def get_epsilon(it):
-    return max(0.05, 1 - it * 0.00095)
+def get_epsilon(it, eps_min, eps_steps_till_min):
+    return max(eps_min, 1 - ((1 - eps_min)/eps_steps_till_min)*it)
 
-def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, do_train=True):
+def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate,
+                 eps_min = 0.05, eps_steps_till_min = 10000, do_train=True, full_gradient=False):
 
     optimizer = optim.Adam(Q.parameters(), learn_rate)
 
@@ -98,8 +103,8 @@ def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discou
         steps = 0
         state = env.reset()
         while True:
-            done, reward, state = episode_step(state, env, policy, memory, global_steps)
-            train(Q, memory, optimizer, batch_size, discount_factor, do_train)
+            done, reward, state = episode_step(state, env, policy, memory, global_steps, eps_min, eps_steps_till_min)
+            train(Q, memory, optimizer, batch_size, discount_factor, do_train, full_gradient)
 
             all_rewards.append(reward)
 
