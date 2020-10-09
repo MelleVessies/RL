@@ -16,7 +16,6 @@ from Codebase.Animation import create_animation
 
 policy_options = ["EpsilonGreedyPolicy"]
 
-
 def Discrete(x):
     '''Helper function for data loading'''
     return True, int(x)
@@ -47,6 +46,11 @@ def run_settings(args, datahandler):
     """
     set_seeds(args.seed)
 
+    if torch.cuda.is_available() and not args.no_cuda:
+        DEVICE = 'cuda:0'
+    else:
+        DEVICE = 'cpu'
+
     env_infodict = json.load(open(os.path.join('environment-info', args.environment_name+".json"), 'r'))
 
     # make (and SEED) the environment
@@ -71,20 +75,20 @@ def run_settings(args, datahandler):
     if args.pretrained:
         Q = datahandler.load_model()
     else:
-        Q = DQN(args.num_hidden, input_size, output_size)
+        Q = DQN(args.num_hidden, input_size, output_size, DEVICE)
     memory = ReplayMemory(args.experience_replay_capacity)
 
     if "EpsilonGreedyPolicy" == args.policy:
         if not isinstance(args.epsilon, float):
             raise ValueError(f"expected float for epsilon, got {args.epsilon}")
-        policy = EpsilonGreedyPolicy(Q, args.epsilon)
+        policy = EpsilonGreedyPolicy(Q, args.epsilon, device=DEVICE)
 
 
     if args.num_episodes > 0 and not args.skip_run_episodes:
         episode_durations, episode_returns, starting_states = run_episodes(
             train, Q, policy, memory, env, args.num_episodes, args.batch_size, args.discount_factor, args.stepsize,
             args.eps_min, args.eps_steps_till_min,
-            args.do_train, args.full_gradient)
+            args.do_train, args.full_gradient, DEVICE)
         datahandler.save_data(episode_durations, episode_returns, starting_states, Q)
 
     if args.create_animation:
@@ -110,7 +114,7 @@ if __name__ == '__main__':
 
     # nentwork (training )settings
     parser.add_argument('--clip_grad', type=float, help='gradient clipped to size float, if < 0 (-1) there is no clipping')
-    parser.add_argument('--batch_size', type=int, default=64, help='number of state action pairs used per update')
+    parser.add_argument('--batch_size', type=int, default=256, help='number of state action pairs used per update')
     parser.add_argument('--stepsize', type=float, default=1e-3, help='learning rate')
     parser.add_argument('--num_hidden', type=int, default=256, help='number of hidden units per hidden layer iof the network')
     parser.add_argument('--full_gradient', action="store_true", default=False, help='Use full gradient instead of semi-gradient during training')
@@ -131,6 +135,7 @@ if __name__ == '__main__':
     parser.add_argument('--do_train', type=bool, default=True, help='Update the Q network weights while running episodes')
     parser.add_argument('--skip_run_episodes', type=bool, default=False, help='Skips the actual running of the episodes')
     parser.add_argument('--create_animation', type=bool, default=True, help='Create and save an animation of a single episode')
+    parser.add_argument('--no_cuda', type=bool, default=False, help='Disable cuda')
 
     # finish adding arguments
     args = parser.parse_args()

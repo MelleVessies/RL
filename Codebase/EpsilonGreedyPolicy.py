@@ -5,9 +5,12 @@ class EpsilonGreedyPolicy(object):
     A simple epsilon greedy policy.
     """
 
-    def __init__(self, Q, epsilon):
+    def __init__(self, Q, epsilon, device='cpu'):
         self.Q = Q
         self.epsilon = epsilon
+        self.device = device
+
+        self.Q.to(device)
 
     def sample_action(self, obs):
         """
@@ -19,8 +22,9 @@ class EpsilonGreedyPolicy(object):
         Returns:
             An action (int).
         """
+        x = torch.from_numpy(obs).float().to(self.device)
+
         with torch.no_grad():
-            x = torch.from_numpy(obs).float()
             actions = self.Q(x)
 
         if np.random.uniform() > self.epsilon:

@@ -1,6 +1,7 @@
 import torch
 from torch import optim
 import torch.nn.functional as F
+from tqdm import tqdm
 
 def compute_q_vals(Q, states, actions):
     """
@@ -42,7 +43,7 @@ def episode_step(state, env, policy, memory, global_steps, eps_min, eps_steps_ti
     return done, reward, next_state
 
 
-def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full_gradient=False):
+def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full_gradient=False, device='cpu'):
     # DO NOT MODIFY THIS FUNCTION
 
     # don't learn without some decent experience
@@ -56,11 +57,11 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full
     state, action, reward, next_state, done = zip(*transitions)
 
     # convert to PyTorch and define types
-    state = torch.tensor(state, dtype=torch.float)
-    action = torch.tensor(action, dtype=torch.int64)[:, None]  # Need 64 bit to use them as index
-    next_state = torch.tensor(next_state, dtype=torch.float)
-    reward = torch.tensor(reward, dtype=torch.float)[:, None]
-    done = torch.tensor(done, dtype=torch.uint8)[:, None]  # Boolean
+    state = torch.tensor(state, dtype=torch.float, device=device)
+    action = torch.tensor(action, dtype=torch.int64, device=device)[:, None]  # Need 64 bit to use them as index
+    next_state = torch.tensor(next_state, dtype=torch.float, device=device)
+    reward = torch.tensor(reward, dtype=torch.float, device=device)[:, None]
+    done = torch.tensor(done, dtype=torch.uint8, device=device)[:, None]  # Boolean
 
     # compute the q value
     q_val = compute_q_vals(Q, state, action)
@@ -86,7 +87,7 @@ def get_epsilon(it, eps_min, eps_steps_till_min):
     return max(eps_min, 1 - ((1 - eps_min)/eps_steps_till_min)*it)
 
 def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate,
-                 eps_min = 0.05, eps_steps_till_min = 10000, do_train=True, full_gradient=False):
+                 eps_min = 0.05, eps_steps_till_min = 10000, do_train=True, full_gradient=False, device='cpu'):
 
     optimizer = optim.Adam(Q.parameters(), learn_rate)
 
@@ -95,7 +96,7 @@ def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discou
     episode_returns = []
     starting_positions = []
 
-    for i in range(num_episodes):
+    for i in tqdm(range(num_episodes)):
         state = env.reset()
         starting_positions.append(state.tolist())
         all_rewards = []
@@ -104,7 +105,7 @@ def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discou
         state = env.reset()
         while True:
             done, reward, state = episode_step(state, env, policy, memory, global_steps, eps_min, eps_steps_till_min)
-            train(Q, memory, optimizer, batch_size, discount_factor, do_train, full_gradient)
+            train(Q, memory, optimizer, batch_size, discount_factor, do_train, full_gradient, device)
 
             all_rewards.append(reward)
 
