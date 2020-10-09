@@ -42,7 +42,7 @@ def episode_step(state, env, policy, memory, global_steps, eps_min, eps_steps_ti
     return done, reward, next_state
 
 
-def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full_gradient=False):
+def train(Q, memory, optimizer, batch_size, discount_factor, do_train, full_gradient, clip_grad):
     # DO NOT MODIFY THIS FUNCTION
 
     # don't learn without some decent experience
@@ -78,6 +78,8 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full
     if do_train:
         optimizer.zero_grad()
         loss.backward()
+        if 0 < clip_grad:
+            torch.nn.utils.clip_grad_norm_(Q.parameters(), clip_grad, norm_type=2)
         optimizer.step()
 
     return loss.item()
@@ -105,7 +107,7 @@ def run_episodes(train, Q, policy, memory, env, args):
         state = env.reset()
         while True:
             done, reward, state = episode_step(state, env, policy, memory, global_steps, args.eps_min, args.eps_steps_till_min)
-            train(Q, memory, optimizer, args.batch_size, args.discount_factor, args.do_train, args.full_gradient)
+            train(Q, memory, optimizer, args.batch_size, args.discount_factor, args.do_train, args.full_gradient, args.clip_grad)
             all_rewards.append(reward)
 
             global_steps += 1
