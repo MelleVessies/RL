@@ -28,11 +28,11 @@
 
 #### Implementing tricks:
 - [x] [experience replay](http://www.incompleteideas.net/lin-92.pdf)  (copied from assignment)
-- [ ] [target network](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf), [target network](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN)
-- [ ] gradient clipping [see](https://abhishm.github.io/DQN/) [specific, paper source? many papers in use it when searching on scholar but there doesnt seem to be a justifying paper]
+- [x] [target network](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf), [target network](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN)
+- [x] gradient clipping [see](https://abhishm.github.io/DQN/) [specific, paper source? many papers in use it when searching on scholar but there doesnt seem to be a justifying paper]
 - [x] [batch sizes](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN) (copied from assignment)
 - [x] [step size](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN) (copied from assignment)
-- [ ] [Double DQN](https://arxiv.org/pdf/1509.06461.pdf)  
+- [x] [Double DQN](https://arxiv.org/pdf/1509.06461.pdf)  
 - [ ] find more tricks [with source]
 - [ ] check slides for lecture mentioned tricks
 

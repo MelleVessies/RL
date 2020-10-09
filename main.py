@@ -34,7 +34,7 @@ def set_seeds(seed):
     random.seed(seed)
 
 
-def run_settings(args, datahandler):
+def run_settings(args):
     """collects results for a set of argparse settings.
 
     Parameters
@@ -47,6 +47,7 @@ def run_settings(args, datahandler):
     None
 
     """
+    datahandler = DataHandler(args)
     set_seeds(args.seed)
 
     env_infodict = json.load(open(os.path.join('environment-info', args.environment_name+".json"), 'r'))
@@ -96,6 +97,8 @@ def run_settings(args, datahandler):
         policy.set_epsilon(0)
         animation  = create_animation(env, policy, Q)
         datahandler.save_animation(animation)
+
+    return datahandler
 
 # run_episodes(
               #train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, args.do_train)
@@ -148,8 +151,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     make_env_info([args.environment_name])
     print(vars(args))
-    datahandler = DataHandler(args)
-    run_settings(args, datahandler)
+
+    datahandler = run_settings(args)
     All_data = datahandler.load_data()
 
     Acrobot_data = datahandler.load_data(filter={"environment_name":"Acrobot-v1"})
