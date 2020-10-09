@@ -52,6 +52,8 @@ def run_settings(args, datahandler):
 
     # make (and SEED) the environment
     env = gym.envs.make(args.environment_name)
+    if args.max_episode_steps:
+        env._max_episode_steps = args.max_episode_steps
     env.seed(args.seed)
 
     # get variables relevant for the the neural network w.r.t. the environment
@@ -106,12 +108,13 @@ if __name__ == '__main__':
     # env settings
     parser.add_argument('--environment_name', default='CartPole-v1', type=str, help='name of the environment according to the name listed @ https://gym.openai.com/envs/#atari')
     parser.add_argument('--num_episodes', default=200)
+    parser.add_argument('--max_episode_steps', type=int, default=0)
 
     # tricks
     parser.add_argument('--experience_replay_capacity', type=int, default=10000, help="size of the replay buffer, size of 1 implies only the last action is in it, which entails there is no experience rayepl")
     parser.add_argument('--discount_factor', type=float, default=0.8, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
 
-    # entwork (training )settings
+    # network (training )settings
     parser.add_argument('--clip_grad', type=float, help='gradient clipped to size float, if < 0 (-1) there is no clipping')
     parser.add_argument('--batch_size', type=int, default=64, help='number of state action pairs used per update')
     parser.add_argument('--stepsize', type=float, default=1e-3, help='learning rate')
