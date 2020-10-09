@@ -39,7 +39,7 @@ class DQNWrapper():
             self.type = "normal DQN"
 
     def update_target(self, it):
-        if self.type == "target_DQN":
+        if self.type == "target DQN":
             if it % self.update_iter == 0:
                 self.target_Q.load_state_dict(self.Q.state_dict())
 

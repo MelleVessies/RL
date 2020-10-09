@@ -109,6 +109,7 @@ def run_episodes(train, QWrapper, policy, env, args):
         while True:
             Q, optimizer, memory, target_Q = QWrapper.wrapper_magic()
             QWrapper.update_target(global_steps)
+
             done, reward, state = episode_step(state, env, policy, Q, memory, global_steps, args.eps_min, args.eps_steps_till_min)
             train(Q, memory, target_Q, optimizer, args.batch_size, args.discount_factor, args.do_train, args.full_gradient, args.clip_grad)
             all_rewards.append(reward)
