@@ -98,9 +98,9 @@ if __name__ == '__main__':
 
     continuous_envs = ["MountainCarContinuous-v0"]
     rgb_envs = ["Breakout-v0", "MontezumaRevenge-v0"]
-    usable_environments = ["Acrobot-v1", "CartPole-v1", "MountainCar-v0", "LunarLander-v2"]
+    box2D_env = ["LunarLander-v2"]
+    usable_environments = ["Acrobot-v1", "CartPole-v1", "MountainCar-v0"]
 
-    make_env_info(usable_environments)
 
     parser = argparse.ArgumentParser()
     # env settings
@@ -135,6 +135,7 @@ if __name__ == '__main__':
 
     # finish adding arguments
     args = parser.parse_args()
+    make_env_info([args.environment_name])
     print(vars(args))
     datahandler = DataHandler(args)
     run_settings(args, datahandler)
