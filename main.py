@@ -76,18 +76,22 @@ def run_settings(args, datahandler):
     memory = ReplayMemory(args.experience_replay_capacity)
 
     if "EpsilonGreedyPolicy" == args.policy:
-        if not isinstance(args.epsilon, float):
-            raise ValueError(f"expected float for epsilon, got {args.epsilon}")
-        policy = EpsilonGreedyPolicy(Q, args.epsilon)
+        if not isinstance(args.eps_min, float):
+            raise ValueError(f"expected float for eps_min, got {args.eps_min}")
+        policy = EpsilonGreedyPolicy(Q, args.eps_min)
 
 
     if args.num_episodes > 0:
         episode_durations, episode_returns, starting_states = run_episodes(
-            train, Q, policy, memory, env, args.num_episodes, args.batch_size, args.discount_factor, args.stepsize, args.do_train)
+            train, Q, policy, memory, env, args)
         datahandler.save_data(episode_durations, episode_returns, starting_states, Q)
 
     if args.create_animation:
         create_animation(env, policy)
+
+# run_episodes(
+              #train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, args.do_train)
+# run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, eps_min = 0.05, eps_steps_till_min = 10000, do_train=True, full_gradient=False)
 
 
 if __name__ == '__main__':
@@ -100,7 +104,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     # env settings
-    parser.add_argument('--environment_name', default='Acrobot-v1', type=str, help='name of the environment according to the name listed @ https://gym.openai.com/envs/#atari')
+    parser.add_argument('--environment_name', default='CartPole-v1', type=str, help='name of the environment according to the name listed @ https://gym.openai.com/envs/#atari')
     parser.add_argument('--num_episodes', default=200)
 
     # tricks
@@ -111,13 +115,13 @@ if __name__ == '__main__':
     parser.add_argument('--clip_grad', type=float, help='gradient clipped to size float, if < 0 (-1) there is no clipping')
     parser.add_argument('--batch_size', type=int, default=64, help='number of state action pairs used per update')
     parser.add_argument('--stepsize', type=float, default=1e-3, help='learning rate')
-    parser.add_argument('--num_hidden', type=int, default=256, help='number of hidden units per hidden layer iof the network')
+    parser.add_argument('--num_hidden', type=int, default=128, help='number of hidden units per hidden layer iof the network')
+    parser.add_argument('--full_gradient', action="store_true", default=False, help='Use full gradient instead of semi-gradient during training')
 
     # policy arguments
     parser.add_argument('--policy', type=str, default="EpsilonGreedyPolicy", help='choice betweem ["EpsilonGreedyPolicy"]')
-    parser.add_argument('--epsilon', type=float, default=0.05, help='The initial epsilon value ')
     parser.add_argument('--eps_min', type=float, default=0.05, help='The minimal value of epsilon in the epsilon greedy policy')
-    parser.add_argument('--eps_steps_till_min', type=int, default=10000, help='Number of steps after which epsilon should be at its minimum')
+    parser.add_argument('--eps_steps_till_min', type=int, default=10000, help='Number of steps after which epsilon should be at its minimum, n=1 for starting at EpsilonGreedy (ish, see get_epsilon function)')
 
     # seed
     parser.add_argument('--seed', type=int, default=42, help="random seed")
@@ -126,10 +130,12 @@ if __name__ == '__main__':
     parser.add_argument('--save_network', type=bool, default=False, help='Save the used Q network')
     parser.add_argument('--pretrained', type=bool, default=False, help='Load a pretrained Q network')
     parser.add_argument('--do_train', type=bool, default=True, help='Update the Q network weights while running episodes')
+    parser.add_argument('--skip_run_episodes', type=bool, default=False, help='Skips the actual running of the episodes')
     parser.add_argument('--create_animation', type=bool, default=True, help='Create and save an animation of a single episode')
 
     # finish adding arguments
     args = parser.parse_args()
+    print(vars(args))
     datahandler = DataHandler(args)
     run_settings(args, datahandler)
     All_data = datahandler.load_data()

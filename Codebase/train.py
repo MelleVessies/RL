@@ -83,19 +83,20 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train=True, full
     return loss.item()
 
 def get_epsilon(it, eps_min, eps_steps_till_min):
+    v = max(eps_min, 1 - ((1 - eps_min)/eps_steps_till_min)*it)
     return max(eps_min, 1 - ((1 - eps_min)/eps_steps_till_min)*it)
 
-def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate,
-                 eps_min = 0.05, eps_steps_till_min = 10000, do_train=True, full_gradient=False):
 
-    optimizer = optim.Adam(Q.parameters(), learn_rate)
+def run_episodes(train, Q, policy, memory, env, args):
+
+    optimizer = optim.Adam(Q.parameters(), args.stepsize)
 
     global_steps = 0  # Count the steps (do not reset at episode start, to compute epsilon)
     episode_durations = []  #
     episode_returns = []
     starting_positions = []
 
-    for i in range(num_episodes):
+    for i in range(args.num_episodes):
         state = env.reset()
         starting_positions.append(state.tolist())
         all_rewards = []
@@ -103,9 +104,8 @@ def run_episodes(train, Q, policy, memory, env, num_episodes, batch_size, discou
         steps = 0
         state = env.reset()
         while True:
-            done, reward, state = episode_step(state, env, policy, memory, global_steps, eps_min, eps_steps_till_min)
-            train(Q, memory, optimizer, batch_size, discount_factor, do_train, full_gradient)
-
+            done, reward, state = episode_step(state, env, policy, memory, global_steps, args.eps_min, args.eps_steps_till_min)
+            train(Q, memory, optimizer, args.batch_size, args.discount_factor, args.do_train, args.full_gradient)
             all_rewards.append(reward)
 
             global_steps += 1
