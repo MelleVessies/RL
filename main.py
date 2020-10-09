@@ -14,6 +14,7 @@ from Codebase.EpsilonGreedyPolicy import EpsilonGreedyPolicy
 from Codebase.environment import make_env_info
 from Codebase.data_handling import DataHandler
 from Codebase.Animation import create_animation
+from Codebase.DQNWrapper import DQNWrapper
 
 policy_options = ["EpsilonGreedyPolicy"]
 
@@ -72,30 +73,28 @@ def run_settings(args, datahandler):
     #     raise ValueError("gradient clipping not yet implemented")
 
     if args.pretrained:
+        raise ValueError ("HOW TO DO THIS NICELY WITH THE WRAPPER???????")
         Q = datahandler.load_model()
     else:
-        Q = DQN(args.num_hidden, input_size, output_size)
-
-    if not args.experience_replay_capacity:
-        flush_memory_after_sample = not args.experience_replay_capacity
-        memory = ReplayMemory(args.batch_size, flush_memory_after_sample)
-    else:
-        flush_memory_after_sample = False
-        memory = ReplayMemory(args.experience_replay_capacity, flush_memory_after_sample)
+        QWrapper = DQNWrapper(args, input_size, output_size)
+        # Q = DQN(args.num_hidden, input_size, output_size)
 
     if "EpsilonGreedyPolicy" == args.policy:
         if not isinstance(args.eps_min, float):
             raise ValueError(f"expected float for eps_min, got {args.eps_min}")
-        policy = EpsilonGreedyPolicy(Q, args.eps_min)
+        policy = EpsilonGreedyPolicy(args.eps_min)
 
 
     if args.num_episodes > 0:
         episode_durations, episode_returns, starting_states = run_episodes(
-            train, Q, policy, memory, env, args)
+            train, QWrapper, policy, env, args)
+        Q = QWrapper.Q
         datahandler.save_data(episode_durations, episode_returns, starting_states, Q)
 
     if args.create_animation:
-        animation  = create_animation(env, policy)
+        print('!!! USING EPSILON=0 TO SHOW TARGET POLICY !!!')
+        policy.set_epsilon(0)
+        animation  = create_animation(env, policy, Q)
         datahandler.save_animation(animation)
 
 # run_episodes(

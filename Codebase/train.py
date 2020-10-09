@@ -32,9 +32,9 @@ def compute_targets(Q, rewards, next_states, dones, discount_factor):
     """
     return rewards + discount_factor * (1- dones.int()) * Q(next_states).max(1)[0].reshape(dones.size())
 
-def episode_step(state, env, policy, memory, global_steps, eps_min, eps_steps_till_min):
+def episode_step(state, env, policy, Q, memory, global_steps, eps_min, eps_steps_till_min):
     policy.set_epsilon(get_epsilon(global_steps, eps_min, eps_steps_till_min))
-    action = policy.sample_action(state)
+    action = policy.sample_action(Q, state)
 
     next_state, reward, done, _ = env.step(action)
     memory.push([state, action, reward, next_state, done])
@@ -42,8 +42,7 @@ def episode_step(state, env, policy, memory, global_steps, eps_min, eps_steps_ti
     return done, reward, next_state
 
 
-def train(Q, memory, optimizer, batch_size, discount_factor, do_train, full_gradient, clip_grad):
-    # DO NOT MODIFY THIS FUNCTION
+def train(Q, memory, target_Q, optimizer, batch_size, discount_factor, do_train, full_gradient, clip_grad):
 
     # don't learn without some decent experience
     if len(memory) < batch_size:
@@ -67,10 +66,10 @@ def train(Q, memory, optimizer, batch_size, discount_factor, do_train, full_grad
 
     # Note that full gradient in tandem with Double Q learning is a bit wacky.
     if full_gradient:
-        target = compute_targets(Q, reward, next_state, done, discount_factor)
+        target = compute_targets(target_Q, reward, next_state, done, discount_factor)
     else:
         with torch.no_grad():
-            target = compute_targets(Q, reward, next_state, done, discount_factor)
+            target = compute_targets(target_Q, reward, next_state, done, discount_factor)
 
     # loss is measured from error between current and newly expected Q values
     loss = F.smooth_l1_loss(q_val, target)
@@ -90,16 +89,17 @@ def get_epsilon(it, eps_min, eps_steps_till_min):
     return max(eps_min, 1 - ((1 - eps_min)/eps_steps_till_min)*it)
 
 
-def run_episodes(train, Q, policy, memory, env, args):
+def run_episodes(train, QWrapper, policy, env, args):
 
-    optimizer = optim.Adam(Q.parameters(), args.stepsize)
+    # optimizer = optim.Adam(Q.parameters(), args.stepsize)
 
-    global_steps = 0  # Count the steps (do not reset at episode start, to compute epsilon)
-    episode_durations = []  #
+    global_steps = 0
+    episode_durations = []
     episode_returns = []
     starting_positions = []
 
     for i in range(args.num_episodes):
+
         state = env.reset()
         starting_positions.append(state.tolist())
         all_rewards = []
@@ -107,8 +107,10 @@ def run_episodes(train, Q, policy, memory, env, args):
         steps = 0
         state = env.reset()
         while True:
-            done, reward, state = episode_step(state, env, policy, memory, global_steps, args.eps_min, args.eps_steps_till_min)
-            train(Q, memory, optimizer, args.batch_size, args.discount_factor, args.do_train, args.full_gradient, args.clip_grad)
+            Q, optimizer, memory, target_Q = QWrapper.wrapper_magic()
+            QWrapper.update_target(global_steps)
+            done, reward, state = episode_step(state, env, policy, Q, memory, global_steps, args.eps_min, args.eps_steps_till_min)
+            train(Q, memory, target_Q, optimizer, args.batch_size, args.discount_factor, args.do_train, args.full_gradient, args.clip_grad)
             all_rewards.append(reward)
 
             global_steps += 1

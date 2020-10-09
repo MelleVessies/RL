@@ -5,11 +5,10 @@ class EpsilonGreedyPolicy(object):
     A simple epsilon greedy policy.
     """
 
-    def __init__(self, Q, epsilon):
-        self.Q = Q
+    def __init__(self, epsilon):
         self.epsilon = epsilon
 
-    def sample_action(self, obs):
+    def sample_action(self, Q, obs):
         """
         This method takes a state as input and returns an action sampled from this policy.
 
@@ -21,7 +20,7 @@ class EpsilonGreedyPolicy(object):
         """
         with torch.no_grad():
             x = torch.from_numpy(obs).float()
-            actions = self.Q(x)
+            actions = Q(x)
 
         if np.random.uniform() > self.epsilon:
             return actions.max(0)[1].item()
