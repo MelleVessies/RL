@@ -89,7 +89,8 @@ def run_settings(args, datahandler):
         datahandler.save_data(episode_durations, episode_returns, starting_states, Q)
 
     if args.create_animation:
-        create_animation(env, policy)
+        animation  = create_animation(env, policy)
+        datahandler.save_animation(animation)
 
 # run_episodes(
               #train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, args.do_train)
