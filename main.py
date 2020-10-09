@@ -75,7 +75,13 @@ def run_settings(args, datahandler):
         Q = datahandler.load_model()
     else:
         Q = DQN(args.num_hidden, input_size, output_size)
-    memory = ReplayMemory(args.experience_replay_capacity)
+
+    if not args.experience_replay_capacity:
+        flush_memory_after_sample = not args.experience_replay_capacity
+        memory = ReplayMemory(args.batch_size, flush_memory_after_sample)
+    else:
+        flush_memory_after_sample = False
+        memory = ReplayMemory(args.experience_replay_capacity, flush_memory_after_sample)
 
     if "EpsilonGreedyPolicy" == args.policy:
         if not isinstance(args.eps_min, float):
@@ -112,8 +118,8 @@ if __name__ == '__main__':
     parser.add_argument('--max_episode_steps', type=int, default=0)
 
     # tricks
-    parser.add_argument('--experience_replay_capacity', type=int, default=10000, help="size of the replay buffer, size of 1 implies only the last action is in it, which entails there is no experience rayepl")
-    parser.add_argument('--discount_factor', type=float, default=0.99, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
+    parser.add_argument('--experience_replay_capacity', type=int, default=10000, help="size of the replay buffer, size of 0 implies no replay buffer")
+    parser.add_argument('--discount_factor', type=float, default=0.8, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
 
     # network (training )settings
     parser.add_argument('--clip_grad', type=float, default=-1, help='gradient clipped to size float, if < 0 (-1) there is no clipping')
@@ -125,7 +131,7 @@ if __name__ == '__main__':
     # policy arguments
     parser.add_argument('--policy', type=str, default="EpsilonGreedyPolicy", help='choice betweem ["EpsilonGreedyPolicy"]')
     parser.add_argument('--eps_min', type=float, default=0.05, help='The minimal value of epsilon in the epsilon greedy policy')
-    parser.add_argument('--eps_steps_till_min', type=int, default=100, help='Number of steps after which epsilon should be at its minimum, n=1 for starting at EpsilonGreedy (ish, see get_epsilon function)')
+    parser.add_argument('--eps_steps_till_min', type=int, default=1000, help='Number of steps after which epsilon should be at its minimum, n=1 for starting at EpsilonGreedy (ish, see get_epsilon function)')
 
     # seed
     parser.add_argument('--seed', type=int, default=42, help="random seed")
