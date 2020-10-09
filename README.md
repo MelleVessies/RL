@@ -113,8 +113,8 @@ other invironment properties such as max steps & reward treshold for 'solving' a
 - [ ] Create wrapper class around Q network
 - [ ]  Wrapper class should allow target network implementation
 - [ ]  Wrapper class should allow double Q learning implementation
-- [x]  Fix gradient clipping (done?)
+- [x]  Fix gradient clipping
 - [ ] Add some more styling/structure to the website
-- [ ] Make it possible to disable replay memory
+- [x] Make it possible to disable replay memory (implemented, simply set argument 'experience_replay_capacity' to 0)
 - [ ] Set up a function that makes it easier to run a bunch of different settings in sequence and gather results
 - [ ] Create function that creates plots for gathered data

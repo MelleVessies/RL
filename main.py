@@ -76,7 +76,12 @@ def run_settings(args, datahandler):
     else:
         Q = DQN(args.num_hidden, input_size, output_size)
 
-    memory = ReplayMemory(args.experience_replay_capacity)
+    if not args.experience_replay_capacity:
+        flush_memory_after_sample = not args.experience_replay_capacity
+        memory = ReplayMemory(args.batch_size, flush_memory_after_sample)
+    else:
+        flush_memory_after_sample = False
+        memory = ReplayMemory(args.experience_replay_capacity, flush_memory_after_sample)
 
     if "EpsilonGreedyPolicy" == args.policy:
         if not isinstance(args.eps_min, float):
@@ -114,7 +119,7 @@ if __name__ == '__main__':
 
     # tricks
     parser.add_argument('--experience_replay_capacity', type=int, default=10000, help="size of the replay buffer, size of 1 implies only the last action is in it, which entails there is no experience rayepl")
-    parser.add_argument('--discount_factor', type=float, default=0.99, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
+    parser.add_argument('--discount_factor', type=float, default=0.8, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
     parser.add_argument('--double_q_network', action="store_true", default=False, help='Use double deep q network learning.')
     parser.add_argument('--target_network', type=int, default=0, help='Number of steps after which to update the target network during training .')
 
