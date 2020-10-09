@@ -115,7 +115,9 @@ if __name__ == '__main__':
 
     # policy arguments
     parser.add_argument('--policy', type=str, default="EpsilonGreedyPolicy", help='choice betweem ["EpsilonGreedyPolicy"]')
-    parser.add_argument('--epsilon', type=float, default=0.05, help='epsilon (chance to explore) for policies that require it')
+    parser.add_argument('--epsilon', type=float, default=0.05, help='The initial epsilon value ')
+    parser.add_argument('--eps_min', type=float, default=0.05, help='The minimal value of epsilon in the epsilon greedy policy')
+    parser.add_argument('--eps_steps_till_min', type=int, default=10000, help='Number of steps after which epsilon should be at its minimum')
 
     # seed
     parser.add_argument('--seed', type=int, default=42, help="random seed")
