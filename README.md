@@ -14,10 +14,10 @@
 - [x] [cartpole (what is its difficulty?)](https://gym.openai.com/envs/CartPole-v1/)
 - [x] [mountain car (what is its difficulty?)](https://gym.openai.com/envs/MountainCar-v0)
 - [x] [Lunar lander (what is its difficulty?)](https://gym.openai.com/envs/LunarLander-v2)
-- [ ] [mountain car continuous (what is its difficulty?)](https://gym.openai.com/envs/MountainCar-v0/) **David says: continuous action spaces are likely out of scope**
-- [ ] [Breakout (what is its difficulty?)](https://gym.openai.com/envs/Breakout-v0/) **David says: atari environments are likely out of scope**
-- [ ] [Monte Zumas revenge (notoriously difficult)](https://gym.openai.com/envs/MontezumaRevenge-v0/) **David says: atari environments are likely out of scope**
-- [ ] [other environments...](https://gym.openai.com/envs/#atari)
+- [-] [mountain car continuous (what is its difficulty?)](https://gym.openai.com/envs/MountainCar-v0/) **David says: continuous action spaces are likely out of scope**
+- [-] [Breakout (what is its difficulty?)](https://gym.openai.com/envs/Breakout-v0/) **David says: atari environments are likely out of scope**
+- [-] [Monte Zumas revenge (notoriously difficult)](https://gym.openai.com/envs/MontezumaRevenge-v0/) **David says: atari environments are likely out of scope**
+- [-] [other environments...](https://gym.openai.com/envs/#atari)
 
 #### policies
 - [x] EpsilonGreedy
@@ -68,10 +68,8 @@
 ### other Todo
 - [ ] Find out if theres a particular reason some environments have a shorted default termination number of steps than others.
 - [ ] Implement a check/warning to see if settings have already been run
-- [ ] implement a check to see whether all results use the same set of hyperparameters and or filter out incomplete ones
+- [x] implement a check to see whether all results use the same set of hyperparameters and or filter out incomplete ones
 - [x] implement saving NNs to view result
-- [ ] implement rendering of behaviour (Melle working on this)
-- [ ] create environment file
 
 #### useful Papers
 * [DQN-paper/target network/ Human-Level Control
@@ -109,3 +107,14 @@ you should now be able to run 'environment.py' to get a rundown of environment p
 
 specific properties can be read up on [here](https://gym.openai.com/docs/)
 other invironment properties such as max steps & reward treshold for 'solving' an environment are given in the [registry file](https://github.com/openai/gym/blob/master/gym/envs/__init__.py)
+
+
+##Latest TODOS
+- [ ] Create wrapper class around Q network
+- [ ]  Wrapper class should allow target network implementation
+- [ ]  Wrapper class should allow double Q learning implementation
+- [x]  Fix gradient clipping (done?)
+- [ ] Add some more styling/structure to the website
+- [ ] Make it possible to disable replay memory
+- [ ] Set up a function that makes it easier to run a bunch of different settings in sequence and gather results
+- [ ] Create function that creates plots for gathered data
