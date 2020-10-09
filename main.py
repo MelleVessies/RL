@@ -107,7 +107,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # env settings
     parser.add_argument('--environment_name', default='CartPole-v1', type=str, help='name of the environment according to the name listed @ https://gym.openai.com/envs/#atari')
-    parser.add_argument('--num_episodes', default=200)
+    parser.add_argument('--num_episodes', type=int, default=200)
     parser.add_argument('--max_episode_steps', type=int, default=0)
 
     # tricks
