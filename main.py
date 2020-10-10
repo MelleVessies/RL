@@ -95,7 +95,7 @@ def run_settings(args):
     if args.create_animation:
         print('!!! USING EPSILON=0 TO SHOW TARGET POLICY !!!')
         policy.set_epsilon(0)
-        animation  = create_animation(env, policy, Q, args.max_episode_steps)
+        animation  = create_animation(env, policy, Q, env._max_episode_steps)
         datahandler.save_animation(animation)
 
     return datahandler
