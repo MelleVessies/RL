@@ -1,0 +1,11 @@
+{
+    "shape": "(2,)",
+    "dtype": "float64",
+    "action_space": "Box(1,)",
+    "action_space.high": "[1.]",
+    "action_space.low": "[-1.]",
+    "observation_space": "Box(2,)",
+    "observation_space.high": "[0.6  0.07]",
+    "observation_space.low": "[-1.2  -0.07]",
+    "environment web page": "https://gym.openai.com/envs/MountainCarContinuous-v0/"
+}

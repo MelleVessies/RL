@@ -1,5 +1,6 @@
 import torch
 from torch import optim
+import numpy as np
 import torch.nn.functional as F
 
 def compute_q_vals(Q, states, actions):
@@ -17,7 +18,7 @@ def compute_q_vals(Q, states, actions):
     return torch.gather(Q(states), 1, actions)
 
 
-def compute_targets(Q, rewards, next_states, dones, discount_factor):
+def compute_targets(action_q, value_q, rewards, next_states, dones, discount_factor):
     """
     This method returns targets (values towards which Q-values should move).
 
@@ -30,7 +31,9 @@ def compute_targets(Q, rewards, next_states, dones, discount_factor):
     Returns:
         A torch tensor filled with target values. Shape: batch_size x 1.
     """
-    return rewards + discount_factor * (1- dones.int()) * Q(next_states).max(1)[0].reshape(dones.size())
+    actions = action_q(next_states).argmax(1)
+    return rewards + discount_factor * (1- dones.int()) * compute_q_vals(value_q, next_states, actions.reshape((actions.size()[0], 1))).reshape(dones.size())
+
 
 def episode_step(state, env, policy, Q, memory, global_steps, eps_min, eps_steps_till_min):
     policy.set_epsilon(get_epsilon(global_steps, eps_min, eps_steps_till_min))
@@ -42,7 +45,9 @@ def episode_step(state, env, policy, Q, memory, global_steps, eps_min, eps_steps
     return done, reward, next_state
 
 
-def train(Q, memory, target_Q, optimizer, batch_size, discount_factor, do_train, full_gradient, clip_grad):
+def train(Q, memory, action_q, value_q, optimizer, args):
+
+    batch_size, discount_factor, do_train, full_gradient, clip_grad = args.batch_size, args.discount_factor, args.do_train, args.full_gradient, args.clip_grad
 
     # don't learn without some decent experience
     if len(memory) < batch_size:
@@ -66,10 +71,10 @@ def train(Q, memory, target_Q, optimizer, batch_size, discount_factor, do_train,
 
     # Note that full gradient in tandem with Double Q learning is a bit wacky.
     if full_gradient:
-        target = compute_targets(target_Q, reward, next_state, done, discount_factor)
+        target = compute_targets(action_q, value_q, reward, next_state, done, discount_factor)
     else:
         with torch.no_grad():
-            target = compute_targets(target_Q, reward, next_state, done, discount_factor)
+            target = compute_targets(action_q, value_q, reward, next_state, done, discount_factor)
 
     # loss is measured from error between current and newly expected Q values
     loss = F.smooth_l1_loss(q_val, target)
@@ -107,21 +112,24 @@ def run_episodes(train, QWrapper, policy, env, args):
         steps = 0
         state = env.reset()
         while True:
-            Q, optimizer, memory, target_Q = QWrapper.wrapper_magic()
+            Q, optimizer, memory, action_q, value_q = QWrapper.wrapper_magic()
             QWrapper.update_target(global_steps)
 
             done, reward, state = episode_step(state, env, policy, Q, memory, global_steps, args.eps_min, args.eps_steps_till_min)
-            train(Q, memory, target_Q, optimizer, args.batch_size, args.discount_factor, args.do_train, args.full_gradient, args.clip_grad)
+            train(Q, memory, action_q, value_q, optimizer, args)
             all_rewards.append(reward)
 
             global_steps += 1
             steps += 1
 
             if done:
-                if i % 10 == 0:
-                    print("{2} Episode {0} finished after {1} steps"
-                          .format(i, steps, '\033[92m' if steps >= 195 else '\033[99m'))
                 episode_durations.append(steps)
+                if i == 0:
+                    print("Episode {0} finished after {1} steps"
+                          .format(i, steps))
+                elif i % 10 == 0:
+                    print("Episode {0}, average steps since last update : {1} steps"
+                          .format(i, np.mean(episode_durations[-10:])))
                 episode_returns.append(sum(all_rewards))
                 break
     return episode_durations, episode_returns, starting_positions

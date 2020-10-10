@@ -74,7 +74,7 @@ def run_settings(args):
     #     raise ValueError("gradient clipping not yet implemented")
 
     if args.pretrained:
-        raise ValueError ("HOW TO DO THIS NICELY WITH THE WRAPPER???????")
+        # raise ValueError ("HOW TO DO THIS NICELY WITH THE WRAPPER???????")
         Q = datahandler.load_model()
     else:
         QWrapper = DQNWrapper(args, input_size, output_size)
@@ -86,7 +86,7 @@ def run_settings(args):
         policy = EpsilonGreedyPolicy(args.eps_min)
 
 
-    if args.num_episodes > 0:
+    if args.num_episodes > 0 and not args.skip_run_episodes:
         episode_durations, episode_returns, starting_states = run_episodes(
             train, QWrapper, policy, env, args)
         Q = QWrapper.Q
@@ -95,7 +95,7 @@ def run_settings(args):
     if args.create_animation:
         print('!!! USING EPSILON=0 TO SHOW TARGET POLICY !!!')
         policy.set_epsilon(0)
-        animation  = create_animation(env, policy, Q)
+        animation  = create_animation(env, policy, Q, args.max_episode_steps)
         datahandler.save_animation(animation)
 
     return datahandler
@@ -141,10 +141,10 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=42, help="random seed")
 
     # framework settings
-    parser.add_argument('--save_network', type=bool, default=False, help='Save the used Q network')
-    parser.add_argument('--pretrained', type=bool, default=False, help='Load a pretrained Q network')
+    parser.add_argument('--save_network', action="store_false", default=True, help='Save the used Q network')
+    parser.add_argument('--pretrained', action="store_true", default=False, help='Load a pretrained Q network')
     parser.add_argument('--do_train', type=bool, default=True, help='Update the Q network weights while running episodes')
-    parser.add_argument('--skip_run_episodes', type=bool, default=False, help='Skips the actual running of the episodes')
+    parser.add_argument('--skip_run_episodes', action="store_true", default=False, help='Skips the actual running of the episodes')
     parser.add_argument('--create_animation', type=bool, default=True, help='Create and save an animation of a single episode')
 
     # finish adding arguments

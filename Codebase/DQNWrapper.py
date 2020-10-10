@@ -51,18 +51,19 @@ class DQNWrapper():
             - tuple: (<Q network to update>,
                       <optimizer for the Q network>,
                       <memory for the Q network>,
-                      <Q network to evaluate with>)
+                      <Q network to get action with>,
+                      <Q network to evaluate action with>)
         """
         if self.type == "double DQN":
 
             # Choose which network to update at random
             if np.random.random() > 0.5:
-                return self.Q, self.optimizer, self.memory, self.Q2
+                return self.Q, self.optimizer, self.memory, self.Q, self.Q2
             else:
-                return self.Q2, self.optimizer2, self.memory2, self.Q
+                return self.Q2, self.optimizer2, self.memory2, self.Q2, self.Q
 
         elif self.type == "target DQN":
-            return self.Q, self.optimizer, self.memory, self.target_Q
+            return self.Q, self.optimizer, self.memory, self.target_Q, self.target_Q
 
         elif self.type == "normal DQN":
-            return self.Q, self.optimizer, self.memory, self.Q
+            return self.Q, self.optimizer, self.memory, self.Q, self.Q

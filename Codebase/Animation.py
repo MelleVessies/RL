@@ -24,10 +24,10 @@ def frames_to_animation(frames):
     return animation.FuncAnimation(plt.gcf(), animate, frames=len(frames), fargs=[t, iter(range(0, len(frames) +1))], interval=50)
 
 
-def create_animation(env, policy, Q):
+def create_animation(env, policy, Q, max_episode_steps):
     state = env.reset()
     frames = []
-    for t in range(1000):
+    for t in range(max_episode_steps):
         # Render to frames buffer
         frames.append(env.render(mode="rgb_array"))
         action = policy.sample_action(Q, state)
