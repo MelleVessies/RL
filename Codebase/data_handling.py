@@ -7,7 +7,7 @@ class DataHandler:
     def __init__(self, args):
         self.args = args
         # These should not have any influence on where the model/data are saved/loaded
-        self.excluded_parameters = ['pretrained', 'do_train', 'create_animation', 'skip_run_episodes', 'environment_name']
+        self.excluded_parameters = ['pretrained', 'do_not_train', 'create_animation', 'skip_run_episodes', 'environment_name']
         self.envdir = args.environment_name
         self.resdir = self.results_dir = self.__settings_to_resdir(vars(self.args))
 
@@ -16,7 +16,9 @@ class DataHandler:
         resdir = ",".join(sorted([k[0] + str(v) for k, v in datadict.items() if k not in self.excluded_parameters]))
         return os.path.join("results", self.envdir,  resdir)
 
-    def __dict_match(self, filter, dictionary):
+
+    @staticmethod
+    def __dict_match(filter, dictionary):
         """checks whether all key value pairs in the filter.
 
         Parameters
@@ -108,7 +110,8 @@ class DataHandler:
             json.dump(datadict, f, indent=4)
 
 
-    def load_data(self, filter=None):
+    @staticmethod
+    def load_data(filter=None):
         """loads in all the result files.
 
         Returns list of dictionaries with run properties like environment,
@@ -136,12 +139,21 @@ class DataHandler:
         r_dirs = [os.path.join('results', f) for f in os.listdir("results") if os.path.isdir(os.path.join("results", f))]
         jsons = []
         for rdir in r_dirs:
-            for f in os.listdir(rdir):
-                if os.path.isfile(os.path.join(rdir, f)) and os.path.splitext(f)[1] == '.json':
-                    jsons += [json.load(open(os.path.join(rdir, f), "r"))]
+            # print("rdir",rdir)
+            for d in os.listdir(rdir):
+                # print(d)
+                # print(os.path.exists(os.path.join(rdir, d)))
+                # print([f for f in os.listdir(os.path.join(rdir, d)) if os.path.splitext(f)[1] == '.json'])
+                for f in os.listdir(os.path.join(rdir, d)):
+                    if os.path.isfile(os.path.join(os.path.join(rdir, d), f)) and os.path.splitext(f)[1] == '.json':
+                        jsons += [json.load(open(os.path.join(os.path.join(rdir, d), f), "r"))]
 
         if not (filter is None):
-            filtered_jsons = [result_json for result_json in jsons if self.__dict_match(filter, result_json)]
+            filtered_jsons = []
+            for result_json in jsons:
+                if DataHandler.__dict_match(filter, result_json):
+                    filtered_jsons.append(result_json)
+            filtered_jsons = [result_json for result_json in jsons if DataHandler.__dict_match(filter, result_json)]
             return filtered_jsons
         else:
             return jsons

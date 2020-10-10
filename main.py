@@ -10,7 +10,6 @@ import itertools
 from Codebase.DQN import DQN
 from Codebase.train import run_episodes, train
 from Codebase.ReplayMemory import ReplayMemory
-from Codebase.EpsilonGreedyPolicy import EpsilonGreedyPolicy
 from Codebase.environment import make_env_info
 from Codebase.data_handling import DataHandler
 from Codebase.Animation import create_animation
@@ -34,7 +33,7 @@ def set_seeds(seed):
     random.seed(seed)
 
 
-def run_settings(args):
+def run_settings(args, skip_completed=True):
     """collects results for a set of argparse settings.
 
     Parameters
@@ -48,6 +47,11 @@ def run_settings(args):
 
     """
     datahandler = DataHandler(args)
+    if skip_completed:
+        if os.path.exists(datahandler.resdir):
+            if len(os.listdir(datahandler.resdir)) >= 2:
+                print("skipping training with arguments\n\n", vars(args), "\n\n results have already been gathered" )
+                return datahandler
     set_seeds(args.seed)
 
     env_infodict = json.load(open(os.path.join('environment-info', args.environment_name+".json"), 'r'))
@@ -93,9 +97,10 @@ def run_settings(args):
         datahandler.save_data(episode_durations, episode_returns, starting_states, Q)
 
     if args.create_animation:
+        print("args.create_animation", type(args.create_animation))
         print('!!! USING EPSILON=0 TO SHOW TARGET POLICY !!!')
         policy.set_epsilon(0)
-        animation  = create_animation(env, policy, Q, args.max_episode_steps)
+        animation  = create_animation(env, policy, Q, env._max_episode_steps)
         datahandler.save_animation(animation)
 
     return datahandler
@@ -143,9 +148,9 @@ if __name__ == '__main__':
     # framework settings
     parser.add_argument('--save_network', action="store_false", default=True, help='Save the used Q network')
     parser.add_argument('--pretrained', action="store_true", default=False, help='Load a pretrained Q network')
-    parser.add_argument('--do_train', type=bool, default=True, help='Update the Q network weights while running episodes')
+    parser.add_argument('--do_not_train', action="store_false", default=True, help='Update the Q network weights while running episodes')
     parser.add_argument('--skip_run_episodes', action="store_true", default=False, help='Skips the actual running of the episodes')
-    parser.add_argument('--create_animation', type=bool, default=True, help='Create and save an animation of a single episode')
+    parser.add_argument('--create_animation', action="store_true", default=False, help='Create and save an animation of a single episode')
 
     # finish adding arguments
     args = parser.parse_args()
