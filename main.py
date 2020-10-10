@@ -34,13 +34,18 @@ def set_seeds(seed):
     random.seed(seed)
 
 
-def run_settings(args, skip_completed=True):
+def run_settings(args, skip_completed=0):
     """collects results for a set of argparse settings.
 
     Parameters
     ----------
     args : Namespace
         output of argparse.
+
+    skip_completed : int
+        skips settings if the data for settings already exists
+        1: skips if json exists
+        2: skips training if json and network exist
 
     Returns
     -------
@@ -50,7 +55,8 @@ def run_settings(args, skip_completed=True):
     datahandler = DataHandler(args)
     if skip_completed:
         if os.path.exists(datahandler.resdir):
-            if len(os.listdir(datahandler.resdir)) >= 2:
+            if len(os.listdir(datahandler.resdir)) >= skip_completed:
+                print("skipping")
                 print("skipping training with arguments\n\n", vars(args), "\n\n results have already been gathered" )
                 return datahandler
     set_seeds(args.seed)
