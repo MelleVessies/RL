@@ -142,5 +142,5 @@ class DataHandler:
 
     def save_animation(self, animation):
         s = time.time()
-        animation.save(os.path.join(self.resdir, 'animation.mp4'), fps=30)
+        animation.save(os.path.join(self.resdir, 'animation_2.mp4'), fps=30)
         print("took", time.time() - s)
