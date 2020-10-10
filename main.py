@@ -11,6 +11,7 @@ from Codebase.DQN import DQN
 from Codebase.train import run_episodes, train
 from Codebase.ReplayMemory import ReplayMemory
 from Codebase.environment import make_env_info
+from Codebase.EpsilonGreedyPolicy import EpsilonGreedyPolicy
 from Codebase.data_handling import DataHandler
 from Codebase.Animation import create_animation
 from Codebase.DQNWrapper import DQNWrapper
