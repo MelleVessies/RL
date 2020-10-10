@@ -110,11 +110,15 @@ other invironment properties such as max steps & reward treshold for 'solving' a
 
 
 ##Latest TODOS
-- [ ] Create wrapper class around Q network
-- [ ]  Wrapper class should allow target network implementation
-- [ ]  Wrapper class should allow double Q learning implementation
+- [x] Create wrapper class around Q network
+- [x]  Wrapper class should allow target network implementation
+- [x]  Wrapper class should allow double Q learning implementation
 - [x]  Fix gradient clipping
 - [ ] Add some more styling/structure to the website
 - [x] Make it possible to disable replay memory (implemented, simply set argument 'experience_replay_capacity' to 0)
 - [ ] Set up a function that makes it easier to run a bunch of different settings in sequence and gather results
 - [ ] Create function that creates plots for gathered data
+        - graph average returns over seeds per parameter with stdev
+        - grid-search like fashion for basic values for epsilon & discount
+- [ ] option to create multiple sample videos
+- [ ] make load_data static
