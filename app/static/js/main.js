@@ -25,4 +25,29 @@ function renderPageContent(evt){
     });
 }
 
+function submit_run(evt){
+    console.log("called submit")
+    // Get data from select fields format is [elementType]#[id]
+    let eps = $('select#eps-select').val()
+    let discount = $('select#discount-select').val()
+
+    $.ajax({
+        url: "/run_ajax",
+        data: {'data': JSON.stringify({'eps': eps, 'discount': discount})},
+        dataType: 'json'
+    }).done(function(response) {
+        // do something with results, this shows the response in console
+        console.log(response)
+
+        let newVidElm = $('<video id="first-vid" width="480" height="360" controls></video>')
+            .append('<source type="video/mp4" />').attr({'src': response[0]});
+
+        $('#first-vid').replaceWith(newVidElm);
+
+    });
+
+}
+
 $('.menu-item-id').on('click', renderPageContent);
+// This means call submit_run once the element with id run_btn is clicked within the body element
+$('body').on('click', '#run-btn', submit_run);
