@@ -14,6 +14,7 @@ from Codebase.EpsilonGreedyPolicy import EpsilonGreedyPolicy
 from Codebase.environment import make_env_info
 from Codebase.data_handling import DataHandler
 from Codebase.Animation import create_animation
+from Codebase.DQNWrapper import DQNWrapper
 
 policy_options = ["EpsilonGreedyPolicy"]
 
@@ -33,7 +34,7 @@ def set_seeds(seed):
     random.seed(seed)
 
 
-def run_settings(args, datahandler):
+def run_settings(args):
     """collects results for a set of argparse settings.
 
     Parameters
@@ -46,6 +47,7 @@ def run_settings(args, datahandler):
     None
 
     """
+    datahandler = DataHandler(args)
     set_seeds(args.seed)
 
     env_infodict = json.load(open(os.path.join('environment-info', args.environment_name+".json"), 'r'))
@@ -72,25 +74,31 @@ def run_settings(args, datahandler):
     #     raise ValueError("gradient clipping not yet implemented")
 
     if args.pretrained:
+        # raise ValueError ("HOW TO DO THIS NICELY WITH THE WRAPPER???????")
         Q = datahandler.load_model()
     else:
-        Q = DQN(args.num_hidden, input_size, output_size)
-    memory = ReplayMemory(args.experience_replay_capacity)
+        QWrapper = DQNWrapper(args, input_size, output_size)
+        # Q = DQN(args.num_hidden, input_size, output_size)
 
     if "EpsilonGreedyPolicy" == args.policy:
         if not isinstance(args.eps_min, float):
             raise ValueError(f"expected float for eps_min, got {args.eps_min}")
-        policy = EpsilonGreedyPolicy(Q, args.eps_min)
+        policy = EpsilonGreedyPolicy(args.eps_min)
 
 
-    if args.num_episodes > 0:
+    if args.num_episodes > 0 and not args.skip_run_episodes:
         episode_durations, episode_returns, starting_states = run_episodes(
-            train, Q, policy, memory, env, args)
+            train, QWrapper, policy, env, args)
+        Q = QWrapper.Q
         datahandler.save_data(episode_durations, episode_returns, starting_states, Q)
 
     if args.create_animation:
-        animation  = create_animation(env, policy)
+        print('!!! USING EPSILON=0 TO SHOW TARGET POLICY !!!')
+        policy.set_epsilon(0)
+        animation  = create_animation(env, policy, Q, args.max_episode_steps)
         datahandler.save_animation(animation)
+
+    return datahandler
 
 # run_episodes(
               #train, Q, policy, memory, env, num_episodes, batch_size, discount_factor, learn_rate, args.do_train)
@@ -113,7 +121,9 @@ if __name__ == '__main__':
 
     # tricks
     parser.add_argument('--experience_replay_capacity', type=int, default=10000, help="size of the replay buffer, size of 1 implies only the last action is in it, which entails there is no experience rayepl")
-    parser.add_argument('--discount_factor', type=float, default=0.99, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
+    parser.add_argument('--discount_factor', type=float, default=0.8, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
+    parser.add_argument('--double_q_network', action="store_true", default=False, help='Use double deep q network learning.')
+    parser.add_argument('--target_network', type=int, default=0, help='Number of steps after which to update the target network during training .')
 
     # network (training )settings
     parser.add_argument('--clip_grad', type=float, default=-1, help='gradient clipped to size float, if < 0 (-1) there is no clipping')
@@ -131,18 +141,18 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=42, help="random seed")
 
     # framework settings
-    parser.add_argument('--save_network', type=bool, default=False, help='Save the used Q network')
-    parser.add_argument('--pretrained', type=bool, default=False, help='Load a pretrained Q network')
+    parser.add_argument('--save_network', action="store_false", default=True, help='Save the used Q network')
+    parser.add_argument('--pretrained', action="store_true", default=False, help='Load a pretrained Q network')
     parser.add_argument('--do_train', type=bool, default=True, help='Update the Q network weights while running episodes')
-    parser.add_argument('--skip_run_episodes', type=bool, default=False, help='Skips the actual running of the episodes')
+    parser.add_argument('--skip_run_episodes', action="store_true", default=False, help='Skips the actual running of the episodes')
     parser.add_argument('--create_animation', type=bool, default=True, help='Create and save an animation of a single episode')
 
     # finish adding arguments
     args = parser.parse_args()
     make_env_info([args.environment_name])
     print(vars(args))
-    datahandler = DataHandler(args)
-    run_settings(args, datahandler)
+
+    datahandler = run_settings(args)
     All_data = datahandler.load_data()
 
     Acrobot_data = datahandler.load_data(filter={"environment_name":"Acrobot-v1"})

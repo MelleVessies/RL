@@ -7,13 +7,14 @@ class DataHandler:
     def __init__(self, args):
         self.args = args
         # These should not have any influence on where the model/data are saved/loaded
-        self.excluded_parameters = ['pretrained', 'do_train', 'create_animation', 'skip_run_episodes']
+        self.excluded_parameters = ['pretrained', 'do_train', 'create_animation', 'skip_run_episodes', 'environment_name']
+        self.envdir = args.environment_name
         self.resdir = self.results_dir = self.__settings_to_resdir(vars(self.args))
 
     def __settings_to_resdir(self, datadict):
         """ Returns the appropriate results directory for the given settings"""
         resdir = ",".join(sorted([k[0] + str(v) for k, v in datadict.items() if k not in self.excluded_parameters]))
-        return os.path.join("results", resdir)
+        return os.path.join("results", self.envdir,  resdir)
 
     def __dict_match(self, filter, dictionary):
         """checks whether all key value pairs in the filter.
@@ -50,7 +51,7 @@ class DataHandler:
         """
 
         if not self.args.save_network:
-            raise ValueError("Looks like you are trying to load a pretrained model without the --save-model flag. \
+            raise ValueError("Looks like you are trying to load a pretrained model without the --save_network flag. \
                               This means there is likely no pretrained model for the given settings.")
 
         if not os.path.isdir(self.resdir):
@@ -83,7 +84,9 @@ class DataHandler:
         None
         """
         datadict = vars(self.args)
+        envdir = self.envdir
         resdir = self.resdir
+
 
         datadict["episode_durations"] = episode_durations
         datadict["episode_returns"] = episode_returns
@@ -91,6 +94,9 @@ class DataHandler:
 
         if not os.path.exists("results"):
             os.mkdir("results")
+
+        if not os.path.exists(os.path.join("results", envdir)):
+            os.mkdir(os.path.join("results", envdir))
 
         if not os.path.exists(resdir):
             os.mkdir(resdir)
@@ -142,5 +148,5 @@ class DataHandler:
 
     def save_animation(self, animation):
         s = time.time()
-        animation.save(os.path.join(self.resdir, 'animation_2.mp4'), fps=30)
+        animation.save(os.path.join(self.resdir, 'animation.mp4'), fps=30)
         print("took", time.time() - s)

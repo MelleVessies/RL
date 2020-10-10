@@ -28,11 +28,11 @@
 
 #### Implementing tricks:
 - [x] [experience replay](http://www.incompleteideas.net/lin-92.pdf)  (copied from assignment)
-- [ ] [target network](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf), [target network](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN)
-- [ ] gradient clipping [see](https://abhishm.github.io/DQN/) [specific, paper source? many papers in use it when searching on scholar but there doesnt seem to be a justifying paper]
+- [x] [target network](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf), [target network](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN)
+- [x] gradient clipping [see](https://abhishm.github.io/DQN/) [specific, paper source? many papers in use it when searching on scholar but there doesnt seem to be a justifying paper]
 - [x] [batch sizes](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN) (copied from assignment)
 - [x] [step size](https://arxiv.org/pdf/1708.04133.pdf) (general RL, not necessarily DQN) (copied from assignment)
-- [ ] [Double DQN](https://arxiv.org/pdf/1509.06461.pdf)  
+- [x] [Double DQN](https://arxiv.org/pdf/1509.06461.pdf)  
 - [ ] find more tricks [with source]
 - [ ] check slides for lecture mentioned tricks
 
@@ -110,11 +110,15 @@ other invironment properties such as max steps & reward treshold for 'solving' a
 
 
 ##Latest TODOS
-- [ ] Create wrapper class around Q network
-- [ ]  Wrapper class should allow target network implementation
-- [ ]  Wrapper class should allow double Q learning implementation
-- [x]  Fix gradient clipping (done?)
+- [x] Create wrapper class around Q network
+- [x]  Wrapper class should allow target network implementation
+- [x]  Wrapper class should allow double Q learning implementation
+- [x]  Fix gradient clipping
 - [ ] Add some more styling/structure to the website
-- [ ] Make it possible to disable replay memory
+- [x] Make it possible to disable replay memory (implemented, simply set argument 'experience_replay_capacity' to 0)
 - [ ] Set up a function that makes it easier to run a bunch of different settings in sequence and gather results
 - [ ] Create function that creates plots for gathered data
+        - graph average returns over seeds per parameter with stdev
+        - grid-search like fashion for basic values for epsilon & discount
+- [ ] option to create multiple sample videos
+- [ ] make load_data static
