@@ -1,0 +1,9 @@
+{
+    "shape": "(6,)",
+    "dtype": "float64",
+    "action_space": "Discrete(3)",
+    "observation_space": "Box(6,)",
+    "observation_space.high": "[ 1.        1.        1.        1.       12.566371 28.274334]",
+    "observation_space.low": "[ -1.        -1.        -1.        -1.       -12.566371 -28.274334]",
+    "environment web page": "https://gym.openai.com/envs/Acrobot-v1/"
+}

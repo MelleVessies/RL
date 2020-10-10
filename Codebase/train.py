@@ -1,5 +1,6 @@
 import torch
 from torch import optim
+import numpy as np
 import torch.nn.functional as F
 
 def compute_q_vals(Q, states, actions):
@@ -122,10 +123,13 @@ def run_episodes(train, QWrapper, policy, env, args):
             steps += 1
 
             if done:
-                if i % 10 == 0:
+                episode_durations.append(steps)
+                if i == 0:
                     print("Episode {0} finished after {1} steps"
                           .format(i, steps))
-                episode_durations.append(steps)
+                elif i % 10 == 0:
+                    print("Episode {0}, average steps since last update : {1} steps"
+                          .format(i, np.mean(episode_durations[-10:])))
                 episode_returns.append(sum(all_rewards))
                 break
     return episode_durations, episode_returns, starting_positions
