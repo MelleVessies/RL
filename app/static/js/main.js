@@ -13,7 +13,6 @@ function renderPageContent(evt){
         targetPage = $(evt.target).attr('href');
     }
 
-    console.log("blaaa");
 
     targetPage = targetPage.slice(1);
     $.ajax({
@@ -21,7 +20,7 @@ function renderPageContent(evt){
         dataType: 'html'
     }).done(function(response) {
         $('.page-content').html(response);
-        ready = true;
+        MathJax.typeset();
     });
 }
 

@@ -13,8 +13,16 @@
         This method allows for easier and faster computations, but does have the drawback of instability due to some of the shortcuts used.
         In order to understand how these drawbacks cause problems, what kind of environments cause these problems to manifest, and how the common tricks really fix these problems we have created a set of experiments to examine not only the vanilla DQN with semi gradient descent, but the common fixes in different environments.
         We will also attempt to find a network structure and methods which will solve all the environments well.
+
+        <div class="formula">
+            $$Q_{\pi} = \mathbb{E}[G_t | S_t = s, A_t = a ] = \mathbb{E}[\sum^{\infty}_{k = 0} Y^k R_{t + k + 1} | S_t = s, A_t = a]$$
+
+        </div>
     </div>
 </div>
+
+
+
 <h2 class="mt-3">Q-learning</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
