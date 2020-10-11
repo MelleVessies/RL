@@ -148,7 +148,8 @@ nav a:hover:before {
 
 
 .textbox {
-    padding: 18px;
+    padding: 17px;
+    font-size: 20px;
     /* border: 1px solid black; */
     /* margin-left: 10px; */
 }

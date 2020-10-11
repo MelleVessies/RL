@@ -15,7 +15,7 @@ def example():
 @main.route("/getPage", methods=['GET'])
 def renderPage():
     type = request.args.get('type')
-    if type not in ['home', 'credits']:
+    if type not in ['home', 'credits', 'blog']:
         print("invalid page")
 
     return render_template(type + ".html")
