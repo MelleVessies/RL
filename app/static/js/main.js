@@ -13,7 +13,7 @@ function renderPageContent(evt){
         targetPage = $(evt.target).attr('href');
     }
 
-
+    console.log("blaaa");
 
     targetPage = targetPage.slice(1);
     $.ajax({
@@ -48,6 +48,6 @@ function submit_run(evt){
 
 }
 
-$('.menu-item-id').on('click', renderPageContent);
+$('header').on('click', '.menu-item-id', renderPageContent);
 // This means call submit_run once the element with id run_btn is clicked within the body element
 $('body').on('click', '#run-btn', submit_run);
