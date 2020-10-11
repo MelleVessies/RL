@@ -147,4 +147,8 @@ nav a:hover:before {
 }
 
 
-
+.textbox {
+    padding: 18px;
+    /* border: 1px solid black; */
+    /* margin-left: 10px; */
+}
