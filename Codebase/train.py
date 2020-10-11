@@ -108,21 +108,20 @@ def run_episodes(train, QWrapper, policy, env, args):
         state = env.reset()
         starting_positions.append(state.tolist())
         all_rewards = []
-
         steps = 0
-        state = env.reset()
         while True:
             Q, optimizer, memory, action_q, value_q = QWrapper.wrapper_magic()
             QWrapper.update_target(global_steps)
 
             done, reward, state = episode_step(state, env, policy, Q, memory, global_steps, args.eps_min, args.eps_steps_till_min)
-            train(Q, memory, action_q, value_q, optimizer, args)
+            loss = train(Q, memory, action_q, value_q, optimizer, args)
             all_rewards.append(reward)
 
             global_steps += 1
             steps += 1
 
             if done:
+                print(loss)
                 episode_durations.append(steps)
                 if i == 0:
                     print("Episode {0} finished after {1} steps"
