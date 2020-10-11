@@ -4,6 +4,7 @@
 * [git](https://github.com/MelleVessies/RL)
 * [environments](https://gym.openai.com/envs/#classic_control)
 * [Overleaf](https://www.overleaf.com/5619338925gmhsmbkfvhgw)
+* [blog outline](https://docs.google.com/document/d/1hIE23JBw8bsPUqPMtLHgawx1U3kX7SI54P924oBWXGU/edit)
 
 
 # Todo
@@ -118,7 +119,8 @@ other invironment properties such as max steps & reward treshold for 'solving' a
 - [x] Make it possible to disable replay memory (implemented, simply set argument 'experience_replay_capacity' to 0)
 - [ ] Set up a function that makes it easier to run a bunch of different settings in sequence and gather results
 - [ ] Create function that creates plots for gathered data
-        - graph average returns over seeds per parameter with stdev
-        - grid-search like fashion for basic values for epsilon & discount
+        - [ ] graph average returns, number of steps, over seeds per parameter with stdev
+        - [ ] grid-search like fashion for basic values for epsilon & discount
+- [ ] add section to blog talking about reward
 - [ ] option to create multiple sample videos
 - [ ] make load_data static

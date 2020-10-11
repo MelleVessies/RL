@@ -47,7 +47,7 @@ def episode_step(state, env, policy, Q, memory, global_steps, eps_min, eps_steps
 
 def train(Q, memory, action_q, value_q, optimizer, args):
 
-    batch_size, discount_factor, do_train, full_gradient, clip_grad = args.batch_size, args.discount_factor, args.do_train, args.full_gradient, args.clip_grad
+    batch_size, discount_factor, do_not_train, full_gradient, clip_grad = args.batch_size, args.discount_factor, args.do_not_train, args.full_gradient, args.clip_grad
 
     # don't learn without some decent experience
     if len(memory) < batch_size:
@@ -80,7 +80,7 @@ def train(Q, memory, action_q, value_q, optimizer, args):
     loss = F.smooth_l1_loss(q_val, target)
 
     # backpropagation of loss to Neural Network (PyTorch magic)
-    if do_train:
+    if not do_not_train:
         optimizer.zero_grad()
         loss.backward()
         if 0 < clip_grad:
