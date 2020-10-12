@@ -19,8 +19,7 @@
 <h2 class="mt-3">Q-learning</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
-        Before we get into Deep Q Networks it’s important to give a brief overview of Q learning.
-        More in depth details can be found in Reinforcement Learning An Introduction [Sutton and Barto 2020].
+        Before we get into Deep Q Networks, it is important to give a brief overview of Q learning (in-depth details can be found in <i>Reinforcement Learning An Introduction</i> [Sutton and Barto 2020]).
         Central to Q learning is the Q function.
         The Q function is a function that maps every state-action pair to a value, which is determined by rewards given under the policy from this state to termination with some given discount factor.
         This can be seen in the equation below:
@@ -54,15 +53,17 @@
         A way to deal with this is by using a neural network to learn and incorporate how the observed values of the states correlate and map it to an estimation of the Q-value for the actions.
         We refer to this neural network which outputs estimates of Q-values as the Deep Q Network (DQN)
         The power of the DQN can be seen in the paper by Mnih et al.[2015], where they train DQN’s to complete many of the old Atari games.  It was impressive to see it be able to discover longer term strategies and sequences, such as in breakout where it discovered the side tunnel strategy.  The performance of the DQN compared to the best linear learner can be seen in the following figure from the paper:
-        <br>
-        <br>
-        ### H E R E   B E   I M A G E###
-        <br>
-        <br>
+
+        <img src="static/img/benchmark RL(human level control))-rotated.png" alt="RL benchmark list">
+
         An example of the DQN working with breakout can be seen here: <iframe width="560" height="315" src="https://www.youtube.com/embed/TmPfTpjtdgg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>.
         The DQN in this paper used tricks like replay memory and batching to allow it to complete the complicated tasks.
-        We wanted to explore when methods like this were needed and to discuss why they are to know in the future when to apply them.
+        <br>
+        Our goal will be to explore when methods like this are needed and to discuss why in order to have a better grasp of when to apply them in the future.
+        In order to determine when a network was diverging, we first had to make sure we had a working network.  To do this we tried the problem with ____________ with 10 random seeds to train the hyperparameters, and to ensure that there was a solution to be found without a lucky or unlucky seed/initialization.  This was done using a grid search and the results can be seen below.  These seeds will be used for future hyperparameter tuning and searching to ensure all algorithms receive the same chance for success.
+        <br><br>
 
+        Seeing that the architecture worked, we had a starting point for testing other environments.  From the given algorithm and the shortcuts it uses (WE MIGHT WANT TO DISCUSS THESE SHORTCUTS ABOVE SOME MORE) we can already see some areas where we might encounter problems.  The first is with the maximization bias due to the max function.  Another area would cause problems is with the experiences being used only once.  Since some states might be hard to get into and we want to get the most out of the previous experience, it is inefficient and harder to converge if we only use each sample once.  Another place that could cause error is when an outlier is present, and the gradient from this causes a large change in the weights, leading to a much different Q function.  Using bootstrapping to estimate the future rewards is also likely to cause problems, since this could lead to an increase in variance if the discount factor is too high, or bias if the discount factor used is too low.  The final place that can cause problems that we are looking at today is the target in the semi gradient method is the same network we are updating through the weight change.  This can lead to a phenomenon referred to as catastrophic forgetting.  This is caused by the weights being updated for the whole Q function rather than just for the one state action pair.  Meaning that some outcome can have effects for states other than the one currently being updated.  This can compound and cause major problems.
 
     </div>
 
@@ -71,36 +72,48 @@
 <h2 class="mt-3">Semi-Gradient vs Full-Gradient approach</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
-        here be text
+        here be text (illustrating what makes it a semi-gradient/full gradient and how we implement it)
+    </div>
+</div>
+
+<h2 class="mt-3">Divergence and Problem Solving</h2>
+<div class="row">
+    <div class="col-sm-8 textbox">
+        In order to see under what conditions the semi gradient and full gradient approach work well (diverge?), we will be comparing the two algorithms on 4 separate gym environments (Acrobot, MountainCar, CartPole, LunarLander).
+        In addition, we will be testing when certain tricks can help improve performance.
+        <br>...
+        Here be text
     </div>
 </div>
 
 <h2 class="mt-3">Experience Replay</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
-        here be text
+        here be text (illustrating what experience replay is and how we implement it)
     </div>
 </div>
 
 <h2 class="mt-3">Target Network Fixing</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
-        here be text
+        here be text (illustrating what Target Network fixing is and how we implement it)
     </div>
 </div>
 
 <h2 class="mt-3">Double Q Learning</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
-        here be text
+        here be text (illustrating what Double Q learning is and how we implement it)
     </div>
 </div>
 
 <h2 class="mt-3">Batching</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
-        here be text
+        here be text (illustrating why batching matters and how we implement it)
     </div>
 </div>
+
+
 
 {% endblock %}
