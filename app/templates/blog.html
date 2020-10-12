@@ -25,30 +25,45 @@
         The Q function is a function that maps every state-action pair to a value, which is determined by rewards given under the policy from this state to termination with some given discount factor.
         This can be seen in the equation below:
         <div class="formula">
-            $$Q_{\pi} = \mathbb{E}[G_t | S_t = s, A_t = a ] = \mathbb{E}[\sum^{\infty}_{k = 0} \gamma^k R_{t + k + 1} | S_t = s, A_t = a]$$
+            $$Q_{\pi}(S_t, A_t) = \mathbb{E}[G_t | S_t = s, A_t = a ] = \mathbb{E}[\sum^{\infty}_{k = 0} \gamma^k R_{t + k + 1} | S_t = s, A_t = a]$$
         </div>
-        This would allow us to then learn a value function for a given policy, but we can also learn the value function using monte carlo sampling.
+        This would allow us to then determine a Q-value function for a given policy, but we can also learn the Q-value function using monte carlo sampling.
         By using a given policy, we can calculate the Q function iteratively over an infinite number of episodes.
         In order to do this, we would need a policy which would give us a chance to explore each state, thus a policy such as epsilon policy.
         An epsilon policy states that a given state, you have an epsilon chance to take a random action instead of the policy action.
-        This can also be done by assuming an epsilon greedy policy where we take the action of max value, or a random action with chance epsilon.
+        This can also be done by assuming an epsilon greedy policy where we take the action of max Q-value, or a random action with chance epsilon.
         By doing this we can learn the values of the Q function and create an epsilon greedy policy at the same time.
         This is the essence of Q learning.
-        Q learning [Watkins, 1989] is a Reinforcement Learning algorithm from the Temporal Difference family of algorithms which allows for Off-Policy learning of a Q value function, which is then used to determine the policy by taking the greedy action given a state.
+        Q learning [Watkins, 1989] is a Reinforcement Learning algorithm from the Temporal Difference family of algorithms which allows for Off-Policy learning of a Q-value function, which is then used to determine the policy by taking the greedy action given a state.
         This method is model free as it does not need the information from the environment to run.
-        It just needs the rewards from the actions and an initial Q value function.
-        Then for each step in the action chain, you update the Q value with the following update rule:
+        It just needs the rewards from the actions and an initial Q-value function.
+        Then for each step in the action chain, you update the Q-value with the following update rule:
         <div class="formula">
             $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha[R_{t+1}+\gamma max_a Q(S_{t+1}, a) - Q(S_t, A_t)] $$
         </div>
-
+        Where $S_t$ is the current state,  $A_t$ is the current action, the reward for the current state action pair is $R_{t+1}$, $\gamma$ is a discount factor and $a$ is the estimated highest valued action for the next state.
+        There are already inherent problems with Q-Learning at this point.  The main one being the maximization bias which is caused by taking the argmax in the update step.  It causes the algorithm to systematically overestimate the value of certain states over others, especially with limited data.
     </div>
 </div>
 
 <h2 class="mt-3">Deep Q-learning</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
-        here be text
+        Although the aforementioned method of using Q-learning can be used to iteratively estimate the value of state-action pairs, it does not deal well with continuous state spaces.
+        This originates mostly from the sampling data-scarcity introduced by the continuous properties (i.e in a continuous space, the probability of observing exactly the same values multiple times is negligable).
+        A way to deal with this is by using a neural network to learn and incorporate how the observed values of the states correlate and map it to an estimation of the Q-value for the actions.
+        We refer to this neural network which outputs estimates of Q-values as the Deep Q Network (DQN)
+        The power of the DQN can be seen in the paper by Mnih et al.[2015], where they train DQN’s to complete many of the old Atari games.  It was impressive to see it be able to discover longer term strategies and sequences, such as in breakout where it discovered the side tunnel strategy.  The performance of the DQN compared to the best linear learner can be seen in the following figure from the paper:
+        <br>
+        <br>
+        ### H E R E   B E   I M A G E###
+        <br>
+        <br>
+        An example of the DQN working with breakout can be seen here: <iframe width="560" height="315" src="https://www.youtube.com/embed/TmPfTpjtdgg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>.
+        The DQN in this paper used tricks like replay memory and batching to allow it to complete the complicated tasks.
+        We wanted to explore when methods like this were needed and to discuss why they are to know in the future when to apply them.
+
+
     </div>
 
 </div>
@@ -60,12 +75,32 @@
     </div>
 </div>
 
-<h2 class="mt-3">Semi-Gradient vs Full-Gradient approach</h2>
+<h2 class="mt-3">Experience Replay</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
         here be text
     </div>
 </div>
 
+<h2 class="mt-3">Target Network Fixing</h2>
+<div class="row">
+    <div class="col-sm-8 textbox">
+        here be text
+    </div>
+</div>
+
+<h2 class="mt-3">Double Q Learning</h2>
+<div class="row">
+    <div class="col-sm-8 textbox">
+        here be text
+    </div>
+</div>
+
+<h2 class="mt-3">Batching</h2>
+<div class="row">
+    <div class="col-sm-8 textbox">
+        here be text
+    </div>
+</div>
 
 {% endblock %}
