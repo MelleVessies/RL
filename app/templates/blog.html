@@ -40,7 +40,7 @@
         <div class="formula">
             $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha[R_{t+1}+\gamma max_a Q(S_{t+1}, a) - Q(S_t, A_t)] $$
         </div>
-        Where $S_t$ is the current state,  $A_t$ is the current action, the reward for the current state action pair is $R_{t+1}$, $\gamma$ is a discount factor and $a$ is the estimated highest valued action for the next state.
+        Where $S_t$ is the current state, $A_t$ is the current action, the reward for the current state action pair is $R_{t+1}$, $\gamma$ is a discount factor and $a$ is the estimated highest valued action for the next state.
         There are already inherent problems with Q-Learning at this point.  The main one being the maximization bias which is caused by taking the argmax in the update step.  It causes the algorithm to systematically overestimate the value of certain states over others, especially with limited data.
     </div>
 </div>
@@ -54,11 +54,25 @@
         We refer to this neural network which outputs estimates of Q-values as the Deep Q Network (DQN)
         The power of the DQN can be seen in the paper by Mnih et al.[2015], where they train DQN’s to complete many of the old Atari games.  It was impressive to see it be able to discover longer term strategies and sequences, such as in breakout where it discovered the side tunnel strategy.  The performance of the DQN compared to the best linear learner can be seen in the following figure from the paper:
 
+        <br/>
+        <br/>
+
         <img src="static/img/benchmark RL(human level control))-rotated.png" alt="RL benchmark list">
 
-        An example of the DQN working with breakout can be seen here: <iframe width="560" height="315" src="https://www.youtube.com/embed/TmPfTpjtdgg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>.
+        <br/><br/>
+
+        An example of the DQN working with breakout can be seen here:
+
+        <br/><br/>
+
+        <div>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/TmPfTpjtdgg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <br/>
+
         The DQN in this paper used tricks like replay memory and batching to allow it to complete the complicated tasks.
-        <br>
+        <br><br/>
         Our goal will be to explore when methods like this are needed and to discuss why in order to have a better grasp of when to apply them in the future.
         In order to determine when a network was diverging, we first had to make sure we had a working network.  To do this we tried the problem with ____________ with 10 random seeds to train the hyperparameters, and to ensure that there was a solution to be found without a lucky or unlucky seed/initialization.  This was done using a grid search and the results can be seen below.  These seeds will be used for future hyperparameter tuning and searching to ensure all algorithms receive the same chance for success.
         <br><br>
