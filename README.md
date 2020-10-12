@@ -110,6 +110,11 @@ specific properties can be read up on [here](https://gym.openai.com/docs/)
 other invironment properties such as max steps & reward treshold for 'solving' an environment are given in the [registry file](https://github.com/openai/gym/blob/master/gym/envs/__init__.py)
 
 
+# d3: pages
+- [heatmap](https://www.d3-graph-gallery.com/graph/heatmap_tooltip.html)
+- [line chart](https://www.d3-graph-gallery.com/graph/line_confidence_interval.html)
+- [greek letters](http://www.javascripter.net/faq/greekletters.htm)
+
 ##Latest TODOS
 - [x] Create wrapper class around Q network
 - [x]  Wrapper class should allow target network implementation
