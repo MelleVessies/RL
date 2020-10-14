@@ -1,4 +1,4 @@
-name: rl2020_project
+name: RL_project
 channels:
   - defaults
   - pytorch
@@ -17,7 +17,6 @@ dependencies:
   - flask=1.1.2
   - flask-socketio=4.3.1
   - pip=19.3
-  - python-socketio==4.5.0
   - Werkzeug==1.0.0
   - pip:
     - gym==0.10.8
