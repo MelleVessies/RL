@@ -67,7 +67,7 @@ class DataHandler:
         return torch.load(modelpath)
 
 
-    def save_data(self, episode_durations, episode_returns, starting_states, Q):
+    def save_data(self, episode_durations, episode_returns, starting_states, Q, MSTD_errors):
         """saves a json with run results and properties of a run, like
         hyperparameters, environment etc.
 
@@ -93,6 +93,7 @@ class DataHandler:
         datadict["episode_durations"] = episode_durations
         datadict["episode_returns"] = episode_returns
         datadict["starting_states"] = starting_states
+        datadict["MSTD_errors"] = MSTD_errors
 
         if not os.path.exists("results"):
             os.mkdir("results")

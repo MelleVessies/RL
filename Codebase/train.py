@@ -51,7 +51,7 @@ def train(Q, memory, action_q, value_q, optimizer, args):
 
     # don't learn without some decent experience
     if len(memory) < batch_size:
-        return None
+        return None, None
 
     # random transition batch is taken from experience replay memory
     transitions = memory.sample(batch_size)
@@ -79,6 +79,10 @@ def train(Q, memory, action_q, value_q, optimizer, args):
     # loss is measured from error between current and newly expected Q values
     loss = F.smooth_l1_loss(q_val, target)
 
+    with torch.no_grad():
+        MSTD = F.mse_loss(q_val, target)
+
+    # print(f"TEST: {MSTD}")
     # backpropagation of loss to Neural Network (PyTorch magic)
     if not do_not_train:
         optimizer.zero_grad()
@@ -87,7 +91,7 @@ def train(Q, memory, action_q, value_q, optimizer, args):
             torch.nn.utils.clip_grad_norm_(Q.parameters(), clip_grad, norm_type=2)
         optimizer.step()
 
-    return loss.item()
+    return loss.item(), MSTD.item()
 
 def get_epsilon(it, eps_min, eps_steps_till_min):
     v = max(eps_min, 1 - ((1 - eps_min)/eps_steps_till_min)*it)
@@ -102,6 +106,7 @@ def run_episodes(train, QWrapper, policy, env, args):
     episode_durations = []
     episode_returns = []
     starting_positions = []
+    MSTD_per_update = []
 
     for i in range(args.num_episodes):
 
@@ -114,21 +119,22 @@ def run_episodes(train, QWrapper, policy, env, args):
             QWrapper.update_target(global_steps)
 
             done, reward, state = episode_step(state, env, policy, Q, memory, global_steps, args.eps_min, args.eps_steps_till_min)
-            loss = train(Q, memory, action_q, value_q, optimizer, args)
+            loss, MSTD = train(Q, memory, action_q, value_q, optimizer, args)
             all_rewards.append(reward)
+            if loss is not None:
+                MSTD_per_update.append(MSTD)
 
             global_steps += 1
             steps += 1
 
             if done:
-                print(loss)
                 episode_durations.append(steps)
                 if i == 0:
-                    print("Episode {0} finished after {1} steps"
+                    print("Episode {0} finished after {1} steps."
                           .format(i, steps))
                 elif i % 10 == 0:
-                    print("Episode {0}, average steps since last update : {1} steps"
-                          .format(i, np.mean(episode_durations[-10:])))
+                    print("Episode {0}, average steps since last update : {1} steps, The running avg MSTD error is {2}"
+                          .format(i, np.mean(episode_durations[-10:]), np.mean(MSTD_per_update[-10:])))
                 episode_returns.append(sum(all_rewards))
                 break
-    return episode_durations, episode_returns, starting_positions
+    return episode_durations, episode_returns, starting_positions, MSTD_per_update

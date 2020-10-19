@@ -98,10 +98,10 @@ def run_settings(args, skip_completed=0):
 
 
     if args.num_episodes > 0 and not args.skip_run_episodes:
-        episode_durations, episode_returns, starting_states = run_episodes(
+        episode_durations, episode_returns, starting_states, MSTD_errors = run_episodes(
             train, QWrapper, policy, env, args)
         Q = QWrapper.Q
-        datahandler.save_data(episode_durations, episode_returns, starting_states, Q)
+        datahandler.save_data(episode_durations, episode_returns, starting_states, Q, MSTD_errors)
 
     if args.create_animation:
         print("args.create_animation", type(args.create_animation))
