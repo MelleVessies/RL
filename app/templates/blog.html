@@ -1,16 +1,22 @@
 {% block body %}
 
 <div class="center">
-<h2 class="mt-3">Deep Q Networks: Semi-Gradient vs Full-Gradient methods</h2>
+<h2 class="mt-3">Deep Q Networks analysis: divergence and problem solving.</h2>
 <p class="lead">
      By Angelo Groot, Jordan Earle, Melle Vessies and Reitze Jansen.
 </p>
 
 <div class="row">
     <div class="col-sm-8 textbox">
-        Deep Q Networks (DQN) are interesting deep reinforcement learning methods which leverage the flexibility of neural networks to handle reinforcement learning tasks which would be difficult or impossible to do tabularly due to high dimensional action-state space.
-        The DQN turns the tabular value function into a Neural Network which uses the input state to produce the Q values for given actions as output.  One of the approaches used for DQN’s is the semi gradient update, which uses only part of the gradient in the update.
-        This method allows for easier and faster computations, but does have the drawback of instability due to some of the shortcuts used.
+        Deep Q Networks (DQN) are deep reinforcement learning methods which leverage the flexibility of neural networks to handle reinforcement learning tasks which would be difficult or impossible to do with a tabular approach due to high dimensional action-state space.
+        Instead of trying to learn a tabular q-function, a DQN tries to learn a continuous mapping from the state to an $A$-dimensional value vector, where each entry describes the estimated value of one of the $A$ actions.
+        (!!!! Here a description of the fact that the dqn introduces function approximation on top of only bootstrapping and off-policy learning as done within q-learning)
+
+        A problem which the DQN encounters is that it is a manifestation of the "deadly triad", which refers to reinforcement learning approaches where off-policy learning, function approximation and bootstrapping are used in tandem.
+        The simultaneous usage of the methods from deadly triad generally results in a highly unstable, volatile learning process.
+        As a result, many "tricks" have been constructed to stabilize the learning process such that we can still use these methods.
+        <!-- The DQN turns the tabular value function into a Neural Network which uses the input state to produce the Q values for given actions as output.  One of the approaches used for DQN’s is the semi gradient update, which uses only part of the gradient in the update.
+        This method allows for easier and faster computations, but does have the drawback of instability due to some of the shortcuts used. -->
         In order to understand how these drawbacks cause problems, what kind of environments cause these problems to manifest, and how the common tricks really fix these problems we have created a set of experiments to examine not only the vanilla DQN with semi gradient descent, but the common fixes in different environments.
         We will also attempt to find a network structure and methods which will solve all the environments well.
     </div>
