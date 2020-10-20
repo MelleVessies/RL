@@ -147,7 +147,7 @@ if __name__ == '__main__':
     # policy arguments
     parser.add_argument('--policy', type=str, default="EpsilonGreedyPolicy", help='choice betweem ["EpsilonGreedyPolicy"]')
     parser.add_argument('--eps_min', type=float, default=0.05, help='The minimal value of epsilon in the epsilon greedy policy')
-    parser.add_argument('--eps_steps_till_min', type=int, default=100, help='Number of steps after which epsilon should be at its minimum, n=1 for starting at EpsilonGreedy (ish, see get_epsilon function)')
+    parser.add_argument('--eps_steps_till_min', type=int, default=1000, help='Number of steps after which epsilon should be at its minimum, n=1 for starting at EpsilonGreedy (ish, see get_epsilon function)')
 
     # seed
     parser.add_argument('--seed', type=int, default=42, help="random seed")
@@ -155,7 +155,7 @@ if __name__ == '__main__':
     # framework settings
     parser.add_argument('--save_network', action="store_false", default=True, help='Save the used Q network')
     parser.add_argument('--pretrained', action="store_true", default=False, help='Load a pretrained Q network')
-    parser.add_argument('--do_not_train', action="store_false", default=True, help='Update the Q network weights while running episodes')
+    parser.add_argument('--do_not_train', action="store_true", default=False, help='dont Update the Q network weights while running episodes')
     parser.add_argument('--skip_run_episodes', action="store_true", default=False, help='Skips the actual running of the episodes')
     parser.add_argument('--create_animation', action="store_true", default=False, help='Create and save an animation of a single episode')
 

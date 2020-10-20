@@ -70,11 +70,11 @@ def train(Q, memory, action_q, value_q, optimizer, args):
     q_val = compute_q_vals(Q, state, action)
 
     # Note that full gradient in tandem with Double Q learning is a bit wacky.
-    if full_gradient:
+    # if full_gradient:
+    #     target = compute_targets(action_q, value_q, reward, next_state, done, discount_factor)
+    # else:
+    with torch.no_grad():
         target = compute_targets(action_q, value_q, reward, next_state, done, discount_factor)
-    else:
-        with torch.no_grad():
-            target = compute_targets(action_q, value_q, reward, next_state, done, discount_factor)
 
     # loss is measured from error between current and newly expected Q values
     loss = F.smooth_l1_loss(q_val, target)
@@ -84,7 +84,7 @@ def train(Q, memory, action_q, value_q, optimizer, args):
 
     # print(f"TEST: {MSTD}")
     # backpropagation of loss to Neural Network (PyTorch magic)
-    if not do_not_train:
+    if  not do_not_train:
         optimizer.zero_grad()
         loss.backward()
         if 0 < clip_grad:
@@ -94,7 +94,6 @@ def train(Q, memory, action_q, value_q, optimizer, args):
     return loss.item(), MSTD.item()
 
 def get_epsilon(it, eps_min, eps_steps_till_min):
-    v = max(eps_min, 1 - ((1 - eps_min)/eps_steps_till_min)*it)
     return max(eps_min, 1 - ((1 - eps_min)/eps_steps_till_min)*it)
 
 
@@ -121,7 +120,7 @@ def run_episodes(train, QWrapper, policy, env, args):
             done, reward, state = episode_step(state, env, policy, Q, memory, global_steps, args.eps_min, args.eps_steps_till_min)
             loss, MSTD = train(Q, memory, action_q, value_q, optimizer, args)
             all_rewards.append(reward)
-            if loss is not None:
+            if MSTD is not None:
                 MSTD_per_update.append(MSTD)
 
             global_steps += 1

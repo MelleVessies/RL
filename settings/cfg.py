@@ -9,7 +9,7 @@ no_tricks_settings = {
     "full_gradient":False,
     "policy":"EpsilonGreedyPolicy",
     "eps_steps_till_min":1,
-    "save_network":False,
+    "save_network":True,
     "pretrained":False,
     "double_q_network": False,
     "target_network":False,
@@ -19,12 +19,12 @@ no_tricks_settings = {
 }
 
 grid_search_range = {
-    "eps_min":[.1*i for i in range(11)],
-    "discount_factor": [round(.8+ 0.02*i, 2) for i in range(11)]
+    "eps_min":[0.05*i for i in range(1, 7)],
+    "discount_factor": [round(0.7 + 0.05*i, 2) for i in range(7)]
 }
 
-training_seed_range = [i for i in range(10)]
-eval_seed_range = [i for i in range(10,20)]
+training_seed_range = [i for i in range(1, 6)]
+eval_seed_range = [i for i in range(6, 11)]
 
 print("training_seed_range", training_seed_range)
 print("eval_seed_range", eval_seed_range)

@@ -129,3 +129,14 @@ other invironment properties such as max steps & reward treshold for 'solving' a
 - [ ] add section to blog talking about reward
 - [ ] option to create multiple sample videos
 - [ ] make load_data static
+
+
+## Hyperparameter searches
+- 10 seeds?
+
+- No tricks
+- ReplayMemory
+- Target network
+- All tricks
+
+- IF TIME:
