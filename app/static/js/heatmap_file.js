@@ -77,16 +77,21 @@ function init_heatmap(data, target){
 
     // Three function that change the tooltip when user hover / move / leave a cell
     var mouseover = function(d) {
-      tooltip.style("opacity", 1)
-    }
-    var mousemove = function(d) {
+      tooltip.transition()
+          .duration(200)
+          .style("opacity", 1);
       tooltip
-        .html("The exact value of<br>this cell is: " + d.value)
-        .style("left", (d3.mouse(this)[0]+70) + "px")
-        .style("top", (d3.mouse(this)[1] +600) + "px")
+            .html("<b>Value: </b>" + d.value + "<br/><b>Epsilon: </b>" + d.epsilon + "<br/><b>Discount factor: </b>" + d.discount_factor)
+            .style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY - 28) + "px")
+            .style("z-index", 9999999)
+
     }
+
     var mouseleave = function(d) {
-      tooltip.style("opacity", 0)
+      tooltip.transition()
+          .duration(200)
+          .style("opacity", 0)
     }
 
     svg.selectAll()
@@ -97,9 +102,8 @@ function init_heatmap(data, target){
         .attr("y", function(d) { return y(d.discount_factor) })
         .attr("width", x.bandwidth() )
         .attr("height", y.bandwidth() )
-        .style("fill", function(d) {console.log(d); return myColor(d.value);} )
+        .style("fill", function(d) {return myColor(d.value);} )
         .on("mouseover", mouseover)
-        .on("mousemove", mousemove)
-        .on("mouseleave", mouseleave)
+        .on("mouseout", mouseleave)
 }
 
