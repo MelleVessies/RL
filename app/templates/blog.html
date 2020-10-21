@@ -9,9 +9,9 @@
 <div class="row">
     <div class="col-sm-8 textbox">
         Deep Q Networks (DQN) are interesting deep reinforcement learning methods which leverage the flexibility of neural networks to handle reinforcement learning tasks which would be difficult or impossible to do tabularly due to high dimensional action-state space.
-        The DQN turns the tabular value function into a Neural Network which uses the input state to produce the Q values for given actions as output.  One of the approaches used for DQN’s is the semi gradient update, which uses only part of the gradient in the update.
+        The DQN turns the tabular value function into a Neural Network which uses the input state to produce the Q values for given state-actions as output.  One of the approaches used for DQN’s is the semi gradient update, which uses only part of the gradient in the update.
         This method allows for easier and faster computations, but does have the drawback of instability due to some of the shortcuts used.
-        In order to understand how these drawbacks cause problems, what kind of environments cause these problems to manifest, and how the common tricks really fix these problems we have created a set of experiments to examine not only the vanilla DQN with semi gradient descent, but the common fixes in different environments.
+        In order to understand how these drawbacks cause divergence, what kind of environmental properties cause divergence to manifest, and how the common tricks really fix these problems we have created a set of experiments to examine not only the vanilla DQN with semi gradient descent, but the common fixes in different environments.
         We will also attempt to find a network structure and methods which will solve all the environments well.
     </div>
 </div>
@@ -86,7 +86,7 @@
 <h2 class="mt-3">Semi-Gradient vs Full-Gradient approach</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
-        here be text (illustrating what makes it a semi-gradient/full gradient and how we implement it)
+        This we dont need now???
     </div>
 </div>
 
@@ -128,6 +128,12 @@
     </div>
 </div>
 
-
+<h2 class="mt-3">References</h2>
+<div class="row">
+    <div class="col-sm-8 textbox">
+        1. Sutton, R. A., and Barto A Reinforcement Learning An Introduction 2020
+        2. 
+    </div>
+</div>
 
 {% endblock %}

@@ -1,7 +1,7 @@
 no_tricks_settings = {
     "num_episodes": 200,
     "max_episode_steps":0,
-    "experience_replay_capacity":0,
+    "experience_replay_capacity":10000,
     "clip_grad":-1,
     "batch_size":64,
     "stepsize": 1e-3,
@@ -19,7 +19,7 @@ no_tricks_settings = {
 }
 
 grid_search_range = {
-    "eps_min":[0.05*i for i in range(1, 7)],
+    "eps_min":[0.2+ 0.05*i for i in range(4)],
     "discount_factor": [round(0.7 + 0.05*i, 2) for i in range(7)]
 }
 

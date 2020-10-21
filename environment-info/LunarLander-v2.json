@@ -1,0 +1,9 @@
+{
+    "shape": "(8,)",
+    "dtype": "float32",
+    "action_space": "Discrete(4)",
+    "observation_space": "Box(8,)",
+    "observation_space.high": "[inf inf inf inf inf inf inf inf]",
+    "observation_space.low": "[-inf -inf -inf -inf -inf -inf -inf -inf]",
+    "environment web page": "https://gym.openai.com/envs/LunarLander-v2/"
+}
