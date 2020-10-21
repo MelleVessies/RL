@@ -153,3 +153,39 @@ nav a:hover:before {
     /* border: 1px solid black; */
     /* margin-left: 10px; */
 }
+
+#result_list_container{
+    width: 100%;
+}
+
+.env-tab-header{
+    padding: 20px;
+    margin: 10px;
+    background-color: darkgreen;
+    border-radius: 10px;
+    width: 100%;
+
+}
+
+.env-tab-content{
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.res-tab-header{
+    padding: 10px;
+    margin: 10px;
+    background-color: #3c76cb;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.res-tab-content{
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    width: 100%;
+}
+
