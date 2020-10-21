@@ -135,7 +135,7 @@ if __name__ == '__main__':
     parser.add_argument('--experience_replay_capacity', type=int, default=10000, help="size of the replay buffer, size of 1 implies only the last action is in it, which entails there is no experience rayepl")
     parser.add_argument('--discount_factor', type=float, default=0.8, help='degree to which the future is certain, discount_factor=1 corresponds to certainty about future reward')
     parser.add_argument('--double_q_network', action="store_true", default=False, help='Use double deep q network learning.')
-    parser.add_argument('--target_network', type=int, default=0, help='Number of steps after which to update the target network during training .')
+    parser.add_argument('--target_network', type=bool, default=False, help='Number of steps after which to update the target network during training .')
 
     # network (training )settings
     parser.add_argument('--clip_grad', type=float, default=-1, help='gradient clipped to size float, if < 0 (-1) there is no clipping')
