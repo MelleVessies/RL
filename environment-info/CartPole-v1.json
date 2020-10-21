@@ -1,9 +1,0 @@
-{
-    "shape": "(4,)",
-    "dtype": "float64",
-    "action_space": "Discrete(2)",
-    "observation_space": "Box(4,)",
-    "observation_space.high": "[4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38]",
-    "observation_space.low": "[-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38]",
-    "environment web page": "https://gym.openai.com/envs/CartPole-v1/"
-}
