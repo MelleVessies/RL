@@ -12,7 +12,7 @@ no_tricks_settings = {
     "num_hidden":128,
     "full_gradient":False,
     "policy":"EpsilonGreedyPolicy",
-    "eps_steps_till_min":1,
+    "eps_steps_till_min":10,
     "save_network":True,
     "pretrained":False,
     "double_q_network": False,
