@@ -117,7 +117,7 @@ def run_episodes(train, QWrapper, policy, env, args):
         steps = 0
         while True:
             Q, optimizer, memory, action_q, value_q = QWrapper.wrapper_magic()
-            QWrapper.update_target(global_steps)
+            QWrapper.update_target(ep_no)
 
             done, reward, state = episode_step(state, env, policy, Q, memory, ep_no, args.eps_min, args.eps_steps_till_min)
             loss, MSTD = train(Q, memory, action_q, value_q, optimizer, args)

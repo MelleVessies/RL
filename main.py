@@ -84,8 +84,7 @@ def run_settings(args, skip_completed=0):
     # if isinstance(args.clip_grad, float):
     #     raise ValueError("gradient clipping not yet implemented")
     if args.target_network:
-        args.target_network = 2 * env._max_episode_steps
-
+        args.target_network = 2
 
     if args.pretrained:
         # raise ValueError ("HOW TO DO THIS NICELY WITH THE WRAPPER???????")
