@@ -83,6 +83,9 @@ def run_settings(args, skip_completed=0):
 
     # if isinstance(args.clip_grad, float):
     #     raise ValueError("gradient clipping not yet implemented")
+    if args.target_network:
+        args.target_network = 2 * env._max_episode_steps
+
 
     if args.pretrained:
         # raise ValueError ("HOW TO DO THIS NICELY WITH THE WRAPPER???????")
@@ -101,7 +104,27 @@ def run_settings(args, skip_completed=0):
         episode_durations, episode_returns, starting_states, MSTD_errors = run_episodes(
             train, QWrapper, policy, env, args)
         Q = QWrapper.Q
-        datahandler.save_data(episode_durations, episode_returns, starting_states, Q, MSTD_errors)
+
+        # Evaluate 10 times with greedy, seeds 100-110
+        performances = []
+        policy.set_epsilon(0)
+        with torch.no_grad():
+            for s in range(100, 111):
+
+                env.seed(s)
+                state = env.reset()
+                r = []
+                for t in range(env._max_episode_steps):
+                    action = policy.sample_action(Q, state)
+                    state, reward, done, _ = env.step(action)
+                    r.append(reward)
+                    if done:
+                        break
+                performances.append(sum(r))
+                env.close()
+            print(f"Average return over 10 seeds (100-110): {np.mean(performances)}")
+
+        datahandler.save_data(episode_durations, episode_returns, starting_states, Q, MSTD_errors, performances)
 
     if args.create_animation:
         print("args.create_animation", type(args.create_animation))
@@ -147,7 +170,7 @@ if __name__ == '__main__':
     # policy arguments
     parser.add_argument('--policy', type=str, default="EpsilonGreedyPolicy", help='choice betweem ["EpsilonGreedyPolicy"]')
     parser.add_argument('--eps_min', type=float, default=0.05, help='The minimal value of epsilon in the epsilon greedy policy')
-    parser.add_argument('--eps_steps_till_min', type=int, default=1000, help='Number of steps after which epsilon should be at its minimum, n=1 for starting at EpsilonGreedy (ish, see get_epsilon function)')
+    parser.add_argument('--eps_steps_till_min', type=int, default=10, help='Number of steps after which epsilon should be at its minimum, n=1 for starting at EpsilonGreedy (ish, see get_epsilon function)')
 
     # seed
     parser.add_argument('--seed', type=int, default=42, help="random seed")
@@ -168,8 +191,9 @@ if __name__ == '__main__':
     All_data = datahandler.load_data()
 
     Acrobot_data = datahandler.load_data(filter={"environment_name":"Acrobot-v1"})
+    LunarLander_data = datahandler.load_data(filter={"environment_name":"LunarLander-v2"})
     MountainCar_data = datahandler.load_data(filter={"environment_name":"MountainCar-v0"})
 
-    print(f"got {len(Acrobot_data)} run results for Acrobot")
+    print(f"got {len(LunarLander_data)} run results for Lunar Lander")
     print(f"got {len(MountainCar_data)} run results for MountainCar_data")
     print(f"got {len(All_data)} run results for All_data")

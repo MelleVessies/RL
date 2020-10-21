@@ -27,13 +27,15 @@ def frames_to_animation(frames):
 def create_animation(env, policy, Q, max_episode_steps):
     state = env.reset()
     frames = []
+    r = []
     for t in range(max_episode_steps):
         # Render to frames buffer
         frames.append(env.render(mode="rgb_array"))
         action = policy.sample_action(Q, state)
         state, reward, done, _ = env.step(action)
+        r.append(reward)
         if done:
             break
     env.close()
-
+    print(f"return obtained: {sum(r)}")
     return frames_to_animation(frames)

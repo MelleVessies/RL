@@ -35,8 +35,8 @@ def compute_targets(action_q, value_q, rewards, next_states, dones, discount_fac
     return rewards + discount_factor * (1- dones.int()) * compute_q_vals(value_q, next_states, actions.reshape((actions.size()[0], 1))).reshape(dones.size())
 
 
-def episode_step(state, env, policy, Q, memory, global_steps, eps_min, eps_steps_till_min):
-    policy.set_epsilon(get_epsilon(global_steps, eps_min, eps_steps_till_min))
+def episode_step(state, env, policy, Q, memory, ep_no, eps_min, eps_steps_till_min):
+    policy.set_epsilon(get_epsilon(ep_no, eps_min, eps_steps_till_min))
     action = policy.sample_action(Q, state)
 
     next_state, reward, done, _ = env.step(action)
@@ -84,7 +84,7 @@ def train(Q, memory, action_q, value_q, optimizer, args):
 
     # print(f"TEST: {MSTD}")
     # backpropagation of loss to Neural Network (PyTorch magic)
-    if  not do_not_train:
+    if not do_not_train:
         optimizer.zero_grad()
         loss.backward()
         if 0 < clip_grad:
@@ -94,6 +94,8 @@ def train(Q, memory, action_q, value_q, optimizer, args):
     return loss.item(), MSTD.item()
 
 def get_epsilon(it, eps_min, eps_steps_till_min):
+    # print(it, eps_min, eps_steps_till_min)
+    # input(max(eps_min, 1 - ((1 - eps_min)/eps_steps_till_min)*it))
     return max(eps_min, 1 - ((1 - eps_min)/eps_steps_till_min)*it)
 
 
@@ -101,6 +103,7 @@ def run_episodes(train, QWrapper, policy, env, args):
 
     # optimizer = optim.Adam(Q.parameters(), args.stepsize)
 
+    ep_no = 0
     global_steps = 0
     episode_durations = []
     episode_returns = []
@@ -108,7 +111,6 @@ def run_episodes(train, QWrapper, policy, env, args):
     MSTD_per_update = []
 
     for i in range(args.num_episodes):
-
         state = env.reset()
         starting_positions.append(state.tolist())
         all_rewards = []
@@ -117,23 +119,26 @@ def run_episodes(train, QWrapper, policy, env, args):
             Q, optimizer, memory, action_q, value_q = QWrapper.wrapper_magic()
             QWrapper.update_target(global_steps)
 
-            done, reward, state = episode_step(state, env, policy, Q, memory, global_steps, args.eps_min, args.eps_steps_till_min)
+            done, reward, state = episode_step(state, env, policy, Q, memory, ep_no, args.eps_min, args.eps_steps_till_min)
             loss, MSTD = train(Q, memory, action_q, value_q, optimizer, args)
             all_rewards.append(reward)
             if MSTD is not None:
                 MSTD_per_update.append(MSTD)
 
-            global_steps += 1
+
             steps += 1
+            global_steps += 1
 
             if done:
+                ep_no += 1
+                returns = sum(all_rewards)
                 episode_durations.append(steps)
                 if i == 0:
-                    print("Episode {0} finished after {1} steps."
-                          .format(i, steps))
+                    print("Episode {0} finished with return: {1}."
+                          .format(i, returns))
                 elif i % 10 == 0:
-                    print("Episode {0}, average steps since last update : {1} steps, The running avg MSTD error is {2}"
-                          .format(i, np.mean(episode_durations[-10:]), np.mean(MSTD_per_update[-10:])))
-                episode_returns.append(sum(all_rewards))
+                    print("Episode {0}, running average return : {1}, The running avg MSTD error is {2}"
+                          .format(i, np.mean(episode_returns[-10:]), np.mean(MSTD_per_update[-10:])))
+                episode_returns.append(returns)
                 break
     return episode_durations, episode_returns, starting_positions, MSTD_per_update
