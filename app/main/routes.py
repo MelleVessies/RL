@@ -44,13 +44,23 @@ def group_results():
             with open(res_json_file) as f:
                 res = json.load(f)
                 res['req_path'] = "/static/" + res_json_file
-                # res['avg_final_performance'] = sum(res['MSTD_errors']) / len(res['MSTD_errors'])
+
+                r = res['MSTD_errors']
+                MSTDS = np.array(r[1:])
+                MSTDS_ = np.array(r[:-1])
+                avg_growth = np.mean(MSTDS/MSTDS_)
+
+                res['avg_growth'] = avg_growth
+
 
             try:
                 res.pop('MSTD_errors')
                 res.pop('starting_states')
                 res.pop('episode_durations')
                 res.pop('episode_returns')
+                res.pop('skip_run_episodes')
+                res.pop('stepsize')
+                res.pop('final_performance')
             except:
                 print(f'WARNING: seems like {res_json_file} is incomplete')
                 continue
@@ -69,14 +79,19 @@ def create_avg_over_seeds(result_list):
 
             for seed, seed_res in trick_results.items():
                 for run_res in seed_res:
-                    heatmap_running[run_res['eps_min']][run_res['discount_factor']].append(run_res['avg_final_performance'])
+                    heatmap_running[run_res['eps_min']][run_res['discount_factor']].append([run_res['avg_final_performance'], run_res['avg_growth']])
+
 
             for epsilon, discount_factors in heatmap_running.items():
                 for discount_factor, values in discount_factors.items():
+                    values = np.array(values)
+
                     heatmap_data.append({
                         'discount_factor': round(discount_factor, 2),
                         'epsilon': round(epsilon, 2),
-                        'value': round(sum(values)/len(values), 2)
+                        'return': round(sum(values[:, 0])/len(values[:, 0]), 2),
+                        # 'growth': round(sum(values[:, 1])/len(values[:, 1]), 2)
+                        'growth': round(min(values[:, 1]), 2)
                     })
 
             result_list[env][tricks_key]['grid_search'] = heatmap_data

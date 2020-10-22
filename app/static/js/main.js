@@ -80,8 +80,13 @@ function render_result_list(response){
                 if(seed_idx === 'grid_search'){
                     let heatmap_container_id = 'heatmap_' + key + "_" + trick_key;
                     let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
-                    init_heatmap(seed_res, heatmap_container);
+                    init_heatmap(seed_res, heatmap_container, 'return');
                     seed_tab_content.append(heatmap_container);
+
+                    let heatmap_container_id2 = 'heatmap_growth_' + key + "_" + trick_key;
+                    let heatmap_container2 = $('<div />').attr({'id': heatmap_container_id2})
+                    init_heatmap(seed_res, heatmap_container2, 'growth');
+                    seed_tab_content.append(heatmap_container2);
                 }
                 else {
                     seed_tab_content.text(JSON.stringify(seed_res, null, 2))

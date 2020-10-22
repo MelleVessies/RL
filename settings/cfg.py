@@ -1,10 +1,10 @@
 no_tricks_settings = {
     "num_episodes": 200,
-    "max_episode_steps":0,
+    "max_episode_steps":500,
 
     # Experiment ding
-    "experience_replay_capacity":0,
-    # "experience_replay_capacity":10000,
+    # "experience_replay_capacity":0,
+    "experience_replay_capacity":10000,
 
     "clip_grad":-1,
     "batch_size":64,
@@ -18,8 +18,8 @@ no_tricks_settings = {
     "double_q_network": False,
 
     # Experiment ding
-    "target_network":False,
-    # "target_network":True,
+    # "target_network":False,
+    "target_network":True,
 
     "do_not_train":False,
     "create_animation":False,

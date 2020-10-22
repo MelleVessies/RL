@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-function init_heatmap(data, target){
+function init_heatmap(data, target, plot_type){
     var margin = {top: 40, right: 40, bottom: 40, left: 40},
       width = 450 - margin.left - margin.right,
       height = 450 - margin.top - margin.bottom;
@@ -21,7 +21,7 @@ function init_heatmap(data, target){
     $(data).each((idx, val) => {
         myEpsilons.push(val.epsilon);
         myDiscounts.push(val.discount_factor);
-        myValues.push(val.value);
+        myValues.push(val[plot_type]);
     });
 
     myEpsilons.sort(function(a, b) {
@@ -75,7 +75,7 @@ function init_heatmap(data, target){
                 'width': 40,
                 'height': 20,
                 'fill': function(d) {
-                    return myColor(d.value);
+                    return myColor(d[plot_type]);
                 }
         });
 
@@ -97,7 +97,7 @@ function init_heatmap(data, target){
           .duration(200)
           .style("opacity", 1);
       tooltip
-            .html("<b>Value: </b>" + d.value + "<br/><b>Epsilon: </b>" + d.epsilon + "<br/><b>Discount factor: </b>" + d.discount_factor)
+            .html("<b>Value: </b>" + d[plot_type] + "<br/><b>Epsilon: </b>" + d.epsilon + "<br/><b>Discount factor: </b>" + d.discount_factor)
             .style("left", (d3.event.pageX) + "px")
             .style("top", (d3.event.pageY - 28) + "px")
             .style("z-index", 9999999)
@@ -118,8 +118,7 @@ function init_heatmap(data, target){
         .attr("y", function(d) { return y(d.discount_factor) })
         .attr("width", x.bandwidth() )
         .attr("height", y.bandwidth() )
-        .style("fill", function(d) {return myColor(d.value);} )
+        .style("fill", function(d) {return myColor(d[plot_type]);} )
         .on("mouseover", mouseover)
         .on("mouseout", mouseleave)
 }
-
