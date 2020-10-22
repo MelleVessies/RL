@@ -4,6 +4,7 @@ import json
 from . import main
 import os
 from collections import defaultdict
+import time
 
 
 @main.route('/', methods=['GET'])
@@ -52,12 +53,11 @@ def group_results():
 
                 res['avg_growth'] = avg_growth
 
-
             try:
                 res.pop('MSTD_errors')
                 res.pop('starting_states')
                 res.pop('episode_durations')
-                res.pop('episode_returns')
+                #res.pop('episode_returns')
                 res.pop('skip_run_episodes')
                 res.pop('stepsize')
                 res.pop('final_performance')
@@ -72,15 +72,33 @@ def group_results():
     return result_list
 
 def create_avg_over_seeds(result_list):
+    print("\n Now creating seed avgs \n")
     for env, env_results in result_list.items():
+        trick_returns = defaultdict(dict)
+
         for tricks_key, trick_results in env_results.items():
+            print(f"Now running for {env} + {tricks_key} \n")
+            MSTD_errors = []
+            returns = defaultdict(dict)
+            returns_for_avg = []
+
             heatmap_running = defaultdict(lambda: defaultdict(list))
             heatmap_data = []
 
             for seed, seed_res in trick_results.items():
                 for run_res in seed_res:
-                    heatmap_running[run_res['eps_min']][run_res['discount_factor']].append([run_res['avg_final_performance'], run_res['avg_growth']])
+                    heatmap_running[run_res['eps_min']][run_res['discount_factor']].append([
+                        run_res['avg_final_performance'],
+                        run_res['avg_growth']
+                    ])
+                    # TODO this means we are taking the final hyper parameter combination of the seed. this should be the best!!!
+                    returns[seed] = [{'x': x, 'y': y} for x, y in enumerate(run_res['episode_returns'])]
+                    # TODO here we are appending all episode returns, which should also be the best only
+                    returns_for_avg.append(run_res['episode_returns'])
 
+            # TODO, yea, if this breaks we have inconsistent numbers of episodes
+            returns_for_avg = np.mean(np.array(returns_for_avg), axis=0)
+            trick_returns[tricks_key] = [{'x': x, 'y': y} for x, y in enumerate(list(returns_for_avg))]
 
             for epsilon, discount_factors in heatmap_running.items():
                 for discount_factor, values in discount_factors.items():
@@ -90,11 +108,19 @@ def create_avg_over_seeds(result_list):
                         'discount_factor': round(discount_factor, 2),
                         'epsilon': round(epsilon, 2),
                         'return': round(sum(values[:, 0])/len(values[:, 0]), 2),
-                        # 'growth': round(sum(values[:, 1])/len(values[:, 1]), 2)
-                        'growth': round(min(values[:, 1]), 2)
+                        'growth': round(sum(values[:, 1])/len(values[:, 1]), 2)
                     })
 
-            result_list[env][tricks_key]['grid_search'] = heatmap_data
+            # result_list[env][tricks_key]['MSTD_errors'] = MSTD_errors
+            result_list[env][tricks_key] = {
+                'returns':  returns,
+                'grid_search': heatmap_data
+            }
+
+        result_list[env]["all_tricks"] = {
+            'returns': trick_returns,
+        }
+
     return result_list
 
 
@@ -102,5 +128,4 @@ def create_avg_over_seeds(result_list):
 @main.route("/list_results", methods=['GET'])
 def getResultList():
     result_list = create_avg_over_seeds(group_results())
-
     return json.dumps(result_list)

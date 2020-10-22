@@ -71,7 +71,7 @@ function render_result_list(response){
 
             for (const [seed_idx, seed_res] of Object.entries(tricks_res)) {
 
-                let seed_tab_header = res_header_template.clone().text("Seed:" + seed_idx);
+                let seed_tab_header = res_header_template.clone().text(seed_idx);
                 let seed_tab_content = res_content_template.clone();
 
                 seed_tab_header.attr({'data-target-ref': key + "_" + trick_key + "_" + seed_idx});
@@ -87,6 +87,12 @@ function render_result_list(response){
                     let heatmap_container2 = $('<div />').attr({'id': heatmap_container_id2})
                     init_heatmap(seed_res, heatmap_container2, 'growth');
                     seed_tab_content.append(heatmap_container2);
+                }
+                else if(seed_idx === 'returns'){
+                    let line_graph_id = 'linegraph_' + key + "_" + trick_key;
+                    let line_graph_container = $('<div />').attr({'id': line_graph_id})
+                    create_line_graph(seed_res, line_graph_container);
+                    seed_tab_content.append(line_graph_container);
                 }
                 else {
                     seed_tab_content.text(JSON.stringify(seed_res, null, 2))
