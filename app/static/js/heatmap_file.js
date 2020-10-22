@@ -1,6 +1,5 @@
 // set the dimensions and margins of the graph
 function init_heatmap(data, target){
-
     var margin = {top: 40, right: 40, bottom: 40, left: 40},
       width = 450 - margin.left - margin.right,
       height = 450 - margin.top - margin.bottom;
@@ -25,6 +24,14 @@ function init_heatmap(data, target){
         myValues.push(val.value);
     });
 
+    myEpsilons.sort(function(a, b) {
+        return a - b;
+    });
+
+    myDiscounts.sort(function(a, b) {
+        return a - b;
+    });
+
     // Build X scales and axis:
     var x = d3.scaleBand()
       .range([ 0, width ])
@@ -44,7 +51,6 @@ function init_heatmap(data, target){
     var y = d3.scaleBand()
         .range([ height, 0 ])
         .domain(myDiscounts)
-        // .domain([0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
         .padding(0.01);
 
     svg.append("g")
@@ -62,6 +68,16 @@ function init_heatmap(data, target){
     var myColor = d3.scaleLinear()
         .range(["#c4d8fa", "#0048ff"])
         .domain([Math.min(...myValues),Math.max(...myValues)])
+
+    var legend = d3.select(target.get(0))
+        .append("rect")
+            .attr({
+                'width': 40,
+                'height': 20,
+                'fill': function(d) {
+                    return myColor(d.value);
+                }
+        });
 
 
     // create a tooltip

@@ -1,4 +1,5 @@
 from flask import Flask,render_template, request
+import numpy as np
 import json
 from . import main
 import os
@@ -26,6 +27,7 @@ def renderPage():
 def getEpisode():
     # data wil contain eps, discount, etc
     data = json.loads(request.args.get('data'))
+
     # return video url
     return json.dumps(["/static/videos/animation_2.mp4"])
 
@@ -42,7 +44,7 @@ def group_results():
             with open(res_json_file) as f:
                 res = json.load(f)
                 res['req_path'] = "/static/" + res_json_file
-                res['avg_final_performance'] = res['episode_returns'][-1]
+                # res['avg_final_performance'] = sum(res['MSTD_errors']) / len(res['MSTD_errors'])
 
             try:
                 res.pop('MSTD_errors')
@@ -66,17 +68,17 @@ def create_avg_over_seeds(result_list):
             heatmap_data = []
 
             for seed, seed_res in trick_results.items():
-                if type(seed_res) == list:
-                    seed_res = seed_res[0]
+                for run_res in seed_res:
+                    heatmap_running[run_res['eps_min']][run_res['discount_factor']].append(run_res['avg_final_performance'])
 
-                heatmap_running[seed_res['eps_min']][seed_res['discount_factor']].append(seed_res['avg_final_performance'])
             for epsilon, discount_factors in heatmap_running.items():
                 for discount_factor, values in discount_factors.items():
                     heatmap_data.append({
                         'discount_factor': round(discount_factor, 2),
                         'epsilon': round(epsilon, 2),
-                        'value': round(sum(values) / len(values), 2)
+                        'value': round(sum(values)/len(values), 2)
                     })
+
             result_list[env][tricks_key]['grid_search'] = heatmap_data
     return result_list
 
