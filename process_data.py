@@ -8,7 +8,7 @@ def group_results():
     envdirs = os.listdir(all_results_dir)
 
     result_list = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
-    for env_res_dir in [os.path.join(all_results_dir, envdir) for envdir in envdirs]:
+    for env_res_dir in [os.path.join(all_results_dir, envdir) for envdir in envdirs if os.path.isdir(os.path.join(all_results_dir, envdir))]:
         env_results = os.listdir(env_res_dir)
         for res_dir in [os.path.join(env_res_dir, env_result) for env_result in env_results]:
             res_json_file = os.path.join(res_dir, 'results.json')
@@ -17,12 +17,12 @@ def group_results():
                 res = json.load(f)
                 res['req_path'] = "/static/" + res_json_file
 
-                r = res['MSTD_errors']
-                MSTDS = np.array(r[1:])
-                MSTDS_ = np.array(r[:-1])
-                avg_growth = np.mean(MSTDS/MSTDS_)
-
-                res['avg_growth'] = avg_growth
+                # r = res['MSTD_errors']
+                # MSTDS = np.array(r[1:])
+                # MSTDS_ = np.array(r[:-1])
+                # avg_growth = np.mean(MSTDS/MSTDS_)
+                #
+                # res['avg_growth'] = avg_growth
 
             try:
                 res.pop('MSTD_errors')
@@ -60,7 +60,7 @@ def create_avg_over_seeds(result_list):
                 for run_res in seed_res:
                     heatmap_running[run_res['eps_min']][run_res['discount_factor']].append([
                         run_res['avg_final_performance'],
-                        run_res['avg_growth']
+                        # run_res['avg_growth']
                     ])
                     # TODO this means we are taking the final hyper parameter combination of the seed. this should be the best!!!
                     returns[seed] = [{'x': x, 'y': y} for x, y in enumerate(run_res['episode_returns'])]
@@ -80,7 +80,7 @@ def create_avg_over_seeds(result_list):
                         'discount_factor': round(discount_factor, 2),
                         'epsilon': round(epsilon, 2),
                         'return': round(sum(values[:, 0])/len(values[:, 0]), 2),
-                        'growth': round(sum(values[:, 1])/len(values[:, 1]), 2)
+                        # 'growth': round(sum(values[:, 1])/len(values[:, 1]), 2)
                     })
 
             # result_list[env][tricks_key]['MSTD_errors'] = MSTD_errors

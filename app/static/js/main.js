@@ -48,6 +48,8 @@ function submit_run(evt){
 }
 
 function render_result_list(response){
+    console.log("Now rendering result list")
+
     let env_header_template = $('<div class="env-tab-header toggle-src" />');
     let env_content_template = $('<div class="env-tab-content toggle-target" style="display: none" />');
     let res_header_template = $('<div class="res-tab-header toggle-src" />');
@@ -56,6 +58,8 @@ function render_result_list(response){
     let container = $('#result_list_container');
 
     for (const [key, value] of Object.entries(response)) {
+        console.log(key);
+
         let env_tab_header = env_header_template.clone().text(key);
         let env_tab_content = env_content_template.clone();
 
@@ -63,6 +67,8 @@ function render_result_list(response){
         env_tab_content.attr({'data-src-ref': key});
 
         for (const [trick_key, tricks_res] of Object.entries(value)) {
+            console.log(" --- " + trick_key)
+
             let trick_tab_header = res_header_template.clone().text(trick_key);
             let trick_tab_content = res_content_template.clone();
 
@@ -83,10 +89,10 @@ function render_result_list(response){
                     init_heatmap(seed_res, heatmap_container, 'return');
                     seed_tab_content.append(heatmap_container);
 
-                    let heatmap_container_id2 = 'heatmap_growth_' + key + "_" + trick_key;
-                    let heatmap_container2 = $('<div />').attr({'id': heatmap_container_id2})
-                    init_heatmap(seed_res, heatmap_container2, 'growth');
-                    seed_tab_content.append(heatmap_container2);
+                    // let heatmap_container_id2 = 'heatmap_growth_' + key + "_" + trick_key;
+                    // let heatmap_container2 = $('<div />').attr({'id': heatmap_container_id2})
+                    // init_heatmap(seed_res, heatmap_container2, 'growth');
+                    // seed_tab_content.append(heatmap_container2);
                 }
                 else if(seed_idx === 'returns'){
                     let line_graph_id = 'linegraph_' + key + "_" + trick_key;
@@ -117,10 +123,16 @@ function get_results_list(evt){
 
     $.ajax({
         url: "/list_results",
-        dataType: 'json'
+        contentType: "application/json",
+        dataType: "json",
     }).done(function(response) {
-        console.log(response);
+        console.log("got the results from backend")
         render_result_list(response);
+    }).fail((evt)=>{
+        let test = JSON.parse(evt.responseText)
+        console.log(test);
+        console.log(evt)
+        console.log("failed")
     });
 }
 
