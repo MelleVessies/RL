@@ -8,17 +8,30 @@
 
 <div class="row">
     <div class="col-sm-8 textbox">
-        Deep Q Networks (DQN) are deep reinforcement learning methods which leverage the flexibility of neural networks to handle reinforcement learning tasks which would be difficult or impossible to do with a tabular approach due to high dimensional action-state space.
-        Instead of trying to learn a tabular q-function, a DQN tries to learn a continuous mapping from the state to an $A$-dimensional value vector, where each entry describes the estimated value of one of the $A$ actions.
-        (!!!! Here a description of the fact that the dqn introduces function approximation on top of only bootstrapping and off-policy learning as done within q-learning)
+      Deep Q Networks (DQN) are deep reinforcement learning algorithms which
+      leverage the flexibility of neural networks to handle reinforcement
+      learning tasks which would be difficult or impossible to do tabularly due
+      to the high state space.  Instead of trying to learn a tabular q-function,
+       a DQN tries to learn a continuous mapping from the state to an
+       N-dimensional value vector, where each entry describes the estimated
+       value of one of the  actions. A problem which the DQN encounters is that
+       it is a manifestation of the "deadly triad", which refers to
+       reinforcement learning approaches where off-policy learning, function
+       approximation and bootstrapping are used in tandem. The simultaneous
+       usage of the methods from deadly triad generally results in a highly
+       unstable, volatile learning process which can cause divergence.  As a
+       result, many "tricks" have been constructed to stabilize the learning
+       process such that we can still use these methods.  In this post we will
+       investigate what environments cause divergence.
 
-        A problem which the DQN encounters is that it is a manifestation of the "deadly triad", which refers to reinforcement learning approaches where off-policy learning, function approximation and bootstrapping are used in tandem.
-        The simultaneous usage of the methods from deadly triad generally results in a highly unstable, volatile learning process.
-        As a result, many "tricks" have been constructed to stabilize the learning process such that we can still use these methods.
-        <!-- The DQN turns the tabular value function into a Neural Network which uses the input state to produce the Q values for given actions as output.  One of the approaches used for DQN’s is the semi gradient update, which uses only part of the gradient in the update.
-        This method allows for easier and faster computations, but does have the drawback of instability due to some of the shortcuts used. -->
-        In order to understand how these drawbacks cause problems, what kind of environments cause these problems to manifest, and how the common tricks really fix these problems we have created a set of experiments to examine not only the vanilla DQN with semi gradient descent, but the common fixes in different environments.
-        We will also attempt to find a network structure and methods which will solve all the environments well.
+
+      In order to understand how these drawbacks cause divergence, what kind of
+      environments cause the divergence to manifest, and how the common tricks
+      really fix these problems we have created a set of experiments to examine
+      the performance of the DQN in addition to some of  the common fixes in
+      different environments.  We will also attempt to find a network structure
+      and methods which will solve all the environments well. 
+
     </div>
 </div>
 
@@ -138,7 +151,10 @@
 <div class="row">
     <div class="col-sm-8 textbox">
         1. Sutton, R. A., and Barto A Reinforcement Learning An Introduction 2020
-        2.
+        2. openai gym
+        3. Mnih et. al. Playing Atari with Deep Reinforcement Learning 2013
+        4. Schaul et. al. Prioritized Experinece Replay 2013
+        5.
     </div>
 </div>
 
