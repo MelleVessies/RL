@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 class ReplayMemory:
     '''Replay memory object in which transitions can be stored for training'''
@@ -25,6 +26,9 @@ class ReplayMemory:
         if self.flush:
             self.memory = []
         return s
+
+    def get_all(self):
+        return self.memory
 
     def __len__(self):
         return len(self.memory)

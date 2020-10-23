@@ -114,8 +114,10 @@ def run_episodes(train, QWrapper, policy, env, args):
         state = env.reset()
         starting_positions.append(state.tolist())
         all_rewards = []
+        eps_MSTDs = []
         steps = 0
         while True:
+            MSTD_per_update = []
             Q, optimizer, memory, action_q, value_q = QWrapper.wrapper_magic()
             QWrapper.update_target(ep_no)
 
@@ -140,5 +142,22 @@ def run_episodes(train, QWrapper, policy, env, args):
                     print("Episode {0}, running average return : {1}, The running avg MSTD error is {2}"
                           .format(i, np.mean(episode_returns[-10:]), np.mean(MSTD_per_update[-10:])))
                 episode_returns.append(returns)
+
+                if len(memory) < args.batch_size:
+                    with torch.no_grad():
+                        transitions = memory.get_all()
+                        state, action, reward, next_state, done = zip(*transitions)
+                        # convert to PyTorch and define types
+                        state = torch.tensor(state, dtype=torch.float)
+                        action = torch.tensor(action, dtype=torch.int64)[:, None]  # Need 64 bit to use them as index
+                        next_state = torch.tensor(next_state, dtype=torch.float)
+                        reward = torch.tensor(reward, dtype=torch.float)[:, None]
+                        done = torch.tensor(done, dtype=torch.uint8)[:, None]  # Boolean
+
+                        q_val = compute_q_vals(Q, state, action)
+                        target = compute_targets(action_q, value_q, reward, next_state, done, args.discount_factor)
+                        MSTD = F.mse_loss(q_val, target)
+                        MSTD_per_update.append(MSTD)
+                eps_MSTDs.append(np.mean(MSTD_per_update))
                 break
-    return episode_durations, episode_returns, starting_positions, MSTD_per_update
+    return episode_durations, episode_returns, starting_positions, eps_MSTDs
