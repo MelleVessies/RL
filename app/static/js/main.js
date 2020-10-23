@@ -97,7 +97,7 @@ function render_result_list(response){
                 else if(seed_idx === 'returns'){
                     let line_graph_id = 'linegraph_' + key + "_" + trick_key;
                     let line_graph_container = $('<div />').attr({'id': line_graph_id})
-                    create_line_graph(seed_res, line_graph_container);
+                    create_line_graph(seed_res, line_graph_container, line_graph_id);
                     seed_tab_content.append(line_graph_container);
                 }
                 else {

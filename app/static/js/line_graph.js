@@ -1,4 +1,4 @@
-function create_line_graph(data, target) {
+function create_line_graph(data, target, graph_id) {
     // console.log(data);
 
     // No idea wtf this does
@@ -13,7 +13,7 @@ function create_line_graph(data, target) {
     ];
 
     // set the dimensions and margins of the graph
-    var margin = {top: 10, right: 200, bottom: 30, left: 60},
+    var margin = {top: 15, right: 200, bottom: 30, left: 60},
         width = 600 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
@@ -53,6 +53,16 @@ function create_line_graph(data, target) {
     svg.append("g")
         .call(d3.axisLeft(y));
 
+    var legendMouseover = function(d, i) {
+        svg.select('#' + graph_id +"_line_"+i).dispatch('dohighlightLine');
+        d3.select(this).style("outline", '2px solid rgba(127,124,124,0.7)');
+    }
+
+    var legendMouseleave = function(d,i) {
+        svg.select('#' + graph_id +"_line_"+i).dispatch('mouseout');
+        d3.select(this).style("outline", "none");
+    }
+
 
     var svgLegend = svg.append('g')
             .attr('class', 'gLegend')
@@ -62,7 +72,11 @@ function create_line_graph(data, target) {
         .data(line_names)
         .enter().append('g')
                 .attr("class", "legend")
+                .style('margin-top', '3px')
+                .style('padding', '5px')
                 .attr("transform", function (d, i) {return "translate(0," + i * 20 + ")"})
+                .on('mouseover', legendMouseover)
+                .on('mouseleave', legendMouseleave)
 
     legend.append("circle")
         .attr("class", "legend-node")
@@ -110,23 +124,30 @@ function create_line_graph(data, target) {
       .style("border-radius", "5px")
       .style("padding", "5px")
 
-    // Three function that change the tooltip when user hover / move / leave a cell
-    var mouseover = function(d,i) {
-        d3.select("#graph_line_"+i).transition().style("fill", "#007DBC");
+    var highlightLine = function(d, target){
+        if(typeof target === 'number'){
+            target = this
+        }
+        d3.select(target).transition().style("opacity", "0.6");
+    }
 
+    var showToolTip = function(target){
         tooltip.transition()
             .style("opacity", 1);
         tooltip
-            .html(line_names[i])
+            .html(line_names[d3.select(target).attr('data-line-idx')])
             .style("left", (d3.event.pageX) + "px")
             .style("top", (d3.event.pageY - 28) + "px")
             .style("z-index", 9999999)
+    }
 
+    var mouseover = function(d) {
+        highlightLine(d, this)
+        showToolTip(this)
     }
 
     var mouseleave = function(d,i) {
-        d3.select("#graph_line_"+i).transition().style("fill", colors[i]);
-
+        d3.select(this).transition().style("opacity", "0");
         tooltip.transition().style("opacity", 0)
     }
 
@@ -138,7 +159,24 @@ function create_line_graph(data, target) {
             .attr("fill", "none")
             .attr("stroke", colors[idx])
             .attr("stroke-width", 1.5)
-            .attr("id", function(d,i){ return "graph_line_"+i})
+            // .attr("id", function(d,i){ return "graph_line_"+i})
+            .attr("d", d3.line()
+                .x(function (d) {
+                    return x(d.x)
+                })
+                .y(function (d) {
+                    return y(d.y)
+                })
+            );
+
+        svg.append("path")
+            .datum(res)
+            .attr("fill", "none")
+            .attr("stroke", colors[idx])
+            .attr("stroke-width", 7)
+            .attr("opacity", 0)
+            .attr("data-line-idx", idx)
+            .attr("id", graph_id +"_line_"+idx)
             .attr("d", d3.line()
                 .x(function (d) {
                     return x(d.x)
@@ -149,5 +187,6 @@ function create_line_graph(data, target) {
             )
             .on("mouseover", mouseover)
             .on("mouseout", mouseleave)
+            .on("dohighlightLine", highlightLine)
     });
 }

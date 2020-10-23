@@ -98,53 +98,6 @@ function init_heatmap(data, target, plot_type){
         .attr("transform", "translate(" + (width + 20) + "," + 20 + ")")
         .call(colorLegend);
 
-    // svg.selectAll('circle')
-    //     .data(data)
-    //     .enter()
-    //     .append('circle')
-    //     .attr("r", function(d,i){return d * 2.5})
-    //     .attr("cx", function(d,i){return i * 50 + 30})
-    //     .attr("cy", 100)
-    //     .attr("fill", function(d,i){return colorScale(d)});
-
-    // var svgLegend = svg.append('g')
-    //     .attr('class', 'gLegend')
-    //     .attr("width", '40')
-    //     .attr("height", height + margin.top + margin.bottom)
-    //     .attr("transform", "translate(" + (width + 20) + "," + 0 + ")")
-    //
-    // let colorLegend = d3.legendColor({
-    //     color: d3.scaleSequential([Math.min(...myValues), Math.max(...myValues)], myColor),
-    //     height: height + margin.top + margin.bottom,
-    //     title: "Temperature (°F)"
-    // });
-    //
-    // console.log(colorLegend)
-    //
-    // svg.select(".gLegend")
-    //     .call(colorLegend);
-
-    // var legend = svgLegend.selectAll('.legend')
-    //    .append('g')
-    //         .attr("class", "legend")
-    //         .attr("transform", function (d, i) {return "translate(0," + i * 20 + ")"})
-    //
-    // legend.append("rectangle")
-    //     .attr("class", "legend-node")
-    //     .attr("cx", 0)
-    //     .attr("cy", 0)
-    //     .attr("r", 20)
-    //     .style("fill", (d)=> { return myColor(d) })
-    //
-    // legend.append("text")
-    //     .attr("class", "legend-text")
-    //     .attr("x", R*2)
-    //     .attr("y", R/2)
-    //     .style("fill", "#A9A9A9")
-    //     .style("font-size", 12)
-    //     .text((d) => {return d})
-
-
     // create a tooltip
     var tooltip = d3.select(target.get(0))
       .append("div")
