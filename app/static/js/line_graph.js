@@ -6,9 +6,9 @@ function create_line_graph(data, target) {
 
     let colors = [
         '#035dfd',
-        '#f8d804',
+        '#c93cff',
         '#36ad02',
-        '#af5b03',
+        '#8d4903',
         '#fc0404'
     ];
 
@@ -47,7 +47,7 @@ function create_line_graph(data, target) {
         .call(d3.axisBottom(x));
 
     var y = d3.scalePow()
-        .exponent(0.2)
+        .exponent(0.3)
         .domain([Math.min(...all_y) - 1, Math.max(...all_y) + 5])
         .range([height, 0]);
     svg.append("g")
@@ -62,7 +62,7 @@ function create_line_graph(data, target) {
         .data(line_names)
         .enter().append('g')
                 .attr("class", "legend")
-                .attr("transform", function (d, i) {console.log(d); return "translate(0," + i * 20 + ")"})
+                .attr("transform", function (d, i) {return "translate(0," + i * 20 + ")"})
 
     legend.append("circle")
         .attr("class", "legend-node")

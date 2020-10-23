@@ -63,21 +63,50 @@ function init_heatmap(data, target, plot_type){
         .style("text-anchor", "middle")
         .text("\u03B3"); // unicode for gamma
 
+    function range(start, stop, step) {
+        var a = [start], b = start;
+
+        while (b < stop) {
+            a.push(b += step);
+        }
+        return a;
+    }
+
+    let R = 6;
 
     // Build color scale
     var myColor = d3.scaleLinear()
         .range(["#c4d8fa", "#0048ff"])
         .domain([Math.min(...myValues),Math.max(...myValues)])
 
-    var legend = d3.select(target.get(0))
-        .append("rect")
-            .attr({
-                'width': 40,
-                'height': 20,
-                'fill': function(d) {
-                    return myColor(d[plot_type]);
-                }
-        });
+    var svgLegend = svg.append('g')
+            .attr('class', 'gLegend')
+            .attr("transform", "translate(" + (width + 20) + "," + 0 + ")")
+
+    var legend = svgLegend.selectAll('.legend')
+        .data(range(
+            Math.min(...myValues),
+            Math.max(...myValues),
+            (Math.max(...myValues)- Math.min(...myValues))/50))
+        .enter()
+        .append('g')
+            .attr("class", "legend")
+            .attr("transform", function (d, i) {return "translate(0," + i * 20 + ")"})
+
+    legend.append("rectangle")
+        .attr("class", "legend-node")
+        .attr("cx", 0)
+        .attr("cy", 0)
+        .attr("r", 20)
+        .style("fill", (d)=> { return myColor(d) })
+
+    legend.append("text")
+        .attr("class", "legend-text")
+        .attr("x", R*2)
+        .attr("y", R/2)
+        .style("fill", "#A9A9A9")
+        .style("font-size", 12)
+        .text((d) => {return d})
 
 
     // create a tooltip
