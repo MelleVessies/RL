@@ -1,7 +1,7 @@
 // set the dimensions and margins of the graph
 function init_heatmap(data, target, plot_type){
-    var margin = {top: 40, right: 40, bottom: 40, left: 40},
-      width = 450 - margin.left - margin.right,
+    var margin = {top: 40, right: 250, bottom: 40, left: 40},
+      width = 700 - margin.left - margin.right,
       height = 450 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
@@ -63,50 +63,86 @@ function init_heatmap(data, target, plot_type){
         .style("text-anchor", "middle")
         .text("\u03B3"); // unicode for gamma
 
-    function range(start, stop, step) {
-        var a = [start], b = start;
+    // function range(start, stop, step) {
+    //     var a = [start], b = start;
+    //
+    //     while (b < stop) {
+    //         a.push(b += step);
+    //     }
+    //     return a;
+    // }
 
-        while (b < stop) {
-            a.push(b += step);
-        }
-        return a;
-    }
-
-    let R = 6;
 
     // Build color scale
-    var myColor = d3.scaleLinear()
-        .range(["#c4d8fa", "#0048ff"])
+    var myColor = d3.scaleQuantize()
+        .range(colorbrewer.Blues[9])
         .domain([Math.min(...myValues),Math.max(...myValues)])
 
-    var svgLegend = svg.append('g')
-            .attr('class', 'gLegend')
-            .attr("transform", "translate(" + (width + 20) + "," + 0 + ")")
+    // Color legend.
+    var colorScale = d3.scaleQuantize()
+        .range(colorbrewer.Blues[9])
+        .domain([Math.min(...myValues),Math.max(...myValues)])
 
-    var legend = svgLegend.selectAll('.legend')
-        .data(range(
-            Math.min(...myValues),
-            Math.max(...myValues),
-            (Math.max(...myValues)- Math.min(...myValues))/50))
-        .enter()
-        .append('g')
-            .attr("class", "legend")
-            .attr("transform", function (d, i) {return "translate(0," + i * 20 + ")"})
+    var colorLegend = d3.legendColor()
+        .labelFormat(d3.format(".0f"))
+        .scale(colorScale)
+        .shapePadding(35)
+        .shapeWidth(50)
+        .shapeHeight(40)
+        .labelAlign("middle");
 
-    legend.append("rectangle")
-        .attr("class", "legend-node")
-        .attr("cx", 0)
-        .attr("cy", 0)
-        .attr("r", 20)
-        .style("fill", (d)=> { return myColor(d) })
+    $('text.label').attr('transform', 'translate(55, 25)');
 
-    legend.append("text")
-        .attr("class", "legend-text")
-        .attr("x", R*2)
-        .attr("y", R/2)
-        .style("fill", "#A9A9A9")
-        .style("font-size", 12)
-        .text((d) => {return d})
+    svg.append("g")
+        .attr("height", height - 30)
+        .attr("transform", "translate(" + (width + 20) + "," + 20 + ")")
+        .call(colorLegend);
+
+    // svg.selectAll('circle')
+    //     .data(data)
+    //     .enter()
+    //     .append('circle')
+    //     .attr("r", function(d,i){return d * 2.5})
+    //     .attr("cx", function(d,i){return i * 50 + 30})
+    //     .attr("cy", 100)
+    //     .attr("fill", function(d,i){return colorScale(d)});
+
+    // var svgLegend = svg.append('g')
+    //     .attr('class', 'gLegend')
+    //     .attr("width", '40')
+    //     .attr("height", height + margin.top + margin.bottom)
+    //     .attr("transform", "translate(" + (width + 20) + "," + 0 + ")")
+    //
+    // let colorLegend = d3.legendColor({
+    //     color: d3.scaleSequential([Math.min(...myValues), Math.max(...myValues)], myColor),
+    //     height: height + margin.top + margin.bottom,
+    //     title: "Temperature (°F)"
+    // });
+    //
+    // console.log(colorLegend)
+    //
+    // svg.select(".gLegend")
+    //     .call(colorLegend);
+
+    // var legend = svgLegend.selectAll('.legend')
+    //    .append('g')
+    //         .attr("class", "legend")
+    //         .attr("transform", function (d, i) {return "translate(0," + i * 20 + ")"})
+    //
+    // legend.append("rectangle")
+    //     .attr("class", "legend-node")
+    //     .attr("cx", 0)
+    //     .attr("cy", 0)
+    //     .attr("r", 20)
+    //     .style("fill", (d)=> { return myColor(d) })
+    //
+    // legend.append("text")
+    //     .attr("class", "legend-text")
+    //     .attr("x", R*2)
+    //     .attr("y", R/2)
+    //     .style("fill", "#A9A9A9")
+    //     .style("font-size", 12)
+    //     .text((d) => {return d})
 
 
     // create a tooltip
