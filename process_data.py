@@ -47,10 +47,13 @@ def create_avg_over_seeds(result_list):
     for env, env_results in result_list.items():
         trick_returns = defaultdict(dict)
 
+        result_list[env]['heatmap_bounds'] = {'upper': None, 'lower': None}
+
         for tricks_key, trick_results in env_results.items():
             print(f"Now running for {env} + {tricks_key} \n")
             MSTD_errors = []
             returns = defaultdict(dict)
+            returns_std = defaultdict(dict)
             returns_for_avg = []
 
             heatmap_running = defaultdict(lambda: defaultdict(list))
@@ -58,19 +61,30 @@ def create_avg_over_seeds(result_list):
 
             for seed, seed_res in trick_results.items():
                 for run_res in seed_res:
+                    high = result_list[env]['heatmap_bounds']['upper']
+                    low = result_list[env]['heatmap_bounds']['lower']
+                    if high is not None:
+                        if high < run_res['avg_final_performance']:
+                            result_list[env]['heatmap_bounds']['upper'] = run_res['avg_final_performance']
+                    if low is not None:
+                        if low > run_res['avg_final_performance']:
+                            result_list[env]['heatmap_bounds']['lower'] = run_res['avg_final_performance']
+
                     heatmap_running[run_res['eps_min']][run_res['discount_factor']].append([
                         run_res['avg_final_performance'],
                         # run_res['avg_growth']
                     ])
                     # TODO this means we are taking the final hyper parameter combination of the seed. this should be the best!!!
                     returns[seed] = [{'x': x, 'y': y} for x, y in enumerate(run_res['episode_returns'])]
-
                     # TODO here we are appending all episode returns, which should also be the best only
                     returns_for_avg.append(run_res['episode_returns'])
 
             # TODO, yea, if this breaks we have inconsistent numbers of episodes
             returns_for_avg = np.mean(np.array(returns_for_avg), axis=0)
+            returns_std_for_avg = np.std(np.array(returns_for_avg), axis=0)
+
             trick_returns[tricks_key] = [{'x': x, 'y': y} for x, y in enumerate(list(returns_for_avg))]
+            trick_returns_std[tricks_key] = [{'x': x, 'y': y} for x, y in enumerate(list(returns_std_for_avg))]
 
             for epsilon, discount_factors in heatmap_running.items():
                 for discount_factor, values in discount_factors.items():
@@ -85,12 +99,13 @@ def create_avg_over_seeds(result_list):
 
             # result_list[env][tricks_key]['MSTD_errors'] = MSTD_errors
             result_list[env][tricks_key] = {
-                'returns':  returns,
+                'returns': returns,
                 'grid_search': heatmap_data
             }
 
         result_list[env]["all_tricks"] = {
             'returns': trick_returns,
+            'returns_std': trick_returns_std #figure out how to get std :(
         }
 
     return result_list
