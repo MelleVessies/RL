@@ -126,13 +126,8 @@ function get_results_list(evt){
         contentType: "application/json",
         dataType: "json",
     }).done(function(response) {
-        console.log("got the results from backend")
+        console.log(response)
         render_result_list(response);
-    }).fail((evt)=>{
-        let test = JSON.parse(evt.responseText)
-        console.log(test);
-        console.log(evt)
-        console.log("failed")
     });
 }
 
