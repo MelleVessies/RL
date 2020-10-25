@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-function init_heatmap(data, target, plot_type){
+function init_heatmap(data, target, plot_type, upper, lower){
     var margin = {top: 40, right: 250, bottom: 40, left: 40},
       width = 700 - margin.left - margin.right,
       height = 450 - margin.top - margin.bottom;
@@ -76,12 +76,12 @@ function init_heatmap(data, target, plot_type){
     // Build color scale
     var myColor = d3.scaleQuantize()
         .range(colorbrewer.Blues[9])
-        .domain([Math.min(...myValues),Math.max(...myValues)])
+        .domain([lower,upper])
 
     // Color legend.
     var colorScale = d3.scaleQuantize()
         .range(colorbrewer.Blues[9])
-        .domain([Math.min(...myValues),Math.max(...myValues)])
+        .domain([lower, upper])
 
     var colorLegend = d3.legendColor()
         .labelFormat(d3.format(".0f"))

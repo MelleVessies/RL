@@ -12,12 +12,11 @@ def plot_gridsearch_dummy(file):
 
 
 
-
 def get_num_steps_final(json):
     return json['episode_durations'][-1]
 
 def get_value_return_final(json):
-    return json['episode_returns'][-1]
+    return json['avg_final_performance']
 
 
 def training_seed_result_gridsearch(base_settings, seed_range, grid_value, environment):
@@ -44,8 +43,9 @@ def training_seed_result_gridsearch(base_settings, seed_range, grid_value, envir
 
 
 
+if __name__ == '__main__':
 
-training_seed_result_gridsearch("no_tricks_settings", cfg.training_seed_range, "return", "CartPole-v1")
+    training_seed_result_gridsearch("no_tricks_settings", cfg.training_seed_range, "return", "CartPole-v1")
 
-jsons = DataHandler.load_data(filter={"eps_min":0.9})
-print(len(jsons))
+    jsons = DataHandler.load_data(filter={"eps_min":0.9})
+    print(len(jsons))

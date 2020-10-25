@@ -3,8 +3,8 @@ no_tricks_settings = {
     "max_episode_steps":500,
 
     # Experiment ding
-    # "experience_replay_capacity":0,
-    "experience_replay_capacity":10000,
+    "experience_replay_capacity":0,
+    # "experience_replay_capacity":10000,
 
     "clip_grad":-1,
     "batch_size":64,

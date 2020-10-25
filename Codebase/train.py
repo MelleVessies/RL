@@ -109,22 +109,21 @@ def run_episodes(train, QWrapper, policy, env, args):
     episode_returns = []
     starting_positions = []
     MSTD_per_update = []
-
+    eps_MSTDs = []
     for i in range(args.num_episodes):
         state = env.reset()
         starting_positions.append(state.tolist())
         all_rewards = []
-        eps_MSTDs = []
         steps = 0
+        MSTD_per_update = []
         while True:
-            MSTD_per_update = []
             Q, optimizer, memory, action_q, value_q = QWrapper.wrapper_magic()
             QWrapper.update_target(ep_no)
 
             done, reward, state = episode_step(state, env, policy, Q, memory, ep_no, args.eps_min, args.eps_steps_till_min)
             loss, MSTD = train(Q, memory, action_q, value_q, optimizer, args)
             all_rewards.append(reward)
-            if MSTD is not None:
+            if MSTD:
                 MSTD_per_update.append(MSTD)
 
 
@@ -135,15 +134,7 @@ def run_episodes(train, QWrapper, policy, env, args):
                 ep_no += 1
                 returns = sum(all_rewards)
                 episode_durations.append(steps)
-                if i == 0:
-                    print("Episode {0} finished with return: {1}."
-                          .format(i, returns))
-                elif i % 10 == 0:
-                    print("Episode {0}, running average return : {1}, The running avg MSTD error is {2}"
-                          .format(i, np.mean(episode_returns[-10:]), np.mean(MSTD_per_update[-10:])))
-                episode_returns.append(returns)
-
-                if len(memory) < args.batch_size:
+                if global_steps < args.batch_size:
                     with torch.no_grad():
                         transitions = memory.get_all()
                         state, action, reward, next_state, done = zip(*transitions)
@@ -159,5 +150,12 @@ def run_episodes(train, QWrapper, policy, env, args):
                         MSTD = F.mse_loss(q_val, target)
                         MSTD_per_update.append(MSTD)
                 eps_MSTDs.append(np.mean(MSTD_per_update))
+                if i == 0:
+                    print("Episode {0} finished with return: {1},The running avg MSTD error is {2} "
+                          .format(i, returns, eps_MSTDs[0]))
+                elif i % 10 == 0:
+                    print("Episode {0}, running average return : {1}, The running avg MSTD error is {2}"
+                          .format(i, np.mean(episode_returns[-10:]), np.mean(eps_MSTDs[-10:])))
+                episode_returns.append(returns)
                 break
     return episode_durations, episode_returns, starting_positions, eps_MSTDs
