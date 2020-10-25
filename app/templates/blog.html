@@ -1,117 +1,322 @@
 {% block body %}
 
 <div class="center">
-<h2 class="mt-3">Deep Q Networks analysis: divergence and problem solving.</h2>
+<h1 class="mt-3">Deep Q Networks analysis: divergence and problem solving.</h1>
 <p class="lead">
      By Angelo Groot, Jordan Earle, Melle Vessies and Reitze Jansen.
 </p>
 
 <div class="row">
-    <div class="col-sm-8 textbox">
-      Deep Q Networks (DQN) are deep reinforcement learning algorithms which
-      leverage the flexibility of neural networks to handle reinforcement
-      learning tasks which would be difficult or impossible to do tabularly due
-      to the high state space.  Instead of trying to learn a tabular q-function,
-       a DQN tries to learn a continuous mapping from the state to an
-       N-dimensional value vector, where each entry describes the estimated
-       value of one of the  actions. A problem which the DQN encounters is that
-       it is a manifestation of the "deadly triad", which refers to
-       reinforcement learning approaches where off-policy learning, function
-       approximation and bootstrapping are used in tandem. The simultaneous
-       usage of the methods from deadly triad generally results in a highly
-       unstable, volatile learning process which can cause divergence.  As a
-       result, many "tricks" have been constructed to stabilize the learning
-       process such that we can still use these methods.  In this post we will
-       investigate what environments cause divergence.
+    <div class="col-sm-10 textbox">
+        Deep Q Networks (DQN) are deep Reinforcement Learning (RL) algorithms which leverage the flexibility
+        of neural networks to handle reinforcement learning tasks which would be difficult or impossible to do
+        tabularly due to the high state space.  Instead of trying to learn a tabular q-function, a DQN tries to
+        learn a continuous mapping from the state to an estimate the value pairs.  A problem which the DQN encounters
+        is a phenomenon in RL known as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad"</a>, which refers to
+        reinforcement learning approaches where off-policy learning, function approximation and bootstrapping
+        are used in tandem. The simultaneous appearance of the methods from deadly triad generally results
+        in a highly unstable, volatile learning process which can cause divergence.
+        As a result, many "tricks" have been constructed to stabilize the learning
+        process such that we can still use these methods.
 
+        We want to understand what kind of environments cause divergence and how some of the common tricks can
+        be used to mitigate these problems.  For this we have created a set of experiments to examine the performance
+        of the DQN in addition to some of  the common fixes in different environments. We will also attempt to find
+        a network structure and methods which will solve all the environments well.
 
-      In order to understand how these drawbacks cause divergence, what kind of
-      environments cause the divergence to manifest, and how the common tricks
-      really fix these problems we have created a set of experiments to examine
-      the performance of the DQN in addition to some of  the common fixes in
-      different environments.  We will also attempt to find a network structure
-      and methods which will solve all the environments well. 
 
     </div>
 </div>
 
 <h2 class="mt-3">Q-learning</h2>
 <div class="row">
-    <div class="col-sm-8 textbox">
-        Before we get into Deep Q Networks, it is important to give a brief overview of Q learning (in-depth details can be found in <i>Reinforcement Learning An Introduction</i> [Sutton and Barto 2020]).
-        Central to Q learning is the Q function.
-        The Q function is a function that maps every state-action pair to a value, which is determined by rewards given under the policy from this state to termination with some given discount factor.
-        This can be seen in the equation below:
+    <div class="col-sm-10 textbox">
+        Before we get into Deep Q Networks it’s important to give a brief overview of Q-learning.
+        Q learning is an off policy method for learning the Q-value function [Sutton and Barto 2020].
+        An off policy method means that we have a behavioural policy to sample data with which is different
+        from the target policy we are trying to learn.  In the case of Q learning, we are trying to learn a
+        greedy policy. In off policy learning, we require a coverage assumption to be met for the behavioural
+        policy.  This means that the behavioural policy must have a non zero probability to visit at least all
+        the states that the target would.  Since at the start we do not know what the target policy should look like,
+        we must have some policy which is able to visit all states.  This is generally called an epsilon-soft policy.
+
+        Central to Q learning is the Q function.  The Q function maps every state-action pair to a “quality” value,
+        which indicates the expected (discounted) return as a result of performing that action in that state under
+        the current policy.  The Q-value of a state-action pair under a policy $\pi$ is defined as the expected
+        (discounted) return when performing the action in that state:
+
         <div class="formula">
             $$Q_{\pi}(S_t, A_t) = \mathbb{E}[G_t | S_t = s, A_t = a ] = \mathbb{E}[\sum^{\infty}_{k = 0} \gamma^k R_{t + k + 1} | S_t = s, A_t = a]$$
         </div>
-        This would allow us to then determine a Q-value function for a given policy, but we can also learn the Q-value function using monte carlo sampling.
-        By using a given policy, we can calculate the Q function iteratively over an infinite number of episodes.
-        In order to do this, we would need a policy which would give us a chance to explore each state, thus a policy such as epsilon policy.
-        An epsilon policy states that a given state, you have an epsilon chance to take a random action instead of the policy action.
-        This can also be done by assuming an epsilon greedy policy where we take the action of max Q-value, or a random action with chance epsilon.
-        By doing this we can learn the values of the Q function and create an epsilon greedy policy at the same time.
-        This is the essence of Q learning.
-        Q learning [Watkins, 1989] is a Reinforcement Learning algorithm from the Temporal Difference family of algorithms which allows for Off-Policy learning of a Q-value function, which is then used to determine the policy by taking the greedy action given a state.
-        This method is model free as it does not need the information from the environment to run.
-        It just needs the rewards from the actions and an initial Q-value function.
-        Then for each step in the action chain, you update the Q-value with the following update rule:
+
+
+        Where $Q_\pi(s, a)$ is the Q-value of state-action pair $s$ and $a$, $G_t$ is the (discounted) return at
+        timestep $t$, $R_t$ is the observed reward at timestep $t$ and $\gamma$ is the discount factor.
+        Q learning [Watkins, 1989] is a Reinforcement Learning algorithm from the Temporal Difference family of
+        algorithms.  In Temporal Difference (TD) algorithms we use a bootstrapping method where, instead of the return
+        from an episode, the update is based on the difference in rewards between $n$ steps (in our case $n=1$).
+        This allows for training with single transitions rather than needing an entire episode.
+
+        If our estimate of the expected return is correct, we would expect that the only difference between our
+        current estimate and the estimate for the next step is the reward we would obtain. The TD error is a
+        quantification of how much the estimated value differs from the true return, in other words, how good
+        our prediction is.  Formally, the TD error is given by:
+
+        <div class="formula">
+            $$\delta_t = R_t + \gamma max_a Q_\pi(S_{t+1}, a) - Q_\pi(S_t, A_t)$$
+        </div>
+
+        Where $max_aQ(S_t, a)$ is the estimate of the expected return that we get after taking the estimated optimal
+        action from state $S_t$ under a certain policy $\pi$.  If we then minimize this TD error we are thus
+        effectively making our estimate more accurate.  This use of the max causes a maximization bias which means
+        the network will systematically overestimate the value of state-action pairs.  As can be seen in the defintion,
+        the TD error is a measurement of the predicted reward against the actual reward.   In Q learning these
+        TD-errors are used to update the Q value estimates.   By taking a step in the direction of the difference
+        between the real value of the reward and the estimated, we can closer approximate the true expected return.
+        This can also be seen in the Q-learning update equation, since the difference between the return $G_t$ and
+        $\gamma G_{t+1}$ should only be $R_{t+1}.
+
+        By following a behaviour policy which is also based on the Q-function, we can estimate/learn the Q-values
+        iteratively while exploring acting in the environment . One such policy is epsilon-greedy, which has a
+        probability of epsilon to do a random action rather than the predicted optimal action. In this way the agent
+        can learn what happens when performing the best actions according to the value function, while also still
+        exploring different options.  By following this policy we can update our Q-values using the TD error as
+        described above which gives rise to the following update rule:
+
         <div class="formula">
             $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha[R_{t+1}+\gamma max_a Q(S_{t+1}, a) - Q(S_t, A_t)] $$
         </div>
-        Where $S_t$ is the current state, $A_t$ is the current action, the reward for the current state action pair is $R_{t+1}$, $\gamma$ is a discount factor and $a$ is the estimated highest valued action for the next state.
-        There are already inherent problems with Q-Learning at this point.  The main one being the maximization bias which is caused by taking the argmax in the update step.  It causes the algorithm to systematically overestimate the value of certain states over others, especially with limited data.
+
+
     </div>
 </div>
 
 <h2 class="mt-3">Deep Q-learning</h2>
 <div class="row">
-    <div class="col-sm-8 textbox">
-        Although the aforementioned method of using Q-learning can be used to iteratively estimate the value of state-action pairs, it does not deal well with continuous state spaces.
-        This originates mostly from the sampling data-scarcity introduced by the continuous properties (i.e in a continuous space, the probability of observing exactly the same values multiple times is negligable).
-        A way to deal with this is by using a neural network to learn and incorporate how the observed values of the states correlate and map it to an estimation of the Q-value for the actions.
-        We refer to this neural network which outputs estimates of Q-values as the Deep Q Network (DQN)
-        The power of the DQN can be seen in the paper by Mnih et al.[2015], where they train DQN’s to complete many of the old Atari games.  It was impressive to see it be able to discover longer term strategies and sequences, such as in breakout where it discovered the side tunnel strategy.  The performance of the DQN compared to the best linear learner can be seen in the following figure from the paper:
+    <div class="col-sm-10 textbox">
+        A Deep Q Network (DQN) uses the same principle as Q learning. The agent takes the action with the currently
+        optimal value according to the current Q value function with some given epsilon chance of doing a random
+        action, and the rewards from this action are used to update the Q value function.  In the case of DQN though,
+        the Q value is no longer  represented as a table (a list of values corresponding to a state and action pair),
+        but as a deep neural network function with the state as input and the output being a vector with the
+        state-action values of possible actions. This allows us to have a much higher state and action space,
+        since the values are represented by the network, which requires less space for the weights  than would be
+        required for storing all of the state action pairs for complex problems.
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4 textbox">
+        The difference between the two can
+        be seen in the image from <a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python" >Ankit Choudhary </a>,
+        showing how the network input is just the state where the Q-Learning input would be the state action pair,
+        and the output will be a list a Q-Values corresponding to the actions, where the Q-learning would have
+        the output be the specific Q-Value for the state action pair input.
 
         <br/>
         <br/>
 
-        <img src="static/img/benchmark RL(human level control))-rotated.png" alt="RL benchmark list">
+        In neural networks, updates to the weights are done through taking the gradient of the loss with respect
+        to the weights.  In DQN, the loss is the TD error previously described, but due to the target in the DQN
+        being the bootstrapped approximation for the Q function, taking the full gradient would cause problems
+        due to the circular dependency.  Therefore, in practice we use the semi-gradient approach in which the
+        gradient is simplified, using just part of the true gradient.   More information on the semi gradient
+        approach can be seen in RL:AI[2020] and the semi gradient update can be written as:
 
-        <br/><br/>
 
+        <h2>Hier functieeee</h2>
+
+
+    </div>
+
+    <br/>
+    <br/>
+
+    <div class="col-sm-8">
+        <img width="600" src="static/img/benchmark RL(human level control))-rotated.png" alt="RL benchmark list">
+    </div>
+
+    <br/>
+    <br/>
+
+    <div class="col-sm-10 textbox">
         An example of the DQN working with breakout can be seen here:
 
         <br/><br/>
 
-        <div>
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/TmPfTpjtdgg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+        <div style="text-align: center">
+            <iframe
+                    width="560"
+                    height="315"
+                    src="https://www.youtube.com/embed/TmPfTpjtdgg"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+            </iframe>
         </div>
 
         <br/>
 
-        The DQN in this paper used tricks like replay memory and batching to allow it to complete the complicated tasks.
-        <br><br/>
-        Our goal will be to explore when methods like this are needed and to discuss why in order to have a better grasp of when to apply them in the future.
-        In order to determine when a network was diverging, we first had to make sure we had a working network.  To do this we tried the problem with ____________ with 10 random seeds to train the hyperparameters, and to ensure that there was a solution to be found without a lucky or unlucky seed/initialization.  This was done using a grid search and the results can be seen below.  These seeds will be used for future hyperparameter tuning and searching to ensure all algorithms receive the same chance for success.
-        <br><br>
+        ___ we might want some filler text here to make the flow a little nicer ___
 
-        Seeing that the architecture worked, we had a starting point for testing other environments.  From the given algorithm and the shortcuts it uses (WE MIGHT WANT TO DISCUSS THESE SHORTCUTS ABOVE SOME MORE) we can already see some areas where we might encounter problems.  The first is with the maximization bias due to the max function.  Another area would cause problems is with the experiences being used only once.  Since some states might be hard to get into and we want to get the most out of the previous experience, it is inefficient and harder to converge if we only use each sample once.  Another place that could cause error is when an outlier is present, and the gradient from this causes a large change in the weights, leading to a much different Q function.  Using bootstrapping to estimate the future rewards is also likely to cause problems, since this could lead to an increase in variance if the discount factor is too high, or bias if the discount factor used is too low.  The final place that can cause problems that we are looking at today is the target in the semi gradient method is the same network we are updating through the weight change.  This can lead to a phenomenon referred to as catastrophic forgetting.  This is caused by the weights being updated for the whole Q function rather than just for the one state action pair.  Meaning that some outcome can have effects for states other than the one currently being updated.  This can compound and cause major problems.
+        <br/><br/>
+
+        Although DQN is a powerful technique it does require some tricks to work effectively since the method has all the components of the deadly triad:
+
+        <ul>
+            <li>
+                <b>Bootstrapping</b>:  Using the estimation of the value function in order to calculate the expected return for a single
+                timestep rather than using the received return for the entire episode.  This can be seen in the update rule we are using.
+            </li>
+            <li>
+                <b>Off Policy Learning</b>:  Learning from data generated by a different policy than the one you are learning.
+                In this case we gather data using epsilon-greedy to learn a greedy policy.
+            </li>
+            <li>
+                <b>Function Approximation</b>: generalizing the statespace to some approximate domain, rather than learning (action)
+                values for each distinct state, is the case for DQN as it does Q-learning where it represents the Q-values
+                for all states in a single neural network
+            </li>
+        </ul>
+
+        The paper by Mnih et al.[2015] combined the DQN with some tricks to prevent divergence and allow it to complete
+        the complicated tasks. In this blog we’ll look at the concrete effect of using the architecture worked,
+        we had a starting point for testing other environments.  From the given algorithm
+        and the shortcuts it uses (WE MIGHT WANT TO DISCUSS THESE SHORTCUTS ABOVE SOME MORE) we can already
+        see some areas where we might encounter problems.  The first is with the maximization bias due to the max function.
+        Another area would cause problems is with the experiences being used only once.
+        Since some states might be hard to get into and we want to get the most out of the previous experience,
+        it is inefficient and harder to converge if we only use each sample once.  Another place that could
+        cause error is when an outlier is present, and the gradient from this causes a large change in the weights,
+        leading to a much different Q function.  Using bootstrapping to estimate the future rewards is also likely
+        to cause problems, since this could lead to an increase in variance if the discount factor is too high,
+        or bias if the discount factor used is too low.  The final place that can cause problems that we are looking
+        at today is the target in the semi gradient method is the same network we are updating through the weight change.
+        This can lead to a phenomenon referred to as catastrophic forgetting.  This is caused by the weights being
+        updated for the whole Q function rather than just for the one state action pair.  Meaning that some outcome
+        can have effects for states other than the one currently being updated.  This can compound and cause major problems.
 
     </div>
 
 </div>
 
+<h2 class="mt-3">Environments</h2>
+<div class="row">
+    <div class="col-sm-10 textbox">
+        Environments in reinforcement learning refer to any space where agents interact to either get a task
+        completed or to continually make good actions. This could be something as simple learning which slot
+        machine will give a good payoff, to putting a box from one conveyor belt to another or even as complex
+        as a game of go.  Since each of these environments can differ greatly and they each bring their own
+        difficulties.   We hypothesize that the reward landscape plays a large role in the chance of divergence
+        for the DQN. In order to fully test what kind of problems can be seen when training a DQN, we chose 3
+        environments with different reward landscapes in order to see how they would affect the convergence of
+        the network.   For this, we have chosen 3 environments with very different reward landscapes: the Cartpole-v0,
+        MountainCar-v0, and LunarLander-v2 environments from the open ai gym package.
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-sm-5 textbox">
+        <h3 class="mt-3">CartPole-v0</h3>
+
+        In the CartPole problem, a pole is attached to an unarticulated joint on a cart, moving along a frictionless
+        path.  The objective is to keep a pole upright, between a certain angle for as long as possible.
+        A reward of +1 is provided at every time step the pole remains upright.  The episode ends when the pole falls
+        below a 15 degree angle from the vertical axis, whenmoves 2.4 units from the center, or when 500 steps have
+        passed.  The state the agent receives is  (cart position, cart velocity, pole angle, pole velocity at tip).
+        The actions the agent has are applying a force to either push the car to the left or the right to the kart to
+        keep the pole upright.
+    </div>
+
+    <div class="col-sm-7" style="padding-top: 100px">
+        <video width="480" height="360" controls>
+                    <source src="/static/videos/animation.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="col-sm-10 textbox">
+        This is an episodic environment as it does have an end of episode state, but if the agent is performing
+        well, it could keep the pole upright for an indefinite amount of time.  This would cause the reward to keep
+        growing.  The reward landscape here is uniform positive and the longer the cart keeps the pole upright, the
+        more reward can be earned.  Tends towards short episodes at the start as the agent is taking random moves
+        and has not learned how to keep the pole upright yet and it fails after a short number of steps.
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-sm-5" style="padding-top: 100px">
+        <video  width="480" height="360" controls>
+                    <source src="/static/videos/animation.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="col-sm-5 textbox">
+        <h3 class="mt-3">MountainCar-v0</h3>
+
+        In the MountainCar problem, a car starts in between 2 mountains on a 1d track with the goal to the right.
+        It is impossible for the car to get to the top by just heading towards the goal, so it must first learn to
+        go backwards and then go to the right.  The reward for the problem is -1 for each time step, and the episode
+        ends when the cart reaches the goal or when 200 steps have passed.  The states the agent receives are the
+        (position, velocity) of the cart.  The actions the agent has is to either push the kart to the left, no push,
+        or push the cart to the right.
+    </div>
+
+
+    <div class="col-sm-10 col-offset-2 textbox">
+        This environment is also episodic as there is a clear end state.  The problem in this environment is the
+        need for exploration at the start.  Since the kart has to go backwards first, it needs to remember that
+        those backward steps were important.  The reward landscape for MountainCart is the inverse of Cartpole as
+        it has a uniform negative landscape where every time step we haven't solved the problem we get an additional
+        negative reward of -1are getting less reward.  This environment tTends towards longer episodes at the start
+        as the agent has not learned to first go backwards to gain momentum to go towards the goal, so it mostly
+        times out.
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-sm-5 textbox">
+        <h3 class="mt-3">LunarLander-v2</h3>
+
+        In the lunar lander problem, an agent is attempting to land on a landing pad with 0 speed after being spawned
+        at the top of the screen with changing landscapes. Landing on the landing pad, between the flags, gives a
+        reward of +100 and doing so safely gives the agent an additional reward of +100. Crashing into the ground
+        gives a negative reward (-100). Landing (anywhere) or crashing both end the episode. The agent also gets
+        a bonus for landing safely, with +10 for each leg touching the ground and a quadratic penalty for its speed.
+        The agent has 4 possible actions to its disposal  to achieve this.
+    </div>
+
+    <div class="col-sm-7" style="padding-top: 100px">
+        <video width="480" height="360" controls>
+                    <source src="/static/videos/animation.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="col-sm-10 textbox">
+        Doing nothing, firing one of its side
+        engines or firing the main engine, applying force from the bottom of the agent upwards (whatever may be
+        ‘up’ from the perspective of the agent).
+        Firing the engines has a cost however, although the engine has
+        infinite fuel, firing the main engine has a cost of 0.3 and firing any of the side engines a cost of 0.03.
+        The environment is considered solved when the agent reaches a return of 200 which happens when landing with
+        low velicity on the pad while spending little fuel.
+    </div>
+</div>
+
 <h2 class="mt-3">Semi-Gradient vs Full-Gradient approach</h2>
 <div class="row">
-    <div class="col-sm-8 textbox">
+    <div class="col-sm-10 textbox">
         This we dont need now???
     </div>
 </div>
 
 <h2 class="mt-3">Divergence and Problem Solving</h2>
 <div class="row">
-    <div class="col-sm-8 textbox">
+    <div class="col-sm-10 textbox">
         In order to see under what conditions the semi gradient and full gradient approach work well (diverge?), we will be comparing the two algorithms on 4 separate gym environments (Acrobot, MountainCar, CartPole, LunarLander).
         In addition, we will be testing when certain tricks can help improve performance.
         <br>...
@@ -121,35 +326,35 @@
 
 <h2 class="mt-3">Experience Replay</h2>
 <div class="row">
-    <div class="col-sm-8 textbox">
+    <div class="col-sm-10 textbox">
         here be text (illustrating what experience replay is and how we implement it)
     </div>
 </div>
 
 <h2 class="mt-3">Target Network Fixing</h2>
 <div class="row">
-    <div class="col-sm-8 textbox">
+    <div class="col-sm-10 textbox">
         here be text (illustrating what Target Network fixing is and how we implement it)
     </div>
 </div>
 
 <h2 class="mt-3">Double Q Learning</h2>
 <div class="row">
-    <div class="col-sm-8 textbox">
+    <div class="col-sm-10 textbox">
         here be text (illustrating what Double Q learning is and how we implement it)
     </div>
 </div>
 
 <h2 class="mt-3">Batching</h2>
 <div class="row">
-    <div class="col-sm-8 textbox">
+    <div class="col-sm-10 textbox">
         here be text (illustrating why batching matters and how we implement it)
     </div>
 </div>
 
 <h2 class="mt-3">References</h2>
 <div class="row">
-    <div class="col-sm-8 textbox">
+    <div class="col-sm-10 textbox">
         1. Sutton, R. A., and Barto A Reinforcement Learning An Introduction 2020
         2. openai gym
         3. Mnih et. al. Playing Atari with Deep Reinforcement Learning 2013
