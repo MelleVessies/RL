@@ -7,6 +7,11 @@
 </p>
 
 <div class="row">
+    <div class="line-graph" data-env="CartPole-v1"></div>
+    <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_10000__Target_False"></div>
+</div>
+
+<div class="row">
     <div class="col-sm-10 textbox">
         Deep Q Networks (DQN) are deep Reinforcement Learning (RL) algorithms which leverage the flexibility
         of neural networks to handle reinforcement learning tasks which would be difficult or impossible to do
@@ -362,5 +367,9 @@
         5.
     </div>
 </div>
+
+<script type="application/javascript">
+    collect_graphs();
+</script>
 
 {% endblock %}
