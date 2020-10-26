@@ -1,6 +1,4 @@
 function create_line_graph(data, target, graph_id) {
-    // console.log(data);
-
     // No idea wtf this does
     var R = 6
 
@@ -31,7 +29,7 @@ function create_line_graph(data, target, graph_id) {
     let line_names = [];
 
     // Ugliest way possible to later get the max
-    for (const [seed_idx, seed_res] of Object.entries(data)) {
+    for (const [seed_idx, seed_res] of Object.entries(data.data)) {
         line_names.push(seed_idx);
         for (const [bla, res_entry] of Object.entries(seed_res)) {
             all_x.push(res_entry.x)
@@ -94,25 +92,6 @@ function create_line_graph(data, target, graph_id) {
         .text((d) => {return d})
 
 
-    // Show confidence interval
-    // svg.append("path")
-    //     .datum(data)
-    //     .attr("fill", "#cce5df")
-    //     .attr("stroke", "none")
-    //     .attr("d", d3.area()
-    //         .x(function (d) {
-    //             return x(d.x)
-    //         })
-    //         .y0(function (d) {
-    //             return y(d.CI_right)
-    //         })
-    //         .y1(function (d) {
-    //             return y(d.CI_left)
-    //         })
-    //     )
-
-
-
     // create a tooltip
     var tooltip = d3.select(target.get(0))
       .append("div")
@@ -152,7 +131,8 @@ function create_line_graph(data, target, graph_id) {
     }
 
 
-    $(Object.values(data)).each((idx, res) => {
+    $(Object.values(data.data)).each((idx, res) => {
+
 
         svg.append("path")
             .datum(res)
@@ -168,6 +148,26 @@ function create_line_graph(data, target, graph_id) {
                     return y(d.y)
                 })
             );
+
+        if(data.std !== undefined) {
+            //Show confidence interval
+            svg.append("path")
+                .datum(res)
+                .attr("fill", colors[idx])
+                .attr("stroke", "none")
+                .attr('opacity', "0.3")
+                .attr("d", d3.area()
+                    .x(function (d) {
+                        return x(d.x)
+                    })
+                    .y0(function (d, i) {
+                       return y(d.y - (data.std[line_names[idx]][i].y/5));
+                    })
+                    .y1(function (d, i) {
+                        return y(d.y + (data.std[line_names[idx]][i].y)/5);
+                    })
+            )
+        }
 
         svg.append("path")
             .datum(res)

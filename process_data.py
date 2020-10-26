@@ -105,14 +105,12 @@ def create_avg_over_seeds(result_list):
 
             # result_list[env][tricks_key]['MSTD_errors'] = MSTD_errors
             result_list[env][tricks_key] = {
-                'returns': returns,
+                'returns': {'data': returns},
                 'grid_search': heatmap_data
             }
         result_list[env]['heatmap_bounds'] = {'upper': upper, 'lower': lower}
         result_list[env]["all_tricks"] = {
-            'returns': trick_returns,
-            'returns_std': trick_returns_std #figure out how to get std :(
-        }
+            'returns': {"data": trick_returns, 'std': trick_returns_std}}
 
     return result_list
 
