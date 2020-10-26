@@ -59,6 +59,7 @@ function render_result_list(response){
 
     for (const [key, value] of Object.entries(response)) {
         console.log(key);
+        console.log(value);
 
         let env_tab_header = env_header_template.clone().text(key);
         let env_tab_content = env_content_template.clone();

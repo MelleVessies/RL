@@ -66,9 +66,14 @@ def create_avg_over_seeds(result_list):
                     if upper is not None:
                         if upper < run_res['avg_final_performance']:
                             upper = run_res['avg_final_performance']
+                    else:
+                        upper = run_res['avg_final_performance']
+
                     if lower is not None:
                         if lower > run_res['avg_final_performance']:
                             lower = run_res['avg_final_performance']
+                    else:
+                        upper = run_res['avg_final_performance']
 
                     heatmap_running[run_res['eps_min']][run_res['discount_factor']].append([
                         run_res['avg_final_performance'],
