@@ -94,9 +94,10 @@ class DataHandler:
         datadict["episode_durations"] = episode_durations
         datadict["episode_returns"] = episode_returns
         datadict["starting_states"] = starting_states
-        datadict["MSTD_errors"] = MSTD_errors
+        datadict["MSTD_errors"] = [x.item() for x in MSTD_errors]
         datadict["final_performance"] = performances
-        datadict["avg_final_performance"] = np.mean(performances)
+        datadict["avg_final_performance"] = np.mean(performances).item()
+        print(datadict)
 
         if not os.path.exists("results"):
             os.mkdir("results")

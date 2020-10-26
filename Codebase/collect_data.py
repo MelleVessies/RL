@@ -75,3 +75,14 @@ def grid_search(run_settings_func, base_settings, environments, range_epsilon, r
                     print(vars(args))
                     run_settings_func(args, skip_completed=skip_completed)
                 # subprocess.call(['./abc.py', arg1, arg2])
+
+
+def grid_search2(run_settings_func, base_settings, environments,tuples, seed_range, skip_completed=True):
+    for name in environments:
+        make_env_info([eval(name)])
+        for epsilon, discount_factor in tuples:
+                for seed in seed_range:
+                    args = PseudoArgs(add_settings_to_default(base_settings, {"environment_name":name,"eps_min":epsilon,"discount_factor":discount_factor, "seed":seed}))
+                    print(vars(args))
+                    run_settings_func(args, skip_completed=skip_completed)
+                # subprocess.call(['./abc.py', arg1, arg2])

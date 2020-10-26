@@ -1,10 +1,10 @@
 no_tricks_settings = {
     "num_episodes": 200,
-    "max_episode_steps":500,
+    "max_episode_steps":0,
 
     # Experiment ding
-    "experience_replay_capacity":0,
-    # "experience_replay_capacity":10000,
+    # "experience_replay_capacity":0,
+    "experience_replay_capacity":10000,
 
     "clip_grad":-1,
     "batch_size":64,
@@ -18,8 +18,8 @@ no_tricks_settings = {
     "double_q_network": False,
 
     # Experiment ding
-    # "target_network":False,
-    "target_network":True,
+    "target_network":False,
+    # "target_network":True,
 
     "do_not_train":False,
     "create_animation":False,
@@ -30,6 +30,9 @@ grid_search_range = {
     "eps_min":[0.05*i for i in range(1, 8)],
     "discount_factor": [round(0.7 + 0.05*i, 2) for i in range(7)]
 }
+
+tuple_search = [(0.1, round(0.7 + 0.05*2, 2))]
+
 
 training_seed_range = [i for i in range(1, 6)]
 eval_seed_range = [i for i in range(6, 11)]

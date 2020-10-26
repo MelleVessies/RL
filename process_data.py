@@ -44,13 +44,16 @@ def group_results():
 
 def create_avg_over_seeds(result_list):
     print("\n Now creating seed avgs \n")
+    best_hyperparameters = {}
+
     for env, env_results in result_list.items():
+        best_hyperparameters[env] = {}
         trick_returns = defaultdict(dict)
         trick_returns_std = defaultdict(dict)
-
         upper, lower = None, None
 
         for tricks_key, trick_results in env_results.items():
+
             print(f"Now running for {env} + {tricks_key} \n")
             MSTD_errors = []
             returns = defaultdict(dict)
@@ -60,20 +63,13 @@ def create_avg_over_seeds(result_list):
             heatmap_running = defaultdict(lambda: defaultdict(list))
             heatmap_data = []
 
+            avg_arr = None
+
             for seed, seed_res in trick_results.items():
+                avg_perf = []
+
                 for run_res in seed_res:
-
-                    if upper is not None:
-                        if upper < run_res['avg_final_performance']:
-                            upper = run_res['avg_final_performance']
-                    else:
-                        upper = run_res['avg_final_performance']
-
-                    if lower is not None:
-                        if lower > run_res['avg_final_performance']:
-                            lower = run_res['avg_final_performance']
-                    else:
-                        lower = run_res['avg_final_performance']
+                    avg_perf.append(run_res['avg_final_performance'])
 
                     heatmap_running[run_res['eps_min']][run_res['discount_factor']].append([
                         run_res['avg_final_performance'],
@@ -83,6 +79,34 @@ def create_avg_over_seeds(result_list):
                     returns[seed] = [{'x': x, 'y': y} for x, y in enumerate(run_res['episode_returns'])]
                     # TODO here we are appending all episode returns, which should also be the best only
                     returns_for_avg.append(run_res['episode_returns'])
+
+                if avg_arr is None:
+                    avg_arr = np.array(avg_perf)
+                else:
+                    avg_arr += np.array(avg_perf)
+
+            # print(avg_arr)
+            perf_upp = (avg_arr/5).max()
+            best_perf = avg_arr.argmax()
+            best_eps = 0.05 * (1 + best_perf%7)
+            best_gam = 0.7 + 0.05 * (best_perf//7)
+
+            best_hyperparameters[env][tricks_key] = {"eps": best_eps, "gam": best_gam, "res": perf_upp}
+            # print(best_perf, avg_arr[best_perf]/5)
+            # print(f"best epsilon: {best_eps}, best gamma: {best_gam}")
+            # input()
+            perf_low = (avg_arr/5).min()
+            if upper is not None:
+                if upper < perf_upp:
+                    upper = perf_upp
+            else:
+                upper = perf_upp
+
+            if lower is not None:
+                if lower > perf_low:
+                    lower = perf_low
+            else:
+                lower = perf_low
 
             # TODO, yea, if this breaks we have inconsistent numbers of episodes
             returns_std_for_avg = np.std(np.array(returns_for_avg), axis=0)
@@ -111,6 +135,10 @@ def create_avg_over_seeds(result_list):
         result_list[env]['heatmap_bounds'] = {'upper': upper, 'lower': lower}
         result_list[env]["all_tricks"] = {
             'returns': {"data": trick_returns, 'std': trick_returns_std}}
+        result_list[env]["best_runs"] = best_hyperparameters[env]
+    for env in best_hyperparameters:
+        for tricks in best_hyperparameters[env]:
+            print(env, tricks, best_hyperparameters[env][tricks])
 
     return result_list
 

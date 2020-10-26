@@ -74,13 +74,20 @@ function init_heatmap(data, target, plot_type, upper, lower){
 
 
     // Build color scale
-    var myColor = d3.scaleQuantize()
-        .range(colorbrewer.Blues[9])
-        .domain([lower,upper])
+    // var myColor = d3.scaleQuantize()
+    //     .range(colorbrewer.Blues[9])
+    //     .domain([lower,upper])
+    var myColor = d3.scaleLinear()
+      .range(["white", "#1c4966"])
+      .domain([lower, upper])
 
     // Color legend.
-    var colorScale = d3.scaleQuantize()
-        .range(colorbrewer.Blues[9])
+    // var colorScale = d3.scaleQuantize()
+    //     .range(colorbrewer.Blues[9])
+    //     .domain([lower, upper])
+
+    var colorScale = d3.scaleLinear()
+        .range(["white", "#1c4966"])
         .domain([lower, upper])
 
     var colorLegend = d3.legendColor()

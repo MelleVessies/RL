@@ -134,7 +134,7 @@ def run_episodes(train, QWrapper, policy, env, args):
                 ep_no += 1
                 returns = sum(all_rewards)
                 episode_durations.append(steps)
-                if global_steps < args.batch_size:
+                if (global_steps < args.batch_size or len(memory) < args.batch_size) and not len(memory)==0:
                     with torch.no_grad():
                         transitions = memory.get_all()
                         state, action, reward, next_state, done = zip(*transitions)
