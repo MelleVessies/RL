@@ -65,12 +65,17 @@ function render_result_list(response){
 
         env_tab_header.attr({'data-target-ref': key});
         env_tab_content.attr({'data-src-ref': key});
+        let heatmap_bounds = value.heatmap_bounds;
+        let upper = heatmap_bounds.upper;
+        let lower = heatmap_bounds.lower;
 
         for (const [trick_key, tricks_res] of Object.entries(value)) {
             console.log(" --- " + trick_key)
 
             let trick_tab_header = res_header_template.clone().text(trick_key);
             let trick_tab_content = res_content_template.clone();
+
+            if (trick_key === "heatmap_bounds") {continue;}
 
             trick_tab_header.attr({'data-target-ref': key + "_" + trick_key});
             trick_tab_content.attr({'data-src-ref': key + "_" + trick_key});
