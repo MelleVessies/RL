@@ -1,7 +1,7 @@
 // set the dimensions and margins of the graph
 function init_heatmap(data, target, plot_type, upper, lower, plotlegend = true){
     var margin = {top: 40, right: plotlegend ? 250 : 40, bottom: 40, left: 40},
-      width = (plotlegend ? 490 : 300 ) - margin.left - margin.right,
+      width = (plotlegend ? 510 : 300 ) - margin.left - margin.right,
       height = 300 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
