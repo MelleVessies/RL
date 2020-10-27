@@ -36,7 +36,19 @@ def group_results():
                 print(f'WARNING: seems like {res_json_file} is incomplete')
                 continue
 
-            tricks_key = 'Replay_' + str(res['experience_replay_capacity']) + '__Target_' + str(res['target_network'])
+            if res['experience_replay_capacity'] == 10000:
+                if res['target_network'] == 2:
+                    tricks_key = 'both tricks'
+                else:
+                    tricks_key = 'experience replay'
+            else:
+                if res['target_network'] == 2:
+                    tricks_key = 'target network fixing'
+                else:
+                    tricks_key = 'no tricks'
+
+
+            # tricks_key = 'Replay_' + str(res['experience_replay_capacity']) + '__Target_' + str(res['target_network'])
 
             result_list[res['environment_name']][tricks_key][res['seed']].append(res)
 
