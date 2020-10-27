@@ -1,7 +1,7 @@
 // set the dimensions and margins of the graph
 function init_heatmap(data, target, plot_type, upper, lower, plotlegend = true){
-    var margin = {top: 40, right: plotlegend ? 250 : 40, bottom: 40, left: 40},
-      width = (plotlegend ? 510 : 300 ) - margin.left - margin.right,
+    var margin = {top: 40, right: plotlegend ? 350 : 40, bottom: 40, left: 40},
+      width = (plotlegend ? 610 : 300 ) - margin.left - margin.right,
       height = 300 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
@@ -96,15 +96,14 @@ function init_heatmap(data, target, plot_type, upper, lower, plotlegend = true){
             .scale(colorScale)
             .shapePadding(35)
             .shapeWidth(50)
-            .shapeHeight(40)
-            .labelAlign("middle");
-
-        $('text.label').attr('transform', 'translate(55, 25)');
+            .shapeHeight(40);
 
         svg.append("g")
             .attr("height", height - 30)
             .attr("transform", "translate(" + (width + 20) + "," + 20 + ")")
             .call(colorLegend);
+
+        svg.selectAll('text.label').attr('transform', 'translate(55, 25)');
     }
     // create a tooltip
     var tooltip = d3.select(target.get(0))
