@@ -25,7 +25,7 @@ def group_results():
                 # res['avg_growth'] = avg_growth
 
             try:
-                res.pop('MSTD_errors')
+                # res.pop('MSTD_errors')
                 res.pop('starting_states')
                 res.pop('episode_durations')
                 #res.pop('episode_returns')
@@ -92,6 +92,9 @@ def create_avg_over_seeds(result_list):
                         # run_res['avg_growth']
                     ])
 
+                    print(run_res)
+                    input()
+
                     MDTDE_growth_running[run_res['eps_min']][run_res['discount_factor']].append([
                         run_res['MSTD_errors'],
                         # run_res['avg_growth']
@@ -155,12 +158,19 @@ def create_avg_over_seeds(result_list):
                         # 'growth': round(sum(values[:, 1])/len(values[:, 1]), 2)
                     })
 
+
+            for epsilon, discount_factors in MDTDE_growth_running.items():
+                for discount_factor, values in discount_factors.items():
+                    values = np.array(values)
+
+
                     MDTDE_growth.append({
                         'discount_factor': round(discount_factor, 2),
                         'epsilon': round(epsilon, 2),
                         'mstd_growth': round(sum(values[:, 0])/len(values[:, 0]), 2),
                         # 'growth': round(sum(values[:, 1])/len(values[:, 1]), 2)
                     })
+
             # result_list[env][tricks_key]['MSTD_errors'] = MSTD_errors
             result_list[env][tricks_key] = {
                 'returns': {'data': returns},
