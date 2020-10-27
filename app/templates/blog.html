@@ -37,7 +37,7 @@
 <div class="row">
     <div class="col-sm-10 textbox">
         Before we get into Deep Q Networks it’s important to give a brief overview of Q-learning.
-        Q learning is an off policy method for learning the Q-value function [Sutton and Barto 2020].
+        Q learning is an off policy method for learning the Q-value function <a href="http://incompleteideas.net/book/the-book-2nd.html"> (Sutton and Barto 2020) [2] </a> .
         An off policy method means that we have a behavioural policy to sample data with which is different
         from the target policy we are trying to learn.  In the case of Q learning, we are trying to learn a
         greedy policy. In off policy learning, we require a coverage assumption to be met for the behavioural
@@ -57,7 +57,7 @@
 
         Where $Q_\pi(s, a)$ is the Q-value of state-action pair $s$ and $a$, $G_t$ is the (discounted) return at
         timestep $t$, $R_t$ is the observed reward at timestep $t$ and $\gamma$ is the discount factor.
-        Q learning [Watkins, 1989] is a Reinforcement Learning algorithm from the Temporal Difference family of
+        Q learning (<a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf">Watkins, 1989</a>) [3] is a Reinforcement Learning algorithm from the Temporal Difference family of
         algorithms.  In Temporal Difference (TD) algorithms we use a bootstrapping method where, instead of the return
         from an episode, the update is based on the difference in rewards between $n$ steps (in our case $n=1$).
         This allows for training with single transitions rather than needing an entire episode.
@@ -128,7 +128,9 @@
         approach can be seen in RL:AI[2020] and the semi gradient update can be written as:
 
 
-        <h2>Hier functieeee</h2>
+        <div class="formula">
+            $$w_{t+1} = w_{t} + \alpha \left [ R_{t+1} + \text{max}_{a_{t+1}} (Q(s_{t+1}, a_{t+1}, w_{t})) - Q(s_{t}, a_{t}, w_{t}) \right ] \mathbf{\nabla}_{w}Q(s_{t}, a_{t}, w_{t})$$
+        </div>
 
 
     </div>
@@ -183,22 +185,10 @@
             </li>
         </ul>
 
-        The paper by Mnih et al.[2015] combined the DQN with some tricks to prevent divergence and allow it to complete
-        the complicated tasks. In this blog we’ll look at the concrete effect of using the architecture worked,
-        we had a starting point for testing other environments.  From the given algorithm
-        and the shortcuts it uses (WE MIGHT WANT TO DISCUSS THESE SHORTCUTS ABOVE SOME MORE) we can already
-        see some areas where we might encounter problems.  The first is with the maximization bias due to the max function.
-        Another area would cause problems is with the experiences being used only once.
-        Since some states might be hard to get into and we want to get the most out of the previous experience,
-        it is inefficient and harder to converge if we only use each sample once.  Another place that could
-        cause error is when an outlier is present, and the gradient from this causes a large change in the weights,
-        leading to a much different Q function.  Using bootstrapping to estimate the future rewards is also likely
-        to cause problems, since this could lead to an increase in variance if the discount factor is too high,
-        or bias if the discount factor used is too low.  The final place that can cause problems that we are looking
-        at today is the target in the semi gradient method is the same network we are updating through the weight change.
-        This can lead to a phenomenon referred to as catastrophic forgetting.  This is caused by the weights being
-        updated for the whole Q function rather than just for the one state action pair.  Meaning that some outcome
-        can have effects for states other than the one currently being updated.  This can compound and cause major problems.
+        <a href="https://www.datascienceassn.org/sites/default/files/Human-level%20Control%20Through%20Deep%20Reinforcement%20Learning.pdf"> Mnih et al.[2015] </a>
+        combined the DQN with some tricks to prevent divergence and allow it to complete the complicated tasks.
+        In this blog we’ll look at the concrete effect of using “experience replay” and “target networks”.
+        In order to gain a deeper understanding into why these tricks prevent divergence and when they are helpful.
 
     </div>
 
@@ -208,7 +198,7 @@
 <div class="row">
     <div class="col-sm-10 textbox">
         Environments in reinforcement learning refer to any space where agents interact to either get a task
-        completed or to continually make good actions. This could be something as simple learning which slot
+        completed or to continually make good actions. This could be something as simple as learning which slot
         machine will give a good payoff, to putting a box from one conveyor belt to another or even as complex
         as a game of go.  Since each of these environments can differ greatly and they each bring their own
         difficulties.   We hypothesize that the reward landscape plays a large role in the chance of divergence
@@ -319,10 +309,10 @@
         <div class="line-graph" data-env="CartPole-v1"></div>
     </div>
     <div class="col-sm-4">
-        <div class="line-graph" data-env="LunarLander-v2"></div>
+        <div class="line-graph" data-env="MountainCar-v0"></div>
     </div>
     <div class="col-sm-4">
-        <div class="line-graph" data-env="MountainCar-v0"></div>
+        <div class="line-graph" data-env="LunarLander-v2"></div>
     </div>
 </div>
 
@@ -375,12 +365,6 @@ LunarLander-v2 results:
 </div>
 
 
-<h2 class="mt-3">Semi-Gradient vs Full-Gradient approach</h2>
-<div class="row">
-    <div class="col-sm-10 textbox">
-        This we dont need now???
-    </div>
-</div>
 
 <h2 class="mt-3">Experimental Setup</h2>
 <div class="row">
@@ -397,7 +381,8 @@ LunarLander-v2 results:
 <h2 class="mt-3">Experience Replay</h2>
 <div class="row">
     <div class="col-sm-10 textbox">
-        Now, let us say the agent tries to become good at whatever task is given by changing its actions according to what it encounters in its ventures, using [REF TO EQUATION] the above update rule to update the parameters that determine its estimated Q-values. It could do so whenever it gets a new reward (whenever it gets enough data to perform a batch update) but this means the agent continually only is adjusting to what it has encountered most recently. This problem was - according to Barto and Sutton [1] - first described by <a href="http://www.incompleteideas.net/lin-92.pdf"> Long-Ji Lin in 1992</a> [2]. He made the observation that it might be wasteful to throw away experiences as some might be rare or costly to obtain in situations with physical agents. As a result he proposed to reuse experiences, which he defines as a pairing of state, the action taken, the reinforcement (reward) obtained and the following state. He calls reusing past experiences Experience Replay . in the paper by Lin the 100 most recent episodes (lessons) are sampled from randomly, with recent experiences being exponentially more likely. However, more recently the approach has been to either sample experiences uniformly with recency governed by the size of a replay buffer (see https://arxiv.org/pdf/1312.5602.pdf ) or by using a prioritization to determine which experiences should be replayed (https://arxiv.org/pdf/1511.05952.pdf ) in this blog we will look at whether standard (uniform sampling) experience replay can improve the performance of DQNs through reducing divergence.
+        Now, let us say the agent tries to become good at whatever task is given by changing its actions according to what it encounters in its ventures, using [REF TO EQUATION] the above update rule to update the parameters that determine its estimated Q-values. It could do so whenever it gets a new reward (whenever it gets enough data to perform a batch update) but this means the agent continually only is adjusting to what it has encountered most recently. This problem was - according to <a <a href="http://incompleteideas.net/book/the-book-2nd.html"> Barto and Sutton </a> [2] - first described by <a href="http://www.incompleteideas.net/lin-92.pdf"> Long-Ji Lin in 1992</a> [4]. He made the observation that it might be wasteful to throw away experiences as some might be rare or costly to obtain in situations with physical agents. As a result he proposed to reuse experiences, which he defines as a pairing of state, the action taken, the reinforcement (reward) obtained and the following state. He calls reusing past experiences Experience Replay . in the paper by Lin the 100 most recent episodes (lessons) are sampled from randomly, with recent experiences being exponentially more likely. However, more recently the approach has been to either sample experiences uniformly with recency governed by the size of a replay buffer ( <a href="https://arxiv.org/pdf/1312.5602.pdf?"> see this paper for example</a> [6]) or by using
+        <a href="https://arxiv.org/pdf/1511.05952.pdf "> prioritization </a> [7] to determine which experiences should be replayed in this blog we will look at whether standard (uniform sampling) experience replay can improve the performance of DQNs through reducing divergence.
     </div>
 </div>
 
@@ -416,13 +401,15 @@ The target network in our implantation starts at 0 updates and then every 2 epis
 <div class="row">
     <div class="col-sm-10 textbox">
         <ol>
+            <li><a href="https://arxiv.org/abs/1812.02648"> Van Hasselt, H., Doron, Y., Strub, F., Hessel, M., Sonnerat, N., & Modayil, J. (2018). Deep reinforcement learning and the deadly triad. arXiv preprint arXiv:1812.02648. </a></li>
             <li> <a href="http://incompleteideas.net/book/the-book-2nd.html"> Sutton, R. S., & Barto, A. G. (2018). Reinforcement learning: An introduction. MIT press.</a> </li>
+            <li> <a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf"> Watkins, C. J., & Dayan, P. (1992). Q-learning. Machine learning, 8(3-4), 279-292.</a>
             <li><a href="http://www.incompleteideas.net/lin-92.pdf"> Lin, L. J. (1992). Self-improving reactive agents based on reinforcement learning, planning and teaching. Machine learning, 8(3-4), 293-321. </a></li>
             <li><a href="https://gym.openai.com/"> OpenAI Gym </a></li>
             <li><a href="https://arxiv.org/pdf/1312.5602.pdf?"> Mnih, V., Kavukcuoglu, K., Silver, D., Graves, A., Antonoglou, I., Wierstra, D., & Riedmiller, M. (2013). Playing atari with deep reinforcement learning. arXiv preprint arXiv:1312.5602. </a></li>
             <li><a href="https://arxiv.org/pdf/1511.05952.pdf "> Schaul, T., Quan, J., Antonoglou, I., & Silver, D. (2015). Prioritized experience replay. arXiv preprint arXiv:1511.05952. </a></li>
             <li><a href="https://arxiv.org/pdf/1709.06560.pdf"> Henderson, P., Islam, R., Bachman, P., Pineau, J., Precup, D., & Meger, D. (2017). Deep reinforcement learning that matters. arXiv preprint arXiv:1709.06560. </a></li>
-            <li></li>
+            <li><a href="https://github.com/pytorch/pytorch"> https://github.com/pytorch </a></li>
             <li></li>
             <li></li>
         </ol>
