@@ -60,6 +60,7 @@ def create_avg_over_seeds(result_list):
             returns_std = defaultdict(dict)
             returns_for_avg = []
 
+
             heatmap_running = defaultdict(lambda: defaultdict(list))
             heatmap_data = []
 
@@ -77,6 +78,7 @@ def create_avg_over_seeds(result_list):
                     ])
                     # TODO this means we are taking the final hyper parameter combination of the seed. this should be the best!!!
                     returns[seed] = [{'x': x, 'y': y} for x, y in enumerate(run_res['episode_returns'])]
+
                     # TODO here we are appending all episode returns, which should also be the best only
                     returns_for_avg.append(run_res['episode_returns'])
 
@@ -88,8 +90,13 @@ def create_avg_over_seeds(result_list):
             # print(avg_arr)
             perf_upp = (avg_arr/5).max()
             best_perf = avg_arr.argmax()
-            best_eps = 0.05 * (1 + best_perf%7)
-            best_gam = 0.7 + 0.05 * (best_perf//7)
+
+            # input(len(returns_for_avg))
+            # input(len(returns_for_avg[best_perf*5 : best_perf*5+5]))
+            # returns_for_avg = returns_for_avg[best_perf*5 : best_perf*5+5]
+
+            best_eps = 0.05 * (1 + best_perf % 7)
+            best_gam = 0.7 + 0.05 * (best_perf // 7)
 
             best_hyperparameters[env][tricks_key] = {"eps": best_eps, "gam": best_gam, "res": perf_upp}
             # print(best_perf, avg_arr[best_perf]/5)
@@ -112,7 +119,6 @@ def create_avg_over_seeds(result_list):
             returns_std_for_avg = np.std(np.array(returns_for_avg), axis=0)
             returns_for_avg = np.mean(np.array(returns_for_avg), axis=0)
 
-
             trick_returns[tricks_key] = [{'x': x, 'y': y} for x, y in enumerate(list(returns_for_avg))]
             trick_returns_std[tricks_key] = [{'x': x, 'y': y} for x, y in enumerate(list(returns_std_for_avg))]
 
@@ -133,9 +139,13 @@ def create_avg_over_seeds(result_list):
                 'grid_search': heatmap_data
             }
         result_list[env]['heatmap_bounds'] = {'upper': upper, 'lower': lower}
+
+
         result_list[env]["all_tricks"] = {
             'returns': {"data": trick_returns, 'std': trick_returns_std}}
+
         result_list[env]["best_runs"] = best_hyperparameters[env]
+
     for env in best_hyperparameters:
         for tricks in best_hyperparameters[env]:
             print(env, tricks, best_hyperparameters[env][tricks])
