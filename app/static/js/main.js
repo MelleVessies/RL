@@ -88,7 +88,7 @@ function render_result_list(response){
                 seed_tab_header.attr({'data-target-ref': key + "_" + trick_key + "_" + seed_idx});
                 seed_tab_content.attr({'data-src-ref': key +  "_" + trick_key + "_"  + seed_idx});
 
-                if(seed_idx === 'grid_search'){
+                if(seed_idx === 'grid_search' || seed_idx === "mstd_grid"){
                     let heatmap_container_id = 'heatmap_' + key + "_" + trick_key;
                     let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
