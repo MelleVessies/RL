@@ -311,58 +311,14 @@
     <div class="col-sm-4">
         <div class="line-graph" data-env="MountainCar-v0"></div>
     </div>
-    <div class="col-sm-4">
-        <div class="line-graph" data-env="LunarLander-v2"></div>
-    </div>
 </div>
 
     Cartpole-v1 results:
-<div class="row expanded">
-    <div class="col-sm-3">
-        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_0__Target_False"></div>
-    </div>
-    <div class="col-sm-3">
-        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_0__Target_2"></div>
-    </div>
-    <div class="col-sm-3">
-        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_10000__Target_False"></div>
-    </div>
-    <div class="col-sm-3">
-        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_10000__Target_2" data-plot-legend="true"></div>
-    </div>
-</div>
 
 MountainCar-v0 results:
-<div class="row expanded">
-<div class="col-sm-3">
-    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_0__Target_False"></div>
-</div>
-<div class="col-sm-3">
-    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_0__Target_2"></div>
-</div>
-<div class="col-sm-3">
-    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_10000__Target_False"></div>
-</div>
-<div class="col-sm-3">
-    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_10000__Target_2"></div>
-</div>
-</div>
+
 
 LunarLander-v2 results:
-<div class="row expanded">
-<div class="col-sm-3">
-    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_0__Target_False"></div>
-</div>
-<div class="col-sm-3">
-    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_0__Target_2"></div>
-</div>
-<div class="col-sm-3">
-    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_10000__Target_False"></div>
-</div>
-<div class="col-sm-3">
-    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_10000__Target_2"></div>
-</div>
-</div>
 
 
 
@@ -396,6 +352,128 @@ The target network in our implantation starts at 0 updates and then every 2 epis
     </div>
 </div>
 
+<h2 class="mt-3">Results and Discussion</h2>
+<div class="row">
+    <div class="col-sm-10 textbox">
+In this section we will be looking at the results of the grid-”search”, which show the average final episode returns and the performance for each of the trick settings over episodes. The grid search results are organised as follows: Left) No tricks applied - Center left) Using a target network, - Center right) Using experience replay -  Right) both a target network and experience replay.
+
+Divergence?!?
+
+</div>
+</div>
+
+<h3 class="mt-3">Cartpole-v1</h2>
+<div class="row">
+    <div class="col-sm-8 textbox">
+
+            We will start by examining the Cartpole environment.  As previously mentioned, the environment will tend to have shorter episodes at the start while agents are learning.  It has a positive uniform landscape, as each step the pole stays upright gives +1 reward.  The heatmaps for the vanilla DQN, the two tricks and the combination of tricks can be seen in figures XXX.
+    </div>
+</div>
+<div class="row expanded">
+    <div class="col-sm-3">
+        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_0__Target_False"></div>
+    </div>
+    <div class="col-sm-3">
+        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_0__Target_2"></div>
+    </div>
+    <div class="col-sm-3">
+        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_10000__Target_False"></div>
+    </div>
+    <div class="col-sm-3">
+        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_10000__Target_2" data-plot-legend="true"></div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-sm-8 textbox">
+
+This shows that to solve the Cartpole problem it is very important to include experience replay, as without it (in the left and center-left heatmaps) the agent is not able to perform the task well for any hyperparameter setting. With Just experience replay, we see that performance improves for approximately the “lower half” of the discount factors, and improves for performance for the higher discount factors when the target network is combined with experience replay. Now lets see if we can find the culprit..
+When we take a further look and see how each of the trick applications performs over time we notice that the baseline without tricks and using the tarket network immediately decrease in performance, even to below their random initialization go on a race to the bottom. Furthermore, even with experience replay (and the target network combined) even after learning well during the first 50 episodes, their performances decrease.
+    </div>
+    <div class="col-sm-4">
+        <div class="line-graph" data-env="CartPole-v1"></div>
+    </div>
+</div>
+
+
+<h3 class="mt-3">Mountaincar-v0</h2>
+<div class="row">
+    <div class="col-sm-10 textbox">
+
+        Mountaincar-v0
+        Next we take a look at the Mountaincar environment. This environment will tend to have longer episodes as the model needs to figure out that it has to go backwards first to gain momentum before going forwards.  This environment is a negative uniform landscape, as each step the model hasn't reached the goal, it gains -1 reward.
+    </div>
+</div>
+<div class="row expanded">
+<div class="col-sm-3">
+    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_0__Target_False"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_0__Target_2"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_10000__Target_False"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_10000__Target_2"></div>
+</div>
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="line-graph" data-env="MountainCar-v0"></div>
+    </div>
+    <div class="col-sm-8 textbox">
+          The heatmaps for the model setups can be seen in figures XXX and show similar results as the cartpole setting There are two differences though. Firstly there seems to be a more narrow range of hyperparameters for reliable good performance for this problem. Secondly, using a target network potentially does have *some* impact here, although this could be simple randomness. (although it can be observed that these better performing results are in the area that does better with the other trick settings)  when looking at the improvement over episodes we can see that on average convergence has not been reached yet
+    </div>
+</div>
+
+<h3 class="mt-3">LunarLander-v2</h2>
+<div class="row">
+    <div class="col-sm-10 textbox">
+Finally we take a look at the LunarLander environment. This environment will tend to have shorter episodes at the start as it will tend to crash.  It has a much more complicated rewards landscape, with negative reward for the actions it takes and any time it crashes, but positive rewards for different types of landings as previously mentioned.
+    </div>
+</div>
+
+<div class="row expanded">
+<div class="col-sm-3">
+    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_0__Target_False"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_0__Target_2"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_10000__Target_False"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_10000__Target_2"></div>
+</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-8 textbox">
+
+        The heatmaps for the model setups can be seen in figures XXX and seem to show relatively good performance for all hyperparameters, with an emphasis for lower epsilon values when experience replay is used. This result was initially surprising, as this environment was selected for its presumed more complex reward landscape.
+
+        When we look at the performance over time we do see experience replay is again the factor which gives a major improvement, but this time mostly in how quickly the agent picks up on what to do. A point of interest, though, is that when the replay memory is introduced, the agent stops performing well for a discount factor of $\gamma$ = 1. (divergence?)
+    </div>
+<div class="col-sm-4">
+    <div class="line-graph" data-env="LunarLander-v2"></div>
+</div>
+</div>
+
+
+<h2 class="mt-3">Conclusion</h2>
+<div class="row">
+    <div class="col-sm-8 textbox">
+        Discuss what we saw, restate the mission statement and the results surrounding it.  Give a statement about what we want to do next? Refer back to the hypothesis about types of environments and how the different tricks help in them.
+
+        Firstly, we have learned that it may not be obvious what qualifies as a “complex” reward landscape. Secondly, it seems that including experience replay during training has a positive effect w.r.t. Performance. This last point might be under the excluding of situations where no discoutn factor is applied, as we have observed that under this condition experience replay is detrimental for some environments (LunarLander).
+
+        [Conclusions divergence]
+
+    </div>
+</div>
 
 <h2 class="mt-3">References</h2>
 <div class="row">
