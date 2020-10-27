@@ -88,7 +88,7 @@ function render_result_list(response){
                 seed_tab_header.attr({'data-target-ref': key + "_" + trick_key + "_" + seed_idx});
                 seed_tab_content.attr({'data-src-ref': key +  "_" + trick_key + "_"  + seed_idx});
 
-                if(seed_idx === 'grid_search'){
+                if(seed_idx === 'grid_search' || seed_idx === "mstd_grid"){
                     let heatmap_container_id = 'heatmap_' + key + "_" + trick_key;
                     let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
@@ -164,7 +164,7 @@ async function collect_graphs() {
         let heatmap_container_id = 'heatmap_' + env + "_" + trick + "_" + idx;
         let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
-        init_heatmap(data, heatmap_container, 'return', upper, lower, legend);
+        init_heatmap(data, heatmap_container, 'return', upper, lower, legend, trick);
         item.replaceWith(heatmap_container.get(0));
     });
 

@@ -1,7 +1,7 @@
 // set the dimensions and margins of the graph
-function init_heatmap(data, target, plot_type, upper, lower, plotlegend = true){
-    var margin = {top: 40, right: plotlegend ? 250 : 40, bottom: 40, left: 40},
-      width = (plotlegend ? 510 : 300 ) - margin.left - margin.right,
+function init_heatmap(data, target, plot_type, upper, lower, plotlegend = true, title = ""){
+    var margin = {top: 40, right: plotlegend ? 350 : 40, bottom: 40, left: 40},
+      width = (plotlegend ? 610 : 300 ) - margin.left - margin.right,
       height = 300 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
@@ -12,6 +12,14 @@ function init_heatmap(data, target, plot_type, upper, lower, plotlegend = true){
     .append("g")
       .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append("text")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("text-decoration", "underline")
+        .text(title);
 
     // Labels of row and columns
     var myEpsilons = [];
@@ -63,28 +71,9 @@ function init_heatmap(data, target, plot_type, upper, lower, plotlegend = true){
         .style("text-anchor", "middle")
         .text("\u03B3"); // unicode for gamma
 
-    // function range(start, stop, step) {
-    //     var a = [start], b = start;
-    //
-    //     while (b < stop) {
-    //         a.push(b += step);
-    //     }
-    //     return a;
-    // }
-
-
-    // Build color scale
-    // var myColor = d3.scaleQuantize()
-    //     .range(colorbrewer.Blues[9])
-    //     .domain([lower,upper])
     var myColor = d3.scaleLinear()
       .range(["white", "#1c4966"])
       .domain([lower, upper])
-
-    // Color legend.
-    // var colorScale = d3.scaleQuantize()
-    //     .range(colorbrewer.Blues[9])
-    //     .domain([lower, upper])
 
     if(plotlegend) {
         var colorScale = d3.scaleLinear()
@@ -96,15 +85,14 @@ function init_heatmap(data, target, plot_type, upper, lower, plotlegend = true){
             .scale(colorScale)
             .shapePadding(35)
             .shapeWidth(50)
-            .shapeHeight(40)
-            .labelAlign("middle");
-
-        $('text.label').attr('transform', 'translate(55, 25)');
+            .shapeHeight(40);
 
         svg.append("g")
             .attr("height", height - 30)
             .attr("transform", "translate(" + (width + 20) + "," + 20 + ")")
             .call(colorLegend);
+
+        svg.selectAll('text.label').attr('transform', 'translate(55, 25)');
     }
     // create a tooltip
     var tooltip = d3.select(target.get(0))
@@ -119,14 +107,14 @@ function init_heatmap(data, target, plot_type, upper, lower, plotlegend = true){
 
     // Three function that change the tooltip when user hover / move / leave a cell
     var mouseover = function(d) {
-      tooltip.transition()
+        tooltip.transition()
           .duration(200)
           .style("opacity", 1);
-      tooltip
+        tooltip
             .html("<b>Value: </b>" + d[plot_type] + "<br/><b>Epsilon: </b>" + d.epsilon + "<br/><b>Discount factor: </b>" + d.discount_factor)
-            .style("left", (d3.event.pageX) + "px")
-            .style("top", (d3.event.pageY - 28) + "px")
-            .style("z-index", 9999999)
+             .style('left', width/2 - 20 + "px")
+             .style('top', "-75px")
+            .style("z-index", 99999999);
 
     }
 
