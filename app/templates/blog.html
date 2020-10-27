@@ -6,6 +6,11 @@
      By Angelo Groot, Jordan Earle, Melle Vessies and Reitze Jansen.
 </p>
 
+<!-- <div class="row">
+    <div class="line-graph" data-env="CartPole-v1"></div>
+    <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_10000__Target_False"></div>
+</div> -->
+
 <div class="row">
     <div class="col-sm-10 textbox">
         Deep Q Networks (DQN) are deep Reinforcement Learning (RL) algorithms which leverage the flexibility
@@ -308,6 +313,75 @@
 </div>
 
 
+<div class="row">
+
+    <div class="col-sm-4">
+        <div class="line-graph" data-env="CartPole-v1"></div>
+    </div>
+    <div class="col-sm-4">
+        <div class="line-graph" data-env="LunarLander-v2"></div>
+    </div>
+    <div class="col-sm-4">
+        <div class="line-graph" data-env="MountainCar-v0"></div>
+    </div>
+</div>
+
+    Cartpole-v1 results:
+<div class="row">
+    <div class="col-sm-3">
+        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_0__Target_False"></div>
+    </div>
+    <div class="col-sm-3">
+        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_0__Target_2"></div>
+    </div>
+    <div class="col-sm-3">
+        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_10000__Target_False"></div>
+    </div>
+    <div class="col-sm-3">
+        <div class="heatmap" data-env="CartPole-v1" data-trick-id="Replay_10000__Target_2"></div>
+    </div>
+</div>
+
+MountainCar-v0 results:
+<div class="row">
+<div class="col-sm-3">
+    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_0__Target_False"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_0__Target_2"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_10000__Target_False"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="MountainCar-v0" data-trick-id="Replay_10000__Target_2"></div>
+</div>
+</div>
+
+LunarLander-v2 results:
+<div class="row">
+<div class="col-sm-3">
+    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_0__Target_False"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_0__Target_2"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_10000__Target_False"></div>
+</div>
+<div class="col-sm-3">
+    <div class="heatmap" data-env="LunarLander-v2" data-trick-id="Replay_10000__Target_2"></div>
+</div>
+</div>
+
+
+<h2 class="mt-3">Semi-Gradient vs Full-Gradient approach</h2>
+<div class="row">
+    <div class="col-sm-10 textbox">
+        This we dont need now???
+    </div>
+</div>
+
 <h2 class="mt-3">Experimental Setup</h2>
 <div class="row">
     <div class="col-sm-10 textbox">
@@ -354,5 +428,9 @@ The target network in our implantation starts at 0 updates and then every 2 epis
         </ol>
     </div>
 </div>
+
+<script type="application/javascript">
+    collect_graphs();
+</script>
 
 {% endblock %}
