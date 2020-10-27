@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-function init_heatmap(data, target, plot_type, upper, lower, color, plotlegend = true, title = ""){
+function init_heatmap(data, target, plot_type, range, colors, plotlegend = true, title = ""){
     var margin = {top: 40, right: plotlegend ? 350 : 40, bottom: 40, left: 40},
       width = (plotlegend ? 610 : 300 ) - margin.left - margin.right,
       height = 300 - margin.top - margin.bottom;
@@ -72,13 +72,13 @@ function init_heatmap(data, target, plot_type, upper, lower, color, plotlegend =
         .text("\u03B3"); // unicode for gamma
 
     var myColor = d3.scaleLinear()
-      .range(["white", color])
-      .domain([lower, upper])
+      .range(colors)
+      .domain(range)
 
     if(plotlegend) {
         var colorScale = d3.scaleLinear()
-            .range(["white", color])
-            .domain([lower, upper])
+            .range(colors)
+            .domain(range)
 
         var colorLegend = d3.legendColor()
             .labelFormat(d3.format(".0f"))

@@ -174,7 +174,7 @@ async function collect_graphs() {
         let heatmap_container_id = 'heatmap_' + env + "_" + trick + "_" + idx;
         let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
-        init_heatmap(data, heatmap_container, 'return', upper, lower, "#79C345", legend, trick);
+        init_heatmap(data, heatmap_container, 'return', [lower, upper], ["white", "#79C345"], legend, trick);
         item.replaceWith(heatmap_container.get(0));
     });
     $(".divergence_heatmap").each((idx, item)=>{
@@ -199,7 +199,7 @@ async function collect_graphs() {
         let heatmap_container_id = 'heatmap_' + env + "_" + trick + "_" + idx;
         let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
-        init_heatmap(data, heatmap_container, 'return', upper, lower, "#900C3F", legend, trick);
+        init_heatmap(data, heatmap_container, 'return', [-10, 0, 20], ["#5263CF", "white", "#900C3F"], legend, trick);
         item.replaceWith(heatmap_container.get(0));
     });
 
