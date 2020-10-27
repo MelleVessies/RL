@@ -93,11 +93,12 @@ function render_result_list(response){
                     let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
                     if(seed_idx === "mstd_grid"){
-                        init_heatmap(seed_res, heatmap_container, 'return', 20, 0);
+                        init_heatmap(seed_res, heatmap_container, 'return', 20, 0, "#900C3F");
                         seed_tab_content.append(heatmap_container);
                     }
                     else{
-                        init_heatmap(seed_res, heatmap_container, 'return', upper, lower);
+                        init_heatmap(seed_res, heatmap_container, 'return', upper, lower, "#79C345");
+                        // init_heatmap(seed_res, heatmap_container, 'return', upper, lower, "#1c4966");
                         seed_tab_content.append(heatmap_container);
                     }
                     //
@@ -173,7 +174,32 @@ async function collect_graphs() {
         let heatmap_container_id = 'heatmap_' + env + "_" + trick + "_" + idx;
         let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
-        init_heatmap(data, heatmap_container, 'return', upper, lower, legend, trick);
+        init_heatmap(data, heatmap_container, 'return', upper, lower, "#79C345", legend, trick);
+        item.replaceWith(heatmap_container.get(0));
+    });
+    $(".divergence_heatmap").each((idx, item)=>{
+        let env = $(item).attr('data-env');
+        let trick = $(item).attr('data-trick-id');
+        let legend = !!$(item).attr('data-plot-legend');
+
+        let upper;
+        let lower;
+
+        let data;
+        try {
+            data = results[env][trick]['mstd_grid'];
+
+            let heatmap_bounds = results[env].heatmap_bounds;
+            upper = 20;
+            lower = 0;
+        }
+        catch{
+            alert('failed to get results for ' + env + " and trick " + trick + " from results list. Did you use the right indices?");
+        }
+        let heatmap_container_id = 'heatmap_' + env + "_" + trick + "_" + idx;
+        let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
+
+        init_heatmap(data, heatmap_container, 'return', upper, lower, "#900C3F", legend, trick);
         item.replaceWith(heatmap_container.get(0));
     });
 
