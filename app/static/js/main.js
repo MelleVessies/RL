@@ -145,6 +145,7 @@ async function collect_graphs() {
     $(".heatmap").each((idx, item)=>{
         let env = $(item).attr('data-env');
         let trick = $(item).attr('data-trick-id');
+        let legend = !!$(item).attr('data-plot-legend');
 
         let upper;
         let lower;
@@ -163,7 +164,7 @@ async function collect_graphs() {
         let heatmap_container_id = 'heatmap_' + env + "_" + trick + "_" + idx;
         let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
-        init_heatmap(data, heatmap_container, 'return', upper, lower);
+        init_heatmap(data, heatmap_container, 'return', upper, lower, legend);
         item.replaceWith(heatmap_container.get(0));
     });
 

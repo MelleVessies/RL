@@ -189,3 +189,7 @@ nav a:hover:before {
     width: 100%;
 }
 
+.row.expanded{
+    width:150%;
+    margin-left:-25%;
+}

@@ -1,8 +1,8 @@
 // set the dimensions and margins of the graph
-function init_heatmap(data, target, plot_type, upper, lower){
+function init_heatmap(data, target, plot_type, upper, lower, plotlegend = true){
     var margin = {top: 40, right: 250, bottom: 40, left: 40},
-      width = 700 - margin.left - margin.right,
-      height = 450 - margin.top - margin.bottom;
+      width = 490 - margin.left - margin.right,
+      height = 300 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
     var svg = d3.select(target.get(0))
@@ -86,25 +86,26 @@ function init_heatmap(data, target, plot_type, upper, lower){
     //     .range(colorbrewer.Blues[9])
     //     .domain([lower, upper])
 
-    var colorScale = d3.scaleLinear()
-        .range(["white", "#1c4966"])
-        .domain([lower, upper])
+    if(plotlegend) {
+        var colorScale = d3.scaleLinear()
+            .range(["white", "#1c4966"])
+            .domain([lower, upper])
 
-    var colorLegend = d3.legendColor()
-        .labelFormat(d3.format(".0f"))
-        .scale(colorScale)
-        .shapePadding(35)
-        .shapeWidth(50)
-        .shapeHeight(40)
-        .labelAlign("middle");
+        var colorLegend = d3.legendColor()
+            .labelFormat(d3.format(".0f"))
+            .scale(colorScale)
+            .shapePadding(35)
+            .shapeWidth(50)
+            .shapeHeight(40)
+            .labelAlign("middle");
 
-    $('text.label').attr('transform', 'translate(55, 25)');
+        $('text.label').attr('transform', 'translate(55, 25)');
 
-    svg.append("g")
-        .attr("height", height - 30)
-        .attr("transform", "translate(" + (width + 20) + "," + 20 + ")")
-        .call(colorLegend);
-
+        svg.append("g")
+            .attr("height", height - 30)
+            .attr("transform", "translate(" + (width + 20) + "," + 20 + ")")
+            .call(colorLegend);
+    }
     // create a tooltip
     var tooltip = d3.select(target.get(0))
       .append("div")
