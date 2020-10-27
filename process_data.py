@@ -62,7 +62,10 @@ def create_avg_over_seeds(result_list):
 
 
             heatmap_running = defaultdict(lambda: defaultdict(list))
+            MDTDE_growth_running = defaultdict(lambda: defaultdict(list))
+
             heatmap_data = []
+            MDTDE_growth = []
 
             avg_arr = None
 
@@ -76,6 +79,13 @@ def create_avg_over_seeds(result_list):
                         run_res['avg_final_performance'],
                         # run_res['avg_growth']
                     ])
+
+                    MDTDE_growth_running[run_res['eps_min']][run_res['discount_factor']].append([
+                        run_res['MSTD_errors'],
+                        # run_res['avg_growth']
+                    ])
+
+
                     # TODO this means we are taking the final hyper parameter combination of the seed. this should be the best!!!
                     returns[seed] = [{'x': x, 'y': y} for x, y in enumerate(run_res['episode_returns'])]
 
@@ -133,10 +143,17 @@ def create_avg_over_seeds(result_list):
                         # 'growth': round(sum(values[:, 1])/len(values[:, 1]), 2)
                     })
 
+                    MDTDE_growth.append({
+                        'discount_factor': round(discount_factor, 2),
+                        'epsilon': round(epsilon, 2),
+                        'mstd_growth': round(sum(values[:, 0])/len(values[:, 0]), 2),
+                        # 'growth': round(sum(values[:, 1])/len(values[:, 1]), 2)
+                    })
             # result_list[env][tricks_key]['MSTD_errors'] = MSTD_errors
             result_list[env][tricks_key] = {
                 'returns': {'data': returns},
-                'grid_search': heatmap_data
+                'grid_search': heatmap_data,
+                'mstd_grid': MDTDE_growth,
             }
         result_list[env]['heatmap_bounds'] = {'upper': upper, 'lower': lower}
 
