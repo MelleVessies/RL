@@ -92,8 +92,6 @@ def create_avg_over_seeds(result_list):
                         # run_res['avg_growth']
                     ])
 
-                    print(run_res)
-                    input()
 
                     MDTDE_growth_running[run_res['eps_min']][run_res['discount_factor']].append([
                         run_res['MSTD_errors'],
@@ -161,13 +159,20 @@ def create_avg_over_seeds(result_list):
 
             for epsilon, discount_factors in MDTDE_growth_running.items():
                 for discount_factor, values in discount_factors.items():
+
+                    running_mean_MSTDE = 0
+                    n_train_seeds = 5
+                    for seed_idx in range(n_train_seeds):
+                        running_mean_MSTDE += 1/n_train_seeds * np.sum(np.log(np.array(values[seed_idx][1:])/np.array(values[seed_idx][:-1])))/(len(values) - 1)
+
                     values = np.array(values)
+
 
 
                     MDTDE_growth.append({
                         'discount_factor': round(discount_factor, 2),
                         'epsilon': round(epsilon, 2),
-                        'mstd_growth': round(sum(values[:, 0])/len(values[:, 0]), 2),
+                        'mstd_growth': running_mean_MSTDE
                         # 'growth': round(sum(values[:, 1])/len(values[:, 1]), 2)
                     })
 
