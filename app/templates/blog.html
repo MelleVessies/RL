@@ -358,9 +358,20 @@ Comparing these methods should be done in a way that has an equal playing field.
     </div>
 </div>
 
-<div class="row" style="text-align: center;">
-    <div class="col-sm-8 offset-sm-1">
-        <img style="width:100%;"  src="/static/img/brainy_thing.png" />
+<h3 class="mt-3">Experience Replay</h3>
+
+<div class="row">
+    <div class="col-sm-4 textbox">
+        Now, let us say the agent tries to become good at whatever task is given by changing its actions according
+        to what it encounters in its ventures, using the <a href="#dqn-update-formula">above update rule</a> to update the parameters
+        that determine its estimated Q-values. . It could do so whenever it gets a new reward (whenever it gets enough data to perform a batch update) but this means the agent continually only is adjusting to what it has encountered most recently. This problem was - according to
+        <a href="http://incompleteideas.net/book/the-book-2nd.html"> Barto and Sutton </a>[<a href="#ref2">2</a>]  - first described by
+        <a href="http://www.incompleteideas.net/lin-92.pdf"> Long-Ji Lin in 1992 </a>[<a href="#ref4">4</a>] . He made the observation that
+        it might be wasteful to throw away experiences as some might be rare or costly to obtain in situations with
+        physical agents.
+    </div>
+    <div class="col-sm-6">
+        <img style="width:100%; padding-top: 10%" src="/static/img/brainy_thing.png" />
 
         <div class="row">
             <div class="col-sm-10 offset-sm-1">
@@ -370,19 +381,9 @@ Comparing these methods should be done in a way that has an equal playing field.
             </div>
         </div>
     </div>
-</div>
 
-<h3 class="mt-3">Experience Replay</h3>
-
-<div class="row">
     <div class="col-sm-10 textbox">
-        Now, let us say the agent tries to become good at whatever task is given by changing its actions according
-        to what it encounters in its ventures, using the <a href="#dqn-update-formula">above update rule</a> to update the parameters
-        that determine its estimated Q-values. . It could do so whenever it gets a new reward (whenever it gets enough data to perform a batch update) but this means the agent continually only is adjusting to what it has encountered most recently. This problem was - according to
-        <a href="http://incompleteideas.net/book/the-book-2nd.html"> Barto and Sutton </a>[<a href="#ref2">2</a>]  - first described by
-        <a href="http://www.incompleteideas.net/lin-92.pdf"> Long-Ji Lin in 1992 </a>[<a href="#ref4">4</a>] . He made the observation that
-        it might be wasteful to throw away experiences as some might be rare or costly to obtain in situations with
-        physical agents. As a result he proposed to reuse experiences, which he defines as a pairing of state, the
+     As a result he proposed to reuse experiences, which he defines as a pairing of state, the
         action taken, the reinforcement (reward) obtained and the following state. He calls reusing past experiences
         <i>Experience Replay</i>. In the original paper by Lin the 100 most recent episodes (lessons) are sampled randomly,
         with recent experiences being exponentially more likely. However, more recently the approach has been to
@@ -392,7 +393,10 @@ Comparing these methods should be done in a way that has an equal playing field.
         be replayed. In this blog we will look at whether standard (uniform sampling) experience replay can improve the
         performance of DQNs through reducing divergence.
     </div>
+
 </div>
+
+
 
 <h3 class="mt-3">Target Network Fixing</h3>
 <div class="row">
