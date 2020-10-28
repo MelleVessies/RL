@@ -24,7 +24,7 @@
 <div class="row">
     <div class="col-sm-10 textbox">
         Deep Q Networks (DQN) is a family of deep Reinforcement Learning (RL) algorithms which leverage the flexibility of neural networks to handle reinforcement learning tasks which would be too difficult or impossible to solve with  tabular methods due to their large state space.  Instead of trying to learn a tabular Q-function, a DQN tries to learn a continuous mapping from the state to an estimate of the  value for each of the actions from that state.  DQN is a popular architecture that can be used to solve a wide variety of tasks, however, they are far from perfect. A problem which DQN's suffer from is a phenomenon known in RL as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad"</a>[<a href="#ref1">1</a>],which refers to reinforcement learning approaches where <b>off-policy learning</b>, <b>function approximation</b> and <b>bootstrapping</b>
-        are used in tandem. The simultaneous appearance of the methods from deadly triad generally results in a highly unstable, volatile learning process caused by divergence of Q-value estimates.  To counter the issues caused by the deadly triad many "tricks" have been constructed to stabilize the learning process such that we can still profit from the benefits of DQN’s.
+        are used in tandem. The simultaneous appearance of the methods from the deadly triad generally results in a highly unstable, volatile learning process caused by divergence of Q-value estimates.  To counter the issues caused by the deadly triad many "tricks" have been constructed to stabilize the learning process such that we can still profit from the benefits of DQN’s.
         <br/>
         <br/>
         In this blogpost we try to understand how some of the common tricks can be used to stabilize training. For this we have created a set of experiments to examine the performance and divergence of the DQN in different environments. We then visualize the results of our experiments in such a way that we can clearly show when each method diverges and what the effect of this divergence is.
@@ -343,8 +343,9 @@
     <div class="col-sm-10 textbox">
         To determine the stability of the models and determine if there is divergence we look at both the relative performance  (Return, $G$)  of the models in the different environments as well as the growth in Mean Squared TD errors ($\Gamma_{\delta}$).  The performance is examined as network divergence causes instability in the learning of the networks which causes poor performance in some cases.  In order to measure divergence rate, we define $\Gamma$ to be the order of growth of the mean squared TD-error (MSTD) between the first and the final training episode, measured in factors of 10 (thus, a growth factor of  $\Gamma=4$ means that the MSTD has grown by a factor of $10^4$). In this way,  $\Gamma$ will show if the MSTD shrinks or grows instead, indicating if the Q-value estimates are converging or diverging.
 
-
-Comparing these methods should be done in a way that has an equal playing field. Since the tricks change how the agent learns and what it uses to learn, it might be the case that one setting of hyperparameters favours the performance of some methods over others. To fairly compare the impact of tricks, we will first establish baselines for each method. As <a href="https://arxiv.org/pdf/1709.06560.pdf">Henderson et. al</a> [<a href="#ref8">8</a>] find, different algorithms have different hyperparameters where they perform well.  As such to make an at least somewhat fair comparison where the model hyperparameters are not the (sole) reason for the divergence, we will be performing a grid search over the discount factor $\gamma$ and the exploration probability ($\epsilon$).  By doing this we will investigate how the algorithms behave across the different environments with different hyperparameters.  In order to more robustly evaluate the effect of hyperparameters, we train the models on 5 different random seeds (1-5) and evaluate the target policy from each trained model on 10 different test seeds (100-109).
+        <br/>
+        <br/>
+        Comparing these methods should be done in a way that has an equal playing field. Since the tricks change how the agent learns and what it uses to learn, it might be the case that one setting of hyperparameters favours the performance of some methods over others. As <a href="https://arxiv.org/pdf/1709.06560.pdf">Henderson et. al</a> [<a href="#ref8">8</a>] find, different algorithms have different hyperparameters where they perform well.  As such to make an at least somewhat fair comparison where the model hyperparameters are not the (sole) reason for the divergence, we will be performing a grid search over the discount factor $\gamma$ and the exploration probability ($\epsilon$).  By doing this we will investigate how the algorithms behave across the different environments with different hyperparameters.  In order to more robustly evaluate the effect of hyperparameters, we train the models on 5 different random seeds (1-5) and evaluate the target policy from each trained model on 10 different test seeds (100-109).
 
     </div>
 </div>
@@ -417,7 +418,7 @@ Comparing these methods should be done in a way that has an equal playing field.
 
 <div class="row">
     <div class="col-sm-10 textbox">
-Given this setup, in order to examine the stability of training and the divergence we will be examining 3 things.  The first is the average return of the final trained model for each set of hyperparameters over the 10 test seeds in a heatmap, which will give an indication of the stability and performance of the networks.  This will be useful in determining if a network is diverging or just not performing well due to poor training.  The second is the average growth magnitude $\Gamma$ of the Mean Squared TD errors during training over the 5 training seeds, which will show when our estimates are diverging. The final is the average performance for each of the trick settings over episodes during training and 0.2 standard deviations in order to see how much spread there is and to get more insight into the training behaviour
+        Given this setup, in order to examine the stability of training and the divergence we will be examining 3 things.  The first is the average return of the final trained model for each set of hyperparameters over the 10 test seeds in a heatmap, which will give an indication of the stability and performance of the networks.  This will be useful in determining if a network is diverging or just not performing well due to poor training.  The second is the average growth magnitude $\Gamma$ of the Mean Squared TD errors during training over the 5 training seeds, which will show when our estimates are diverging. The final is the average performance for each of the trick settings over episodes during training and 0.2 standard deviations in order to see how much spread there is and to get more insight into the training behaviour
     </div>
 </div>
 
@@ -494,6 +495,8 @@ Given this setup, in order to examine the stability of training and the divergen
     <div class="col-sm-6 textbox">
 
          From these heatmaps we can see that to solve the Cartpole problem it is very important to include experience replay, as without it (in the left and center-left heatmaps) the agent is not able to perform the task well for any hyperparameter setting. It is notable that this lack of performance does not appear to be caused by a high divergence rate but rather the inability to learn at all. This may be caused by the uniform reward landscape of the CartPole-v1 problem, where it is very hard to distinguish between good and bad actions on a short term.
+        <br/>
+        <br/>
         It can be seen from the returns heatmap that the network begins to train once the experience replay is added, and trains better when the target network is added to that.  When taking a look at the divergence heatmap , it can be seen that when the model is failing it is because of divergence, and that when the target network is added it improves the training and reduces the divergence.  This can be interpreted as the trick helping, but only when the DQN is learning useful estimates to begin with. This may be attributed to target network fixing mitigating the estimate-target correlation (while experience replay also allows for using more data during training).
 
     </div>
@@ -512,7 +515,7 @@ Given this setup, in order to examine the stability of training and the divergen
 
 <div class="row">
     <div class="col-sm-10 textbox">
-When we take a further look and see how each of the trick applications performs over time we notice that the baseline without tricks and using the tarket network immediately decrease in performance, even to below their random initialization.
+        When we take a further look and see how each of the trick applications performs over time we notice that the baseline without tricks and using the tarket network immediately decrease in performance, even to below their random initialization.
         <br/>
         <br/>
     </div>
@@ -664,7 +667,9 @@ When looking at the improvement over episodes we can see that on average converg
     <div class="col-sm-6 textbox">
 
        The heatmaps above seem to show relatively good performance for all hyperparameters, with an emphasis for lower gamma values when experience replay is used. It can be seen that there is a much higher variance in the test performance without tricks, which is to be expected for the more complex but also more information-dense reward landscape (even if the DQN cannot learn how to solve the problem of landing, it can still learn how to crash in a less expensive way).
-In contrast with the CartPole-v1 and MountainCar-v0 experiments, target network fixing seems to only have a small influence on divergence, but only when the agent is not performing well. We do however see that experience replay is again the factor which gives a major improvement overall, but when we look at the line plot it appears to be mostly in how quickly the DQN learns what the good actions are.
+        <br/>
+        <br/>
+        In contrast with the CartPole-v1 and MountainCar-v0 experiments, target network fixing seems to only have a small influence on divergence, but only when the agent is not performing well. We do however see that experience replay is again the factor which gives a major improvement overall, but when we look at the line plot it appears to be mostly in how quickly the DQN learns what the good actions are.
 
     </div>
 <div class="col-sm-6">
