@@ -18,7 +18,7 @@
         tabularly because of their large state space. Instead of trying to learn a tabular q-function, a DQN tries to
         learn a continuous mapping from a state to a list of actions and their values. DQN is a popular architecture
         that can be used to solve a wide variety of tasks, however, they are far from perfect. A problem which DQN's suffer from
-        is a phenomenon known in RL as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad"</a>, which refers to
+        is a phenomenon known in RL as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad" [1]</a>, which refers to
         reinforcement learning approaches where off-policy learning, function approximation and bootstrapping
         are used in tandem. The simultaneous use of these methods generally results
         in a highly unstable, volatile learning process which can cause divergence.
@@ -56,7 +56,7 @@
 
         Where $Q_\pi(s, a)$ is the Q-value of state-action pair $s$ and $a$, $G_t$ is the (discounted) return at
         timestep $t$, $R_t$ is the observed reward at timestep $t$ and $\gamma$ is the discount factor.
-        Q learning (<a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf">Watkins, 1989</a>) [3]
+        Q learning (<a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf">Watkins, 1989 [3] </a> )
         is a Reinforcement Learning algorithm from the Temporal Difference family of
         algorithms.  In Temporal Difference (TD) algorithms we use a bootstrapping method where, instead of the return
         from an episode ($R$), the update is based on the difference in rewards between $n$ steps (in our case $n=1$).
@@ -112,7 +112,7 @@
 <div class="row">
     <div class="col-sm-4 textbox">
         The difference between the two can
-        be seen in the image from <a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python" >Ankit Choudhary </a>,
+        be seen in the image from <a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python" >Ankit Choudhary [10]</a>,
         showing how the network input is just the state where the Q-Learning input would be the state action pair,
         and the output will be a list of Q-Values corresponding to the actions, where in Q-learning we would have
         the output be the specific Q-Value for the state action pair input.
@@ -202,7 +202,7 @@
         for the DQN. In order to fully test what kind of problems can be seen when training a DQN, we chose 3
         environments with different reward landscapes in order to see how they would affect the convergence of
         the network.   For this, we have chosen 3 environments with very different reward landscapes: the Cartpole-v1,
-        MountainCar-v0, and LunarLander-v2 environments from the open ai gym package.
+        MountainCar-v0, and LunarLander-v2 environments from the OpenAI gym package.
     </div>
 </div>
 
@@ -603,8 +603,8 @@
             <li><a href="https://arxiv.org/pdf/1511.05952.pdf "> Schaul, T., Quan, J., Antonoglou, I., & Silver, D. (2015). Prioritized experience replay. arXiv preprint arXiv:1511.05952. </a></li>
             <li><a href="https://arxiv.org/pdf/1709.06560.pdf"> Henderson, P., Islam, R., Bachman, P., Pineau, J., Precup, D., & Meger, D. (2017). Deep reinforcement learning that matters. arXiv preprint arXiv:1709.06560. </a></li>
             <li><a href="https://github.com/pytorch/pytorch"> https://github.com/pytorch </a></li>
-            <li></li>
-            <li></li>
+            <li><a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python" >Ankit Choudhary's A Hands-On Introduction to Deep Q-Learning using OpenAI Gym in Python </a></li>
+            <li><a href="https://www.youtube.com/watch?v=TmPfTpjtdgg."> Deepminds Atari Breakout Video </a></li>
         </ol>
     </div>
 </div>
