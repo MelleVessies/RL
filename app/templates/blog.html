@@ -690,6 +690,11 @@ When looking at the improvement over episodes we can see that on average converg
 <div class="row">
     <div class="col-sm-10 textbox">
         As the DQN approach suffers from highly unstable, volatile learning as a symptom of using the deadly triad, it is important to use methods to stabilize learning and mitigate the divergence of the estimates. We have looked at two common “tricks” that would tackle this problem: target network fixing and experience replay. We evaluated the overall influence these tricks have on the training process for environments with different reward landscapes and found that both experience replay and target network fixing appear to have general positive effects. Where experience replay appears to have a large effect on the quality of the learned policies and target network fixing aids in mitigating divergence in settings where the agent is able to start learning. From this, we can conclude that both tricks can help stabilize the training process, but how much they help appears to depend on the reward landscape of the environment.
+
+        <br/>
+        <br/>
+        For future experiments, it would be good to extend the hyperparameter search into the number of episodes between updates for the target network, as 2 episodes might not have been the optimal choice. It was fixed in order to lower the number of hyperparameters we were searching over as it was too time intensive to add.  Similarly we used a replay-memory with a fixed size of 10000 samples which might be more or less effective depending on the environment.  Another metric we would like to look at in the future would be the magnitudes of the parameters in the network.  As they are surrogates for the Q values, they should also grow with time if the network is diverging.  Finally, it would likely be useful to obtain the target-seed performance before training, so we can measure the difference in performance than the absolute values, as this would clarify results with environments that can have both positive and negative rewards/returns.
+
     </div>
 </div>
 
