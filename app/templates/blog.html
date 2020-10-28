@@ -334,7 +334,8 @@
     <div class="col-sm-10 textbox">
         To determine the stability of the models and determine if there is divergence we look at both the relative performance  (Return, $G$)  of the models in the different environments as well as the growth in Mean Squared TD errors ($\Gamma_{\delta}$).  The performance is examined as network divergence causes instability in the learning of the networks which causes poor performance in some cases.  In order to measure divergence rate, we define $\Gamma$ to be the order of growth of the mean squared TD-error (MSTD) between the first and the final training episode, measured in factors of 10 (thus, a growth factor of  $\Gamma=4$ means that the MSTD has grown by a factor of $10^4$). In this way,  $\Gamma$ will show if the MSTD shrinks or grows instead, indicating if the Q-value estimates are converging or diverging.
 
-Comparing these methods should be done in a way that has an equal playing field. Since the tricks change how the agent learns and what it uses to learn, it might be the case that one setting of hyperparameters favours the performance of some methods over others. To fairly compare the impact of tricks, we will first establish baselines for each method. As Henderson et. al [https://arxiv.org/pdf/1709.06560.pdf] find, different algorithms have different hyperparameters where they perform well.  As such to make an at least somewhat fair comparison where the model hyperparameters are not the (sole) reason for the divergence, we will be performing a grid search over the discount factor $\gamma$ and the exploration probability ($\epsilon$).  By doing this we will investigate how the algorithms behave across the different environments with different hyperparameters.  In order to more robustly evaluate the effect of hyperparameters, we train the models on 5 different random seeds (1-5) and evaluate the target policy from each trained model on 10 different test seeds (100-109).
+
+Comparing these methods should be done in a way that has an equal playing field. Since the tricks change how the agent learns and what it uses to learn, it might be the case that one setting of hyperparameters favours the performance of some methods over others. To fairly compare the impact of tricks, we will first establish baselines for each method. As <a href="https://arxiv.org/pdf/1709.06560.pdf">Henderson et. al</a> [<a href="#ref8">8</a>] find, different algorithms have different hyperparameters where they perform well.  As such to make an at least somewhat fair comparison where the model hyperparameters are not the (sole) reason for the divergence, we will be performing a grid search over the discount factor $\gamma$ and the exploration probability ($\epsilon$).  By doing this we will investigate how the algorithms behave across the different environments with different hyperparameters.  In order to more robustly evaluate the effect of hyperparameters, we train the models on 5 different random seeds (1-5) and evaluate the target policy from each trained model on 10 different test seeds (100-109).
 
     </div>
 </div>
@@ -398,6 +399,12 @@ Comparing these methods should be done in a way that has an equal playing field.
 
         The target network in our implantation starts at 0 updates and then every 2 episodes.  This
         is because we want the network to be dependent on more recent samples than those seen more than 2 episodes prior.
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-10 textbox">
+Given this setup, in order to examine the stability of training and the divergence we will be examining 3 things.  The first is the average return of the final trained model for each set of hyperparameters over the 10 test seeds in a heatmap, which will give an indication of the stability and performance of the networks.  This will be useful in determining if a network is diverging or just not performing well due to poor training.  The second is the average growth magnitude $\Gamma$ of the Mean Squared TD errors during training over the 5 training seeds, which will show when our estimates are diverging. The final is the average performance for each of the trick settings over episodes during training and 0.2 standard deviations in order to see how much spread there is and to get more insight into the training behaviour
     </div>
 </div>
 
