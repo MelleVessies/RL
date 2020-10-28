@@ -84,7 +84,7 @@
         <br/>
         If our estimate of the expected return is correct, we would expect that the only difference between
         our current estimate and the estimate for the next step is the reward we would obtain. The TD error is
-        a quantification of how much the estimated value differs from the true return, in other words, how good our
+        a quantification of how much the estimated value differs from the true return for this timestep, in other words, how good our
         prediction is.  Formally, the TD error is given by:
 
         <div class="formula">
@@ -106,7 +106,7 @@
         <br/>
 
         By following a behaviour policy which is also based on the Q-function, we can
-        estimate/learn  the Q-values iteratively while exploring in the environment.
+        learn  the Q-values iteratively while exploring in the environment.
         We will use epsilon-greedy in this blogpost, which has a probability of epsilon
         to do a random action rather than the predicted optimal action, and anneals
         linearly over the first 10 episodes. In this way the DQN can learn what happens
