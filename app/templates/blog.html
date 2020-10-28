@@ -14,6 +14,11 @@
                 src="https://www.youtube.com/embed/TmPfTpjtdgg"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
         </iframe>
+        <div class="row">
+            <div class="col-sm-10 offset-sm-1">
+                <b>Video 1) </b> - <i>Example of a successful application of a Deep Q-network applied to the Atari game "breakout"</i>
+            </div>
+        </div>
     </div>
 </div>
 <div class="row">
@@ -92,6 +97,14 @@ In this blogpost we try to understand how some of the common tricks can be used 
 <div class="row" style="text-align: center;">
     <div class="col-sm-8 offset-sm-1">
         <img style="width:100%;"  src="/static/img/schema.jpeg" />
+
+        <div class="row">
+            <div class="col-sm-10 offset-sm-1">
+                <b>Picture 1) </b> - <i>Schematic of tabular Q-learning versus deep Q-learning by
+                    <a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python">Ankit Choudhary </a>
+                </i>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -140,6 +153,14 @@ In this blogpost we try to understand how some of the common tricks can be used 
 
     <div class="col-sm-8">
         <img width="600" src="static/img/benchmark RL(human level control))-rotated.png" alt="RL benchmark list">
+
+        <div class="row">
+            <div class="col-sm-10 offset-sm-1">
+                <b>Picture 2) </b> - <i> Results of deep Q-networks on various atari games as reported by
+                    <a href="https://www.datascienceassn.org/sites/default/files/Human-level%20Control%20Through%20Deep%20Reinforcement%20Learning.pdf"> Mnih et al. </a>
+                </i>
+            </div>
+        </div>
     </div>
 
     <br/>
@@ -195,6 +216,12 @@ In this blogpost we try to understand how some of the common tricks can be used 
                     <source src="/static/videos/best_cartpole.mp4" type="video/mp4">
                         Your browser does not support the video tag.
         </video>
+        <div class="row">
+            <div class="col-sm-8 offset-sm-1">
+                <b>Video 2) </b> - <i>Example result of an episode of the CartPole-v1 environment rendered using the
+                <a href="https://gym.openai.com/"> OpenAI Gym </a> library </i>
+            </div>
+        </div>
     </div>
 
     <div class="col-sm-10 textbox">
@@ -209,6 +236,12 @@ In this blogpost we try to understand how some of the common tricks can be used 
                     <source src="/static/videos/alright_mountaincar.mp4" type="video/mp4">
                         Your browser does not support the video tag.
         </video>
+        <div class="row">
+            <div class="col-sm-10 offset-sm-1">
+                <b>Video 3) </b> - <i>Example result of an episode of the MountainCar-v0 environment rendered using the
+                <a href="https://gym.openai.com/"> OpenAI Gym </a> library </i>
+            </div>
+        </div>
     </div>
 
     <div class="col-sm-5 textbox">
@@ -238,6 +271,13 @@ In this blogpost we try to understand how some of the common tricks can be used 
                     <source src="/static/videos/best_lunar_lander.mp4" type="video/mp4">
                         Your browser does not support the video tag.
         </video>
+        <div class="row">
+            <div class="col-sm-8 offset-sm-1">
+                <b>Video 4) </b> - <i>Example result of an episode of the LunarLander-v2 environment rendered using the
+                <a href="https://gym.openai.com/"> OpenAI Gym </a> library </i>
+            </div>
+        </div>
+
     </div>
 
     <div class="col-sm-10 textbox">
@@ -350,6 +390,16 @@ In this blogpost we try to understand how some of the common tricks can be used 
         <div class="heatmap" data-env="CartPole-v1" data-trick-id="both_tricks" data-plot-legend="true"></div>
     </div>
 </div>
+<div class="row expanded">
+    <div class="col-sm-7 offset-sm-2">
+        <b>Graph section 1) </b> - <i> Heatmaps of the returns of the gridsearch of the different trick combinations on the CartPole-v1 environment.
+        <b>Left)</b>  No tricks - <b>Center-left)</b> Target network fixing - <b>Center-right)</b> Experience replay - <b>Right)</b> Both tricks </i>
+    </div>
+</div>
+
+<br/>
+<br/>
+
 
 <b>Divergence: </b>
 
@@ -367,9 +417,17 @@ In this blogpost we try to understand how some of the common tricks can be used 
     </div>
     <div class="col-sm-3">
         <div class="divergence_heatmap" data-env="CartPole-v1" data-trick-id="both_tricks" data-plot-legend="true"></div>
+    </div>
 </div>
+<div class="row expanded">
+    <div class="col-sm-7 offset-sm-2">
+        <b>Graph section 2) </b> - <i> Heatmaps of the Γ of the gridsearch of the different trick combinations on the CartPole-v1 environment.
+        <b>Left)</b>  No tricks - <b>Center-left)</b> Target network fixing - <b>Center-right)</b> Experience replay - <b>Right)</b> Both tricks </i>
+    </div>
 </div>
 
+<br/>
+<br/>
 <!-- AYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY -->
 
 
@@ -388,6 +446,14 @@ In this blogpost we try to understand how some of the common tricks can be used 
     </div>
     <div class="col-sm-6">
         <div class="line-graph" data-env="CartPole-v1"></div>
+        <div class="row">
+            <div class="col-sm-8 offset-sm-1">
+                <b>Linegraph 1) </b> - <i>Line graph of the average returns over all hyper parameters for each trick
+                    (combination) on the CartPole-v1 environment. Standard deviations shown are 1 fifth of the original.
+                    Hover over lines or trick names in the legend to highlight parts of the graph.
+                </i>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -416,6 +482,17 @@ In this blogpost we try to understand how some of the common tricks can be used 
         <div class="heatmap" data-env="MountainCar-v0" data-trick-id="both_tricks" data-plot-legend="true"></div>
 </div>
 </div>
+<div class="row expanded">
+    <div class="col-sm-7 offset-sm-2">
+        <b>Graph section 3) </b> - <i> Heatmaps of the returns of the gridsearch of the different trick combinations on the MountainCar-v0 environment.
+        <b>Left)</b>  No tricks - <b>Center-left)</b> Target network fixing - <b>Center-right)</b> Experience replay - <b>Right)</b> Both tricks </i>
+    </div>
+</div>
+
+<br/>
+<br/>
+
+
 <b>Divergence: </b>
 
 <!-- AYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY -->
@@ -434,12 +511,28 @@ In this blogpost we try to understand how some of the common tricks can be used 
         <div class="divergence_heatmap" data-env="MountainCar-v0" data-trick-id="both_tricks" data-plot-legend="true"></div>
 </div>
 </div>
+<div class="row expanded">
+    <div class="col-sm-7 offset-sm-2">
+        <b>Graph section 4) </b> - <i> Heatmaps of the Γ of the gridsearch of the different trick combinations on the MountainCar-v0 environment.
+        <b>Left)</b>  No tricks - <b>Center-left)</b> Target network fixing - <b>Center-right)</b> Experience replay - <b>Right)</b> Both tricks </i>
+    </div>
+</div>
 
+<br/>
+<br/>
 <!-- AYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY -->
 
 <div class="row">
     <div class="col-sm-6">
         <div class="line-graph" data-env="MountainCar-v0"></div>
+        <div class="row">
+            <div class="col-sm-8 offset-sm-1">
+                <b>Linegraph 2) </b> - <i>Line graph of the average returns over all hyper parameters for each trick
+                    (combination) on the MountainCar-v0 environment. Standard deviations shown are 1 fifth of the original.
+                    Hover over lines or trick names in the legend to highlight parts of the graph.
+                </i>
+            </div>
+        </div>
     </div>
     <div class="col-sm-6 textbox">
           The heatmaps for the model setups can be seen in the figures above and show similar results as the cartpole
@@ -475,6 +568,15 @@ In this blogpost we try to understand how some of the common tricks can be used 
     <div class="heatmap_lunar" data-env="LunarLander-v2" data-trick-id="both_tricks" data-plot-legend="true"></div>
 </div>
 </div>
+<div class="row expanded">
+    <div class="col-sm-7 offset-sm-2">
+        <b>Graph section 5) </b> - <i> Heatmaps of the returns of the gridsearch of the different trick combinations on the LunarLander-v2 environment.
+        <b>Left)</b>  No tricks - <b>Center-left)</b> Target network fixing - <b>Center-right)</b> Experience replay - <b>Right)</b> Both tricks </i>
+    </div>
+</div>
+
+<br/>
+<br/>
 
 <b>Divergence: </b>
 
@@ -494,7 +596,15 @@ In this blogpost we try to understand how some of the common tricks can be used 
         <div class="divergence_heatmap" data-env="LunarLander-v2" data-trick-id="both_tricks" data-plot-legend="true"></div>
 </div>
 </div>
+<div class="row expanded">
+    <div class="col-sm-7 offset-sm-2">
+        <b>Graph section 6) </b> - <i> Heatmaps of the Γ of the gridsearch of the different trick combinations on the LunarLander-v2 environment.
+        <b>Left)</b>  No tricks - <b>Center-left)</b> Target network fixing - <b>Center-right)</b> Experience replay - <b>Right)</b> Both tricks </i>
+    </div>
+</div>
 
+<br/>
+<br/>
 <!-- AYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY -->
 
 
@@ -512,6 +622,14 @@ In this blogpost we try to understand how some of the common tricks can be used 
     </div>
 <div class="col-sm-6">
     <div class="line-graph" data-env="LunarLander-v2"></div>
+    <div class="row">
+            <div class="col-sm-8 offset-sm-1">
+                <b>Linegraph 3) </b> - <i>Line graph of the average returns over all hyper parameters for each trick
+                    (combination) on the LunarLander-v2 environment. Standard deviations shown are 1 fifth of the original.
+                    Hover over lines or trick names in the legend to highlight parts of the graph.
+                </i>
+            </div>
+        </div>
 </div>
 </div>
 
