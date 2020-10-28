@@ -13,23 +13,22 @@
 
 <div class="row">
     <div class="col-sm-10 textbox">
-        Deep Q Networks (DQN) are deep Reinforcement Learning (RL) algorithms which leverage the flexibility
-        of neural networks to handle reinforcement learning tasks which would be difficult or impossible to do
-        tabularly due to the high state space.  Instead of trying to learn a tabular q-function, a DQN tries to
-        learn a continuous mapping from the state to an estimate the value pairs.  A problem which the DQN encounters
-        is a phenomenon in RL known as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad"</a>, which refers to
+        Deep Q Networks (DQN) is a family of deep Reinforcement Learning (RL) algorithms which leverage the flexibility
+        of neural networks to handle reinforcement learning tasks which would be to difficult to solve
+        tabularly because of their large state space. Instead of trying to learn a tabular q-function, a DQN tries to
+        learn a continuous mapping from a state to a list of actions and their values. DQN is a popular architecture
+        that can be used to solve a wide variety of tasks, however, they are far from perfect. A problem which DQN's suffer from
+        is a phenomenon known in RL as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad"</a>, which refers to
         reinforcement learning approaches where off-policy learning, function approximation and bootstrapping
-        are used in tandem. The simultaneous appearance of the methods from deadly triad generally results
+        are used in tandem. The simultaneous use of these methods generally results
         in a highly unstable, volatile learning process which can cause divergence.
         As a result, many "tricks" have been constructed to stabilize the learning
         process such that we can still use these methods.
 
-        We want to understand what kind of environments cause divergence and how some of the common tricks can
+        We want to understand what kind of environments are prone to divergence with DQN's and how some of the common tricks can
         be used to mitigate these problems.  For this we have created a set of experiments to examine the performance
         of the DQN in addition to some of  the common fixes in different environments. We will also attempt to find
         a network structure and methods which will solve all the environments well.
-
-
     </div>
 </div>
 
@@ -38,7 +37,7 @@
     <div class="col-sm-10 textbox">
         Before we get into Deep Q Networks it’s important to give a brief overview of Q-learning.
         Q learning is an off policy method for learning the Q-value function <a href="http://incompleteideas.net/book/the-book-2nd.html"> (Sutton and Barto 2020) [2] </a> .
-        An off policy method means that we have a behavioural policy to sample data with which is different
+        An off policy method means that we have a behavioural policy to sample data from which is different
         from the target policy we are trying to learn.  In the case of Q learning, we are trying to learn a
         greedy policy. In off policy learning, we require a coverage assumption to be met for the behavioural
         policy.  This means that the behavioural policy must have a non zero probability to visit at least all
@@ -57,10 +56,11 @@
 
         Where $Q_\pi(s, a)$ is the Q-value of state-action pair $s$ and $a$, $G_t$ is the (discounted) return at
         timestep $t$, $R_t$ is the observed reward at timestep $t$ and $\gamma$ is the discount factor.
-        Q learning (<a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf">Watkins, 1989</a>) [3] is a Reinforcement Learning algorithm from the Temporal Difference family of
+        Q learning (<a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf">Watkins, 1989</a>) [3]
+        is a Reinforcement Learning algorithm from the Temporal Difference family of
         algorithms.  In Temporal Difference (TD) algorithms we use a bootstrapping method where, instead of the return
-        from an episode, the update is based on the difference in rewards between $n$ steps (in our case $n=1$).
-        This allows for training with single transitions rather than needing an entire episode.
+        from an episode ($R$), the update is based on the difference in rewards between $n$ steps (in our case $n=1$).
+        This allows us to improve our estimate every transition/step, rather than needing an entire episode.
 
         If our estimate of the expected return is correct, we would expect that the only difference between our
         current estimate and the estimate for the next step is the reward we would obtain. The TD error is a
@@ -74,7 +74,7 @@
         Where $max_aQ(S_t, a)$ is the estimate of the expected return that we get after taking the estimated optimal
         action from state $S_t$ under a certain policy $\pi$.  If we then minimize this TD error we are thus
         effectively making our estimate more accurate.  This use of the max causes a maximization bias which means
-        the network will systematically overestimate the value of state-action pairs.  As can be seen in the defintion,
+        the network may systematically overestimate the value of state-action pairs.  As can be seen in the defintion,
         the TD error is a measurement of the predicted reward against the actual reward.   In Q learning these
         TD-errors are used to update the Q value estimates.   By taking a step in the direction of the difference
         between the real value of the reward and the estimated, we can closer approximate the true expected return.
@@ -104,7 +104,7 @@
         action, and the rewards from this action are used to update the Q value function.  In the case of DQN though,
         the Q value is no longer  represented as a table (a list of values corresponding to a state and action pair),
         but as a deep neural network function with the state as input and the output being a vector with the
-        state-action values of possible actions. This allows us to have a much higher state and action space,
+        state-action values of possible actions. This allows us to have a much larger state and action space,
         since the values are represented by the network, which requires less space for the weights  than would be
         required for storing all of the state action pairs for complex problems.
     </div>
@@ -114,7 +114,7 @@
         The difference between the two can
         be seen in the image from <a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python" >Ankit Choudhary </a>,
         showing how the network input is just the state where the Q-Learning input would be the state action pair,
-        and the output will be a list a Q-Values corresponding to the actions, where the Q-learning would have
+        and the output will be a list of Q-Values corresponding to the actions, where in Q-learning we would have
         the output be the specific Q-Value for the state action pair input.
 
         <br/>
@@ -128,7 +128,7 @@
         approach can be seen in RL:AI[2020] and the semi gradient update can be written as:
 
 
-        <div class="formula">
+        <div class="formula" id="dqn-update-formula">
             $$w_{t+1} = w_{t} + \alpha \left [ R_{t+1} + \text{max}_{a_{t+1}} (Q(s_{t+1}, a_{t+1}, w_{t})) - Q(s_{t}, a_{t}, w_{t}) \right ] \mathbf{\nabla}_{w}Q(s_{t}, a_{t}, w_{t})$$
         </div>
 
@@ -163,11 +163,8 @@
 
         <br/>
 
-        ___ we might want some filler text here to make the flow a little nicer ___
 
-        <br/><br/>
-
-        Although DQN is a powerful technique it does require some tricks to work effectively since the method has all the components of the deadly triad:
+        DQN is a powerful technique but it does require some tricks to work effectively. This is because the method has all the components of the deadly triad:
 
         <ul>
             <li>
@@ -234,8 +231,9 @@
         This is an episodic environment as it does have an end of episode state, but if the agent is performing
         well, it could keep the pole upright for an indefinite amount of time.  This would cause the reward to keep
         growing.  The reward landscape here is uniform positive and the longer the cart keeps the pole upright, the
-        more reward can be earned.  Tends towards short episodes at the start as the agent is taking random moves
-        and has not learned how to keep the pole upright yet and it fails after a short number of steps.
+        more reward can be earned. Agents learning this environment likely tend towards short episodes at the start as the
+        agent is taking random moves and has not learned how to keep the pole upright yet. As the agent learns, the rewards
+        will get larger, meaning the DQN may start to update its weights more aggressively.
     </div>
 </div>
 
@@ -251,12 +249,12 @@
     <div class="col-sm-5 textbox">
         <h3 class="mt-3">MountainCar-v0</h3>
 
-        In the MountainCar problem, a car starts in between 2 mountains on a 1d track with the goal to the right.
-        It is impossible for the car to get to the top by just heading towards the goal, so it must first learn to
-        go backwards and then go to the right.  The reward for the problem is -1 for each time step, and the episode
-        ends when the cart reaches the goal or when 200 steps have passed.  The states the agent receives are the
-        (position, velocity) of the cart.  The actions the agent has is to either push the kart to the left, no push,
-        or push the cart to the right.
+        In the MountainCar problem, a car starts in between 2 mountains on a 1d track with the goal on the top of the mountain
+        to the right. It is impossible for the car to get to the top of the mountain by just heading towards the goal,
+        so it must first learn to go backwards to be able to gain enough speed to reach it's goal.  The reward for the
+        problem is -1 for each time step, and the episode ends when the cart reaches the goal or when 500 steps have
+        passed.  The states the agent receives are the (position, velocity) of the cart.  The actions the agent has is
+        to either push the kart to the left, no push, or push the cart to the right.
     </div>
 
 
@@ -265,9 +263,9 @@
         need for exploration at the start.  Since the kart has to go backwards first, it needs to remember that
         those backward steps were important.  The reward landscape for MountainCart is the inverse of Cartpole as
         it has a uniform negative landscape where every time step we haven't solved the problem we get an additional
-        negative reward of -1are getting less reward.  This environment tTends towards longer episodes at the start
+        negative reward of -1.  This environment tends towards longer episodes at the start
         as the agent has not learned to first go backwards to gain momentum to go towards the goal, so it mostly
-        times out.
+        times out. Only after it reaches its goal for the first time trough random exploration, it will truly start learning.
     </div>
 </div>
 
@@ -308,9 +306,24 @@
 <h2 class="mt-3">Experimental Setup</h2>
 <div class="row">
     <div class="col-sm-10 textbox">
-        Comparing these methods should be done in a way that has an equal playing field. Since the tricks change how the agent learns and what it uses to learn, it might be the case that one setting of hyperparameters favours the performance of some methods over others. To fairly compare the impact of tricks, we will first establish baselines for each method. To establish this baseline we do a grid search for each of the environments, for each of the methods and investigate how they impact divergence when each method is at their best.  to compare to and determine how much the tricks help to improve the divergence, if it occurs.
-        Now that the environments have been selected for their diverse reward landscapes, we can set up experiments to evaluate  the performance (Return) and divergence (growth in Mean Squared TD errors) of the models. As <a href="https://arxiv.org/pdf/1709.06560.pdf"> Henderson et. al</a> find, different algorithms have different hyperparameters where they perform well, as such to make an at least somewhat fair comparison where the model hyperparameters are not the (sole) reason for the divergence,  we will be doing a grid search over different values for the discount factor $\gamma$ and the exploration probability ($\epsilon$).
-        In order to more robustly evaluate the effect of hyperparameters, we train the models on 5 different random seeds (1-5) and evaluate the target policy from each trained model on 10 different test seeds (100-109). Then we compare the training divergence and test performance of best found hyperparameters.  In order to help the convergence of the system, we will implement the 2 tricks previously mentioned, the experience replay and the fixing of the target network.  These tricks will be evaluated in the same manner as discussed above and all the results will be compared.  Let's first take a quick look at each trick in more detail.
+        Comparing these methods should be done in a way that has an equal playing field. Since the tricks change how
+        the agent learns and what it uses to learn, it might be the case that one setting of hyperparameters favours
+        the performance of some methods over others. To fairly compare the impact of tricks, we will first establish
+        baselines for each method. To establish this baseline we do a grid search for each of the environments, for
+        each of the methods and investigate how they impact divergence when each method is at their best.  to compare
+        to and determine how much the tricks help to improve the divergence, if it occurs.
+        Now that the environments have been selected for their diverse reward landscapes, we can set up experiments
+        to evaluate  the performance (Return) and divergence (growth in Mean Squared TD errors) of the models.
+        As <a href="https://arxiv.org/pdf/1709.06560.pdf"> Henderson et. al</a> find, different algorithms have
+        different hyperparameters where they perform well, as such to make an at least somewhat fair comparison where
+        the model hyperparameters are not the (sole) reason for the divergence,  we will be doing a grid search over
+        different values for the discount factor $\gamma$ and the exploration probability ($\epsilon$).
+        In order to more robustly evaluate the effect of hyperparameters, we train the models on 5 different random
+        seeds (1-5) and evaluate the target policy from each trained model on 10 different test seeds (100-109). Then
+        we compare the training divergence and test performance of best found hyperparameters.  In order to help the
+        convergence of the system, we will implement the 2 tricks previously mentioned, the experience replay and the
+        fixing of the target network.  These tricks will be evaluated in the same manner as discussed above and all
+        the results will be compared.  Let's first take a quick look at each trick in more detail.
     </div>
 </div>
 
@@ -320,17 +333,41 @@
 <h2 class="mt-3">Experience Replay</h2>
 <div class="row">
     <div class="col-sm-10 textbox">
-        Now, let us say the agent tries to become good at whatever task is given by changing its actions according to what it encounters in its ventures, using [REF TO EQUATION] the above update rule to update the parameters that determine its estimated Q-values. It could do so whenever it gets a new reward (whenever it gets enough data to perform a batch update) but this means the agent continually only is adjusting to what it has encountered most recently. This problem was - according to <a <a href="http://incompleteideas.net/book/the-book-2nd.html"> Barto and Sutton </a> [2] - first described by <a href="http://www.incompleteideas.net/lin-92.pdf"> Long-Ji Lin in 1992</a> [4]. He made the observation that it might be wasteful to throw away experiences as some might be rare or costly to obtain in situations with physical agents. As a result he proposed to reuse experiences, which he defines as a pairing of state, the action taken, the reinforcement (reward) obtained and the following state. He calls reusing past experiences Experience Replay . in the paper by Lin the 100 most recent episodes (lessons) are sampled from randomly, with recent experiences being exponentially more likely. However, more recently the approach has been to either sample experiences uniformly with recency governed by the size of a replay buffer ( <a href="https://arxiv.org/pdf/1312.5602.pdf?"> see this paper for example</a> [6]) or by using
-        <a href="https://arxiv.org/pdf/1511.05952.pdf "> prioritization </a> [7] to determine which experiences should be replayed in this blog we will look at whether standard (uniform sampling) experience replay can improve the performance of DQNs through reducing divergence.
+        Now, let us say the agent tries to become good at whatever task is given by changing its actions according
+        to what it encounters in its ventures, using the <a href="#dqn-update-formula">above update rule</a> to update the parameters
+        that determine its estimated Q-values. It could do so whenever it gets a new reward (or whenever it gets enough
+        data to perform a batch update) but this means the agent continually only is adjusting to what it has
+        encountered most recently. This problem was - according to
+        <a href="http://incompleteideas.net/book/the-book-2nd.html"> Barto and Sutton </a> [2] - first described by
+        <a href="http://www.incompleteideas.net/lin-92.pdf"> Long-Ji Lin in 1992</a> [4]. He made the observation that
+        it might be wasteful to throw away experiences as some might be rare or costly to obtain in situations with
+        physical agents. As a result he proposed to reuse experiences, which he defines as a pairing of state, the
+        action taken, the reinforcement (reward) obtained and the following state. He calls reusing past experiences
+        Experience Replay. In the paper by Lin the 100 most recent episodes (lessons) are sampled randomly,
+        with recent experiences being exponentially more likely. However, more recently the approach has been to
+        either sample experiences uniformly with recency governed by the size of a replay buffer
+        ( <a href="https://arxiv.org/pdf/1312.5602.pdf?"> see this paper for example</a> [6]) or by using
+        <a href="https://arxiv.org/pdf/1511.05952.pdf "> prioritization </a> [7] to determine which experiences should
+        be replayed in this blog we will look at whether standard (uniform sampling) experience replay can improve the
+        performance of DQNs through reducing divergence.
     </div>
 </div>
 
 <h2 class="mt-3">Target Network Fixing</h2>
 <div class="row">
     <div class="col-sm-10 textbox">
-        In order to help with the problem of the target (TD error) containing what we are updating (the predicted Q function from bootstrapping to replace the true expected return), the network is fixed at a certain time and is used as the target for the TD error.  This fixed network is called the target network and allows for a more stable update by ensuring the difference between the two Q functions is larger, so the network has a more accurate direction to update in.  This can be seen as a dog chasing its own tail, getting faster and faster trying to catch it but never catching up.  The target network, in combination with the experience replay, is what made the DQN in the <a href="https://www.datascienceassn.org/sites/default/files/Human-level%20Control%20Through%20Deep%20Reinforcement%20Learning.pdf">paper by Mnih et. al. (2015)</a>  performed well on the Arati games.
+        In order to help with the problem of the target (TD error) containing what we are updating (the predicted Q
+        function from bootstrapping to replace the true expected return), the network is fixed at a certain time and is
+        used as the target for the TD error.  This fixed network is called the target network and allows for a more
+        stable update by ensuring the difference between the two Q functions is larger, so the network has a more
+        accurate direction to update in.  This can be seen as a dog chasing its own tail, getting faster and faster
+        trying to catch it but never catching up.  The target network, in combination with the experience replay, is
+        what made the DQN in the
+        <a href="https://www.datascienceassn.org/sites/default/files/Human-level%20Control%20Through%20Deep%20Reinforcement%20Learning.pdf">
+            paper by Mnih et. al. (2015)</a>  perform well on the Arati games.
 
-The target network in our implantation starts at 0 updates and then every 2 episodes.  This is because we want the network to be dependent on more recent samples than those seen more than 2 episodes prior.
+        The target network in our implantation starts at 0 updates and then every 2 episodes.  This
+        is because we want the network to be dependent on more recent samples than those seen more than 2 episodes prior.
 
     </div>
 </div>
@@ -338,9 +375,11 @@ The target network in our implantation starts at 0 updates and then every 2 epis
 <h2 class="mt-3">Results and Discussion</h2>
 <div class="row">
     <div class="col-sm-10 textbox">
-In this section we will be looking at the results of the grid-”search”, which show the average final episode returns and the performance for each of the trick settings over episodes. To show this we show the mean accross 5 seeds and 0.2 standard deviations. The grid search results are organised as follows: Left) No tricks applied - Center left) Using a target network, - Center right) Using experience replay -  Right) both a target network and experience replay.
-
-Divergence?!?
+        In this section we will be looking at the results of the grid-”search”, which show the average final episode returns
+        and the performance for each of the trick settings over episodes. To show this we show the mean accross 5 seeds
+        and one fifth of their standard deviations. The grid search results are organised as follows: Left) No tricks applied - Center
+        left) Using a target network, - Center right) Using experience replay -  Right) both a target network and
+        experience replay.
 
 </div>
 </div>
@@ -348,8 +387,10 @@ Divergence?!?
 <h3 class="mt-3">Cartpole-v1</h3>
 <div class="row">
     <div class="col-sm-8 textbox">
-
-            We will start by examining the Cartpole environment.  As previously mentioned, the environment will tend to have shorter episodes at the start while agents are learning.  It has a positive uniform landscape, as each step the pole stays upright gives +1 reward.  The heatmaps for the vanilla DQN, the two tricks and the combination of tricks can be seen in figures XXX.
+        We will start by examining the Cartpole environment.  As previously mentioned, the environment will
+        tend to have shorter episodes at the start while agents are learning.  It has a positive uniform landscape,
+        as each step the pole stays upright gives +1 reward.  The heatmaps for the vanilla DQN, the two tricks and
+        the combination of tricks can be seen in the figures below.
     </div>
 </div>
 <div class="row expanded">
@@ -367,7 +408,7 @@ Divergence?!?
     </div>
 </div>
 
-Divergence:
+<b>Divergence: </b>
 
 <!-- AYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY -->
 
@@ -392,8 +433,15 @@ Divergence:
 <div class="row">
     <div class="col-sm-6 textbox">
 
-This shows that to solve the Cartpole problem it is very important to include experience replay, as without it (in the left and center-left heatmaps) the agent is not able to perform the task well for any hyperparameter setting. With Just experience replay, we see that performance improves for approximately the “lower half” of the discount factors, and improves for performance for the higher discount factors when the target network is combined with experience replay. Now lets see if we can find the culprit..
-When we take a further look and see how each of the trick applications performs over time we notice that the baseline without tricks and using the tarket network immediately decrease in performance, even to below their random initialization go on a race to the bottom. Furthermore, even with experience replay (and the target network combined) even after learning well during the first 50 episodes, their performances decrease.
+        This shows that to solve the Cartpole problem it is very important to include experience replay, as without it
+        (in the left and center-left heatmaps) the agent is not able to perform the task well for any hyperparameter
+        setting. With Just experience replay, we see that performance improves for approximately the “lower half” of
+        the discount factors, and improves for performance for the higher discount factors when the target network is
+        combined with experience replay. Now lets see if we can find the culprit..
+        When we take a further look and see how each of the trick applications performs over time we notice that the
+        baseline without tricks and using the tarket network immediately decrease in performance, even to below their
+        random initialization go on a race to the bottom. Furthermore, even with experience replay (and the target
+        network combined) even after learning well during the first 50 episodes, their performances decrease.
     </div>
     <div class="col-sm-6">
         <div class="line-graph" data-env="CartPole-v1"></div>
@@ -406,7 +454,9 @@ When we take a further look and see how each of the trick applications performs 
     <div class="col-sm-10 textbox">
 
         Mountaincar-v0
-        Next we take a look at the Mountaincar environment. This environment will tend to have longer episodes as the model needs to figure out that it has to go backwards first to gain momentum before going forwards.  This environment is a negative uniform landscape, as each step the model hasn't reached the goal, it gains -1 reward.
+        Next we take a look at the Mountaincar environment. This environment will tend to have longer episodes as the
+        model needs to figure out that it has to go backwards first to gain momentum before going forwards.  This
+        environment is a negative uniform landscape, as each step the model hasn't reached the goal, it gains -1 reward.
     </div>
 </div>
 <div class="row expanded">
@@ -423,7 +473,7 @@ When we take a further look and see how each of the trick applications performs 
         <div class="heatmap" data-env="MountainCar-v0" data-trick-id="both_tricks" data-plot-legend="true"></div>
 </div>
 </div>
-Divergence:
+<b>Divergence: </b>
 
 <!-- AYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY -->
 
@@ -449,14 +499,22 @@ Divergence:
         <div class="line-graph" data-env="MountainCar-v0"></div>
     </div>
     <div class="col-sm-6 textbox">
-          The heatmaps for the model setups can be seen in figures XXX and show similar results as the cartpole setting There are two differences though. Firstly there seems to be a more narrow range of hyperparameters for reliable good performance for this problem. Secondly, using a target network potentially does have *some* impact here, although this could be simple randomness. (although it can be observed that these better performing results are in the area that does better with the other trick settings)  when looking at the improvement over episodes we can see that on average convergence has not been reached yet
+          The heatmaps for the model setups can be seen in the figures above and show similar results as the cartpole
+        setting. There are however, two differences. Firstly there seems to be a more narrow range of hyperparameters
+        for reliable good performance for this problem. Secondly, using a target network potentially does have *some*
+        impact here, although its impact is not significant enough to draw any further conclusions. When looking at the
+        improvement over episodes we can see that on average convergence has not been reached yet. This means that, to
+        further explore the divergence characteristics of this environment, we should in future experiments train longer.
     </div>
 </div>
 
 <h3 class="mt-3">LunarLander-v2</h3>
 <div class="row">
     <div class="col-sm-10 textbox">
-Finally we take a look at the LunarLander environment. This environment will tend to have shorter episodes at the start as it will tend to crash.  It has a much more complicated rewards landscape, with negative reward for the actions it takes and any time it crashes, but positive rewards for different types of landings as previously mentioned.
+        Finally we take a look at the LunarLander environment. This environment will tend to have shorter episodes
+        at the start as it tends to crash. It has a much more complicated rewards landscape, with negative
+        reward for the actions it takes and any time it crashes, but positive rewards for different types of landings
+        as previously mentioned.
     </div>
 </div>
 
@@ -475,7 +533,7 @@ Finally we take a look at the LunarLander environment. This environment will ten
 </div>
 </div>
 
-Divergence:
+<b>Divergence: </b>
 
 <!-- AYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY -->
 
@@ -500,9 +558,14 @@ Divergence:
 <div class="row">
     <div class="col-sm-6 textbox">
 
-        The heatmaps for the model setups can be seen in figures XXX and seem to show relatively good performance for all hyperparameters, with an emphasis for lower epsilon values when experience replay is used. This result was initially surprising, as this environment was selected for its presumed more complex reward landscape.
+        The heatmaps for the model setups can be seen in figures above and seem to show relatively good performance for
+        all hyperparameters, with an emphasis for lower epsilon values when experience replay is used. This result was
+        initially surprising, as this environment was selected for its presumed more complex reward landscape.
 
-        When we look at the performance over time we do see experience replay is again the factor which gives a major improvement, but this time mostly in how quickly the agent picks up on what to do. A point of interest, though, is that when the replay memory is introduced, the agent stops performing well for a discount factor of $\gamma$ = 1. (divergence?)
+        When we look at the performance over time we do see experience replay is again the factor which gives a major
+        improvement, but this time mostly in how quickly the agent picks up on what to do. A point of interest, though,
+        is that when the replay memory is introduced, the agent stops performing well for a discount factor of
+        $\gamma$ = 1.
     </div>
 <div class="col-sm-6">
     <div class="line-graph" data-env="LunarLander-v2"></div>
@@ -513,9 +576,14 @@ Divergence:
 <h2 class="mt-3">Conclusion</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
-        Discuss what we saw, restate the mission statement and the results surrounding it.  Give a statement about what we want to do next? Refer back to the hypothesis about types of environments and how the different tricks help in them.
+        Discuss what we saw, restate the mission statement and the results surrounding it.  Give a statement about
+        what we want to do next? Refer back to the hypothesis about types of environments and how the different tricks
+        help in them.
 
-        Firstly, we have learned that it may not be obvious what qualifies as a “complex” reward landscape. Secondly, it seems that including experience replay during training has a positive effect w.r.t. Performance. This last point might be under the excluding of situations where no discoutn factor is applied, as we have observed that under this condition experience replay is detrimental for some environments (LunarLander).
+        Firstly, we have learned that it may not be obvious what qualifies as a “complex” reward landscape. Secondly,
+        it seems that including experience replay during training has a positive effect w.r.t. Performance. This last
+        point might be under the excluding of situations where no discoutn factor is applied, as we have observed that
+        under this condition experience replay is detrimental for some environments (LunarLander).
 
         [Conclusions divergence]
 
