@@ -177,6 +177,32 @@ async function collect_graphs() {
         init_heatmap(data, heatmap_container, 'return', [lower, upper], ["white", "#79C345"], legend, trick, "G̅");
         item.replaceWith(heatmap_container.get(0));
     });
+
+    $(".heatmap_lunar").each((idx, item)=>{
+        let env = $(item).attr('data-env');
+        let trick = $(item).attr('data-trick-id');
+        let legend = !!$(item).attr('data-plot-legend');
+
+        let upper;
+        let lower;
+
+        let data;
+        try {
+            data = results[env][trick]['grid_search'];
+
+            let heatmap_bounds = results[env].heatmap_bounds;
+            upper = heatmap_bounds.upper;
+            lower = heatmap_bounds.lower;
+        }
+        catch{
+            alert('failed to get results for ' + env + " and trick " + trick + " from results list. Did you use the right indices?");
+        }
+        let heatmap_container_id = 'heatmap_' + env + "_" + trick + "_" + idx;
+        let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
+
+        init_heatmap(data, heatmap_container, 'return', [-3*upper, 0, upper], ["#FFA500", "white", "#79C345"], legend, trick, "G̅");
+        item.replaceWith(heatmap_container.get(0));
+    });
     $(".divergence_heatmap").each((idx, item)=>{
         let env = $(item).attr('data-env');
         let trick = $(item).attr('data-trick-id');
