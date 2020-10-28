@@ -149,7 +149,7 @@ async function collect_graphs() {
         }
         let line_graph_id = 'linegraph_' + env + "_" + "all_tricks_" + idx;
         let line_graph_container = $('<div />').attr({'id': line_graph_id});
-        create_line_graph(data, line_graph_container, line_graph_id);
+        create_line_graph(data, line_graph_container, line_graph_id, env);
         item.replaceWith(line_graph_container.get(0));
     });
     $(".heatmap").each((idx, item)=>{

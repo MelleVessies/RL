@@ -1,4 +1,4 @@
-function create_line_graph(data, target, graph_id) {
+function create_line_graph(data, target, graph_id, title = "") {
     // No idea wtf this does
     var R = 6
 
@@ -11,7 +11,7 @@ function create_line_graph(data, target, graph_id) {
     ];
 
     // set the dimensions and margins of the graph
-    var margin = {top: 15, right: 200, bottom: 30, left: 60},
+    var margin = {top: 40, right: 200, bottom: 30, left: 60},
         width = 600 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
@@ -19,10 +19,20 @@ function create_line_graph(data, target, graph_id) {
     var svg = d3.select(target.get(0))
         .append("svg")
         .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("height", height + margin.top + margin.bottom + 100)
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append("text")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("font-color", "white")
+        .style("text-decoration", "underline")
+        .style("fill", "black")
+        .text(title + " Average Returns");
 
     let all_x = [];
     let all_y = [];
