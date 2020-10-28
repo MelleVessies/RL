@@ -30,6 +30,14 @@ In this blogpost we try to understand how some of the common tricks can be used 
     </div>
 </div>
 
+<h3 class="mt-3">The importance of Divergence and Stability</h3>
+
+<div class="row">
+    <div class="col-sm-10 textbox">
+        We ideally want to have algorithms that do not only learn, but also learn consistently. This means we want an algorithm to be as independent as possible from factors such as hyper parameters and environments. We thus want stability in addition to just performance. The ultimate goal of the analysis done in this blog post is to understand one of the main factors that influences stability, divergence. Formally we define divergence as the continuously worsening estimation of the value of a state action pair or, in other words, the inverse of learning. This means that even though it is only one of the factors, it is an important one, as it may cause the performance of our algorithm to get increasingly worse.
+    </div>
+</div>
+
 <h2 class="mt-3">Q-learning</h2>
 <div class="row">
     <div class="col-sm-10 textbox">
@@ -142,18 +150,12 @@ In this blogpost we try to understand how some of the common tricks can be used 
         <br/>
         <br/>
 
-        In neural networks, updates to the weights are done through taking the gradient of the loss with respect
-        to the weights.  In DQN, the loss is the TD error previously described, but due to the target in the DQN
-        being the bootstrapped approximation for the Q function, taking the full gradient would cause problems
-        due to the circular dependency.  Therefore, in practice we use the semi-gradient approach in which the
-        gradient is simplified, using just part of the true gradient.   More information on the semi gradient
-        approach can be seen in RL:AI[2020] and the semi gradient update can be written as:
+       In neural networks, updates to the weights are done through taking the gradient of the loss with respect to the weights.  In DQN, the loss is the TD error previously described, but due to the target in the DQN being the bootstrapped approximation for the Q function, taking the full gradient would cause problems due to the circular dependency.  Therefore, in practice we use the semi-gradient approach in which the gradient is simplified, using just part of the true gradient.   More information on the semi gradient approach can be seen in the book by Sutton & Barto [2] and the semi gradient update rule for the weights can be written as:
 
 
         <div class="formula" id="dqn-update-formula">
             $$w_{t+1} = w_{t} + \alpha \left [ R_{t+1} + \text{max}_{a_{t+1}} (Q(s_{t+1}, a_{t+1}, w_{t})) - Q(s_{t}, a_{t}, w_{t}) \right ] \mathbf{\nabla}_{w}Q(s_{t}, a_{t}, w_{t})$$
         </div>
-
 
     </div>
 
@@ -176,6 +178,12 @@ In this blogpost we try to understand how some of the common tricks can be used 
     <br/>
 
     <div class="col-sm-10 textbox">
+
+        Where w is the weights, t represents the current time steps, s and a represents the state and action,  and Q is the state-action value function.  by taking a small step in the direction which minimizes the TD-error , we will have a more accurate representation of the Q function.
+        The power of the DQN can be seen in the paper by Mnih et al.[2015], where they train DQN’s to complete many of the old Atari games.  It was impressive to see it be able to discover longer term strategies and sequences, such as in breakout where it discovered the side tunnel strategy.  The performance of the DQN compared to the best linear learner can be seen in the figure shown from the paper.
+
+        <br/>
+        <br/>
 
         DQN is a powerful technique but it does require some tricks to work effectively since the method has all the components of the deadly triad:
 
@@ -319,24 +327,10 @@ In this blogpost we try to understand how some of the common tricks can be used 
 
 <div class="row">
     <div class="col-sm-10 textbox">
-        Comparing these methods should be done in a way that has an equal playing field. Since the tricks change how
-        the agent learns and what it uses to learn, it might be the case that one setting of hyperparameters favours
-        the performance of some methods over others. To fairly compare the impact of tricks, we will first establish
-        baselines for each method. To establish this baseline we do a grid search for each of the environments, for
-        each of the methods and investigate how they impact divergence when each method is at their best.  to compare
-        to and determine how much the tricks help to improve the divergence, if it occurs.
-        Now that the environments have been selected for their diverse reward landscapes, we can set up experiments
-        to evaluate  the performance (Return) and divergence (growth in Mean Squared TD errors) of the models.
-        As <a href="https://arxiv.org/pdf/1709.06560.pdf"> Henderson et. al </a>[<a href="#ref8">8</a>] find, different algorithms have
-        different hyperparameters where they perform well, as such to make an at least somewhat fair comparison where
-        the model hyperparameters are not the (sole) reason for the divergence,  we will be doing a grid search over
-        different values for the discount factor $\gamma$ and the exploration probability ($\epsilon$).
-        In order to more robustly evaluate the effect of hyperparameters, we train the models on 5 different random
-        seeds (1-5) and evaluate the target policy from each trained model on 10 different test seeds (100-109). Then
-        we compare the training divergence and test performance of best found hyperparameters.  In order to help the
-        convergence of the system, we will implement the 2 tricks previously mentioned, the experience replay and the
-        fixing of the target network.  These tricks will be evaluated in the same manner as discussed above and all
-        the results will be compared.  Let's first take a quick look at each trick in more detail.
+        To determine the stability of the models and determine if there is divergence we look at both the relative performance  (Return, $G$)  of the models in the different environments as well as the growth in Mean Squared TD errors ($\Gamma_{\delta}$).  The performance is examined as network divergence causes instability in the learning of the networks which causes poor performance in some cases.  In order to measure divergence rate, we define $\Gamma$ to be the order of growth of the mean squared TD-error (MSTD) between the first and the final training episode, measured in factors of 10 (thus, a growth factor of  $\Gamma=4$ means that the MSTD has grown by a factor of $10^4$). In this way,  $\Gamma$ will show if the MSTD shrinks or grows instead, indicating if the Q-value estimates are converging or diverging.
+
+Comparing these methods should be done in a way that has an equal playing field. Since the tricks change how the agent learns and what it uses to learn, it might be the case that one setting of hyperparameters favours the performance of some methods over others. To fairly compare the impact of tricks, we will first establish baselines for each method. As Henderson et. al [https://arxiv.org/pdf/1709.06560.pdf] find, different algorithms have different hyperparameters where they perform well.  As such to make an at least somewhat fair comparison where the model hyperparameters are not the (sole) reason for the divergence, we will be performing a grid search over the discount factor $\gamma$ and the exploration probability ($\epsilon$).  By doing this we will investigate how the algorithms behave across the different environments with different hyperparameters.  In order to more robustly evaluate the effect of hyperparameters, we train the models on 5 different random seeds (1-5) and evaluate the target policy from each trained model on 10 different test seeds (100-109).
+
     </div>
 </div>
 
@@ -390,22 +384,15 @@ In this blogpost we try to understand how some of the common tricks can be used 
 <h2 class="mt-3">Results and Discussion</h2>
 <div class="row">
     <div class="col-sm-10 textbox">
-        In this section we will be looking at the results of the grid-”search”, which show the average final episode returns
-        and the performance for each of the trick settings over episodes. To show this we show the mean accross 5 seeds
-        and one fifth of their standard deviations. The grid search results are organised as follows: Left) No tricks applied - Center
-        left) Using a target network, - Center right) Using experience replay -  Right) both a target network and
-        experience replay.
-
+        In this section we will be looking at the results during the grid-search, which show the average target-policy returns $\bar{G}$ and the divergence measure $\bar{\Gamma}$. We also look at the average performance for each of the trick settings over episodes during training.
 </div>
 </div>
 
 <h3 class="mt-3">Cartpole-v1</h3>
 <div class="row">
-    <div class="col-sm-8 textbox">
-        We will start by examining the Cartpole environment.  As previously mentioned, the environment will
-        tend to have shorter episodes at the start while agents are learning.  It has a positive uniform landscape,
-        as each step the pole stays upright gives +1 reward.  The heatmaps for the vanilla DQN, the two tricks and
-        the combination of tricks can be seen in the figures below.
+    <div class="col-sm-10 textbox">
+        We will start by examining the Cartpole environment.  As previously mentioned, the environment will tend to have shorter episodes at the start while agents are learning.  It has a positive uniform landscape, as each step the pole stays upright gives +1 reward.  The heatmaps for the vanilla DQN, the two tricks and the combination of tricks can be seen in the figures below.
+
     </div>
 </div>
 <div class="row expanded">
@@ -466,15 +453,8 @@ In this blogpost we try to understand how some of the common tricks can be used 
 <div class="row">
     <div class="col-sm-6 textbox">
 
-        This shows that to solve the Cartpole problem it is very important to include experience replay, as without it
-        (in the left and center-left heatmaps) the agent is not able to perform the task well for any hyperparameter
-        setting. With Just experience replay, we see that performance improves for approximately the “lower half” of
-        the discount factors, and improves for performance for the higher discount factors when the target network is
-        combined with experience replay. Now lets see if we can find the culprit..
-        When we take a further look and see how each of the trick applications performs over time we notice that the
-        baseline without tricks and using the tarket network immediately decrease in performance, even to below their
-        random initialization go on a race to the bottom. Furthermore, even with experience replay (and the target
-        network combined) even after learning well during the first 50 episodes, their performances decrease.
+         From these heatmaps we can see that to solve the Cartpole problem it is very important to include experience replay, as without it (in the left and center-left heatmaps) the agent is not able to perform the task well for any hyperparameter setting. It is notable that this lack of performance does not appear to be caused by a high divergence rate but rather the inability to learn at all. This may be caused by the uniform reward landscape of the CartPole-v1 problem, where it is very hard to distinguish between good and bad actions on a short term.
+
     </div>
     <div class="col-sm-6">
         <div class="line-graph" data-env="CartPole-v1"></div>
@@ -489,15 +469,22 @@ In this blogpost we try to understand how some of the common tricks can be used 
     </div>
 </div>
 
+<div class="row">
+    <div class="col-sm-10 textbox">
+It can be seen from the returns heatmap that the network begins to train once the experience replay is added, and trains better when the target network is added to that.  When taking a look at the divergence heatmap , it can be seen that when the model is failing it is because of divergence, and that when the target network is added it improves the training and reduces the divergence.  This can be interpreted as the trick helping, but only when the DQN is learning useful estimates to begin with. This may be attributed to target network fixing mitigating the estimate-target correlation (while experience replay also allows for using more data during training).
+        <br/>
+        <br/>
+When we take a further look and see how each of the trick applications performs over time we notice that the baseline without tricks and using the tarket network immediately decrease in performance, even to below their random initialization.
+        <br/>
+        <br/>
+    </div>
+</div>
+
 
 <h3 class="mt-3">Mountaincar-v0</h3>
 <div class="row">
     <div class="col-sm-10 textbox">
-
-        Mountaincar-v0
-        Next we take a look at the Mountaincar environment. This environment will tend to have longer episodes as the
-        model needs to figure out that it has to go backwards first to gain momentum before going forwards.  This
-        environment is a negative uniform landscape, as each step the model hasn't reached the goal, it gains -1 reward.
+        Next we take a look at the Mountaincar environment. This environment will tend to have longer episodes as the model needs to figure out that it has to go backwards first to gain momentum before going forwards. This environment is a negative uniform landscape, as each step the model hasn't reached the goal, it gains -1 reward.
     </div>
 </div>
 <div class="row expanded">
@@ -567,22 +554,17 @@ In this blogpost we try to understand how some of the common tricks can be used 
         </div>
     </div>
     <div class="col-sm-6 textbox">
-          The heatmaps for the model setups can be seen in the figures above and show similar results as the cartpole
-        setting. There are however, two differences. Firstly there seems to be a more narrow range of hyperparameters
-        for reliable good performance for this problem. Secondly, using a target network potentially does have *some*
-        impact here, although its impact is not significant enough to draw any further conclusions. When looking at the
-        improvement over episodes we can see that on average convergence has not been reached yet. This means that, to
-        further explore the divergence characteristics of this environment, we should in future experiments train longer.
+        The heatmaps for the model setups can be seen in the figures above and show similar results as the cartpole setting. Without the tricks and with only the target network it is unable to train, seemingly not due to divergence.  Then once experience replay is added, the model is able to find solutions for some of the settings. There are however, three differences. Firstly there seems to be a more narrow range of hyperparameters for reliable good performance for this problem. Secondly, using a target network potentially does have *some* impact here, although its impact is not significant enough to draw any further conclusions about if it is helping to prevent divergence again as seen in the cartpole. Finally, using experience replay also seems to increase divergence rates for $\gamma=1$, which can be explained by the network having more updates when using experience replay, hence also more steps in which the MSTD can grow.   This appears to indicate that for this problem, the addition of the tricks does allow for  more stable learning, but unlike in the previous environment, the target network seems to only mitigate divergence slightly.
+When looking at the improvement over episodes we can see that on average convergence has not been reached yet. This means that, to further explore the divergence characteristics of this environment, we should in future experiments train longer.
+
     </div>
 </div>
 
 <h3 class="mt-3">LunarLander-v2</h3>
 <div class="row">
     <div class="col-sm-10 textbox">
-        Finally we take a look at the LunarLander environment. This environment will tend to have shorter episodes
-        at the start as it tends to crash. It has a much more complicated rewards landscape, with negative
-        reward for the actions it takes and any time it crashes, but positive rewards for different types of landings
-        as previously mentioned.
+        Finally we take a look at the LunarLander environment. This environment will tend to have shorter episodes at the start as it tends to crash. It has a much more complicated rewards landscape, with negative reward for the actions it takes and any time it crashes, but positive rewards for different types of landings as previously mentioned.
+
     </div>
 </div>
 
@@ -643,14 +625,9 @@ In this blogpost we try to understand how some of the common tricks can be used 
 <div class="row">
     <div class="col-sm-6 textbox">
 
-        The heatmaps for the model setups can be seen in figures above and seem to show relatively good performance for
-        all hyperparameters, with an emphasis for lower epsilon values when experience replay is used. This result was
-        initially surprising, as this environment was selected for its presumed more complex reward landscape.
+       The heatmaps above seem to show relatively good performance for all hyperparameters, with an emphasis for lower gamma values when experience replay is used. It can be seen that there is a much higher variance in the test performance without tricks, which is to be expected for the more complex but also more information-dense reward landscape (even if the DQN cannot learn how to solve the problem of landing, it can still learn how to crash in a less expensive way).
+In contrast with the CartPole-v1 and MountainCar-v0 experiments, target network fixing seems to only have a small influence on divergence, but only when the agent is not performing well. We do however see that experience replay is again the factor which gives a major improvement overall, but when we look at the line plot it appears to be mostly in how quickly the DQN learns what the good actions are.
 
-        When we look at the performance over time we do see experience replay is again the factor which gives a major
-        improvement, but this time mostly in how quickly the agent picks up on what to do. A point of interest, though,
-        is that when the replay memory is introduced, the agent stops performing well for a discount factor of
-        $\gamma$ = 1.
     </div>
 <div class="col-sm-6">
     <div class="line-graph" data-env="LunarLander-v2"></div>
@@ -669,17 +646,7 @@ In this blogpost we try to understand how some of the common tricks can be used 
 <h2 class="mt-3">Conclusion</h2>
 <div class="row">
     <div class="col-sm-8 textbox">
-        Discuss what we saw, restate the mission statement and the results surrounding it.  Give a statement about
-        what we want to do next? Refer back to the hypothesis about types of environments and how the different tricks
-        help in them.
-
-        Firstly, we have learned that it may not be obvious what qualifies as a “complex” reward landscape. Secondly,
-        it seems that including experience replay during training has a positive effect w.r.t. Performance. This last
-        point might be under the excluding of situations where no discoutn factor is applied, as we have observed that
-        under this condition experience replay is detrimental for some environments (LunarLander).
-
-        [Conclusions divergence]
-
+        As the DQN approach suffers from highly unstable, volatile learning as a symptom of using the deadly triad, it is important to use methods to stabilize learning and mitigate the divergence of the estimates. We have looked at two common “tricks” that would tackle this problem: target network fixing and experience replay. We evaluated the overall influence these tricks have on the training process for environments with different reward landscapes and found that both experience replay and target network fixing appear to have general positive effects, where experience replay seems to have a large effect on the quality of the learned policies and target network fixing aids in mitigating divergence in settings where the agent is able to start learning.
     </div>
 </div>
 
