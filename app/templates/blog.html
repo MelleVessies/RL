@@ -211,7 +211,7 @@ In this blogpost we try to understand how some of the common tricks can be used 
         In the CartPole problem, a pole is attached to an unarticulated joint on a cart, moving along a frictionless path.  The objective is to keep a pole upright, between a certain angle for as long as possible.  A reward of +1 is provided at every time step the pole remains upright.  The episode ends when the pole falls below a 15 degree angle from the vertical axis, when the cart  moves 2.4 units from the center, or when 500 steps have passed.  The state the agent receives is  (cart position, cart velocity, pole angle, pole velocity at tip).  The actions the agent has are applying a force to either push the car to the left or the right to the kart to keep the pole upright.
     </div>
 
-    <div class="col-sm-7" style="padding-top: 100px">
+    <div class="col-sm-7" >
         <video width="480" height="360" controls>
                     <source src="/static/videos/best_cartpole.mp4" type="video/mp4">
                         Your browser does not support the video tag.
@@ -231,7 +231,7 @@ In this blogpost we try to understand how some of the common tricks can be used 
 
 <div class="row">
 
-    <div class="col-sm-5" style="padding-top: 100px">
+    <div class="col-sm-5" >
         <video  width="480" height="360" controls>
                     <source src="/static/videos/alright_mountaincar.mp4" type="video/mp4">
                         Your browser does not support the video tag.
@@ -266,7 +266,7 @@ In this blogpost we try to understand how some of the common tricks can be used 
         at the top of the screen with changing landscapes. Landing on the landing pad, between the flags, gives a reward of +100 and doing so safely gives the agent an additional reward of +100. Crashing into the ground gives a negative reward (-100). The agent also gets a bonus for landing safely, with +10 for each leg touching the ground and a quadratic penalty for its speed. Landing (anywhere) or crashing both end the episode. If the agent does not crash or land in 500 steps the epsiode is also terminated.The agent has 4 possible actions to its disposal  to achieve this.
     </div>
 
-    <div class="col-sm-7" style="padding-top: 100px">
+    <div class="col-sm-7" >
         <video width="480" height="360" controls>
                     <source src="/static/videos/best_lunar_lander.mp4" type="video/mp4">
                         Your browser does not support the video tag.
