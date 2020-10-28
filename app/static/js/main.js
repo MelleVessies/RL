@@ -93,7 +93,7 @@ function render_result_list(response){
                     let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
                     if(seed_idx === "mstd_grid"){
-                        init_heatmap(seed_res, heatmap_container, 'return', 20, 0, "#900C3F");
+                        init_heatmap(seed_res, heatmap_container, 'mstd_grid', 20, 0, "#900C3F");
                         seed_tab_content.append(heatmap_container);
                     }
                     else{
@@ -174,7 +174,7 @@ async function collect_graphs() {
         let heatmap_container_id = 'heatmap_' + env + "_" + trick + "_" + idx;
         let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
-        init_heatmap(data, heatmap_container, 'return', [lower, upper], ["white", "#79C345"], legend, trick);
+        init_heatmap(data, heatmap_container, 'return', [lower, upper], ["white", "#79C345"], legend, trick, "G̅");
         item.replaceWith(heatmap_container.get(0));
     });
     $(".divergence_heatmap").each((idx, item)=>{
@@ -200,7 +200,16 @@ async function collect_graphs() {
         let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
         // init_heatmap(data, heatmap_container, 'return', [-5, 0, 10], ["#5263CF", "white", "#900C3F"], legend, trick);
-        init_heatmap(data, heatmap_container, 'return', [-10, 0, 10], ["#5263CF", "white", "#ba6787"], legend, trick);
+        init_heatmap(
+            data,
+            heatmap_container,
+            'return',
+            [-10, 0, 10],
+            ["#5263CF", "white", "#ba6787"],
+            legend,
+            trick,
+            "Γ"
+            );
 
         item.replaceWith(heatmap_container.get(0));
     });

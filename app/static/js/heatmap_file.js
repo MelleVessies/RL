@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-function init_heatmap(data, target, plot_type, range, colors, plotlegend = true, title = ""){
+function init_heatmap(data, target, plot_type, range, colors, plotlegend = true, title = "", legendHeader = ""){
     var margin = {top: 40, right: plotlegend ? 350 : 40, bottom: 40, left: 40},
       width = (plotlegend ? 610 : 300 ) - margin.left - margin.right,
       height = 300 - margin.top - margin.bottom;
@@ -91,6 +91,11 @@ function init_heatmap(data, target, plot_type, range, colors, plotlegend = true,
             .attr("height", height - 30)
             .attr("transform", "translate(" + (width + 20) + "," + 20 + ")")
             .call(colorLegend);
+
+        svg.append("text")
+            .attr("class", "extraLabel")
+            .attr("transform", 'translate(' + (width + 42) +', 0)')
+            .text(legendHeader);
 
         svg.selectAll('text.label').attr('transform', 'translate(55, 25)');
     }
