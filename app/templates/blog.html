@@ -18,22 +18,10 @@
 </div>
 <div class="row">
     <div class="col-sm-10 textbox">
-        Deep Q Networks (DQN) is a family of deep Reinforcement Learning (RL) algorithms which leverage the flexibility
-        of neural networks to handle reinforcement learning tasks which would be to difficult to solve
-        tabularly because of their large state space. Instead of trying to learn a tabular Q-function, a DQN tries to
-        learn a continuous mapping from a state to a list of actions and their values. DQN is a popular architecture
-        that can be used to solve a wide variety of tasks, however, they are far from perfect. A problem which DQN's suffer from
-        is a phenomenon known in RL as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad"</a>[<a href="#ref1">1</a>], which refers to
-        reinforcement learning approaches where <b>off-policy learning</b>, <b>function approximation</b> and <b>bootstrapping</b>
-        are used in tandem. The simultaneous use of these methods generally results
-        in a highly unstable, volatile learning process which can cause divergence.
-        As a result, many "tricks" have been constructed to stabilize the learning
-        process such that we can still use these methods.
+        Deep Q Networks (DQN) is a family of deep Reinforcement Learning (RL) algorithms which leverage the flexibility of neural networks to handle reinforcement learning tasks which would be too difficult or impossible to solve with  tabular methods due to their large state space.  Instead of trying to learn a tabular Q-function, a DQN tries to learn a continuous mapping from the state to an estimate of the  value for each of the actions from that state.  DQN is a popular architecture that can be used to solve a wide variety of tasks, however, they are far from perfect. A problem which DQN's suffer from is a phenomenon known in RL as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad"</a>[<a href="#ref1">1</a>],which refers to reinforcement learning approaches where <b>off-policy learning</b>, <b>function approximation</b> and <b>bootstrapping</b>
+        are used in tandem. The simultaneous appearance of the methods from deadly triad generally results in a highly unstable, volatile learning process caused by divergence of Q-value estimates.  To counter the issues caused by the deadly triad many "tricks" have been constructed to stabilize the learning process such that we can still profit from the benefits of DQN’s.
 
-        We want to understand what kind of environments are prone to divergence with DQN's and how some of the common tricks can
-        be used to mitigate these problems.  For this we have created a set of experiments to examine the performance
-        of the DQN in addition to some of  the common fixes in different environments. We will also attempt to find
-        a network structure and methods which will solve all the environments well.
+In this blogpost we try to understand how some of the common tricks can be used to stabilize training. For this we have created a set of experiments to examine the performance and divergence of the DQN in different environments. s. We then visualize the results of our experiments in such a way that we can clearly show when each method diverges and what the effect of this divergence is.
     </div>
 </div>
 
@@ -189,15 +177,8 @@
 <h2 class="mt-3">Environments</h2>
 <div class="row">
     <div class="col-sm-10 textbox">
-        Environments in reinforcement learning refer to any space where agents interact to either get a task
-        completed or to continually make good actions. This could be something as simple as learning which slot
-        machine will give a good payoff, to putting a box from one conveyor belt to another or even as complex
-        as a game of go.  Since each of these environments can differ greatly and they each bring their own
-        difficulties.   We hypothesize that the reward landscape plays a large role in the chance of divergence
-        for the DQN. In order to fully test what kind of problems can be seen when training a DQN, we chose 3
-        environments with different reward landscapes in order to see how they would affect the convergence of
-        the network.   For this, we have chosen 3 environments with very different reward landscapes: the Cartpole-v1,
-        MountainCar-v0, and LunarLander-v2 environments from the OpenAI gym package.
+        Environments in reinforcement learning refer to any space where agents interact to either get a task completed or to continually make good actions. This could be something as simple as learning which slot machine will give a good payoff, to putting a box from one conveyor belt to another or even as complex as a game of go. Since each of these environments can differ greatly and they each bring their own difficulties. We hypothesize that the reward landscape plays a large role in the chance of divergence for the DQN. In order to fully test what kind of problems can be seen when training a DQN, we chose 3 environments with different reward landscapes to see how they would affect the convergence of the network.   For this, we have chosen 3 environments with very different reward landscapes: the Cartpole-v0, MountainCar-v0, and LunarLander-v2 environments from the OpenAI Gym Environment. <a href="https://gym.openai.com/"> OpenAI Gym </a>[<a href="#ref5">5</a>]
+
     </div>
 </div>
 
@@ -206,13 +187,7 @@
     <div class="col-sm-5 textbox">
         <h3 class="mt-3">CartPole-v1</h3>
 
-        In the CartPole problem, a pole is attached to an unarticulated joint on a cart, moving along a frictionless
-        path. The objective is to keep a pole upright, between a certain angle for as long as possible.
-        A reward of +1 is provided at every time step the pole remains upright. The episode ends when the pole falls
-        below a 15 degree angle from the vertical axis, when the cart moves 2.4 units from the center, or when 500 steps have
-        passed. The state the agent receives is (cart position, cart velocity, pole angle, pole velocity at tip).
-        The actions the agent has are applying a force to either push the car to the left or the right to the kart to
-        keep the pole upright.
+        In the CartPole problem, a pole is attached to an unarticulated joint on a cart, moving along a frictionless path.  The objective is to keep a pole upright, between a certain angle for as long as possible.  A reward of +1 is provided at every time step the pole remains upright.  The episode ends when the pole falls below a 15 degree angle from the vertical axis, when the cart  moves 2.4 units from the center, or when 500 steps have passed.  The state the agent receives is  (cart position, cart velocity, pole angle, pole velocity at tip).  The actions the agent has are applying a force to either push the car to the left or the right to the kart to keep the pole upright.
     </div>
 
     <div class="col-sm-7" style="padding-top: 100px">
@@ -223,12 +198,7 @@
     </div>
 
     <div class="col-sm-10 textbox">
-        This is an episodic environment as it does have an end of episode state, but if the agent is performing
-        well, it could keep the pole upright for an indefinite amount of time.  This would cause the reward to keep
-        growing.  The reward landscape here is uniform positive and the longer the cart keeps the pole upright, the
-        more reward can be earned. Agents learning this environment likely tend towards short episodes at the start as the
-        agent is taking random moves and has not learned how to keep the pole upright yet. As the agent learns, the rewards
-        will get larger, meaning the DQN may start to update its weights more aggressively.
+        This is an episodic environment as it does have an end of episode state, but if the agent is performing well, it could keep the pole upright for an indefinite amount of time.  This would cause the reward to keep growing.  The reward landscape here is uniform positive and the longer the cart keeps the pole upright, the more reward can be earned.  Tends towards short episodes at the start as the agent is taking random moves and has not learned how to keep the pole upright yet and it fails after a short number of steps.
     </div>
 </div>
 
@@ -244,23 +214,13 @@
     <div class="col-sm-5 textbox">
         <h3 class="mt-3">MountainCar-v0</h3>
 
-        In the MountainCar problem, a car starts in between 2 mountains on a 1d track with the goal on the top of the mountain
-        to the right. It is impossible for the car to get to the top of the mountain by just heading towards the goal,
-        so it must first learn to go backwards to be able to gain enough speed to reach it's goal.  The reward for the
-        problem is -1 for each time step, and the episode ends when the cart reaches the goal or when 500 steps have
-        passed.  The states the agent receives are the (position, velocity) of the cart.  The actions the agent has is
-        to either push the kart to the left, no push, or push the cart to the right.
+        In the MountainCar problem, a car starts in between 2 mountains on a 1d track with the goal to the right. It is impossible for the car to get to the top by just heading towards the goal, so it must first learn to go backwards and then go to the right.  The reward for the problem is -1 for each time step, and the episode ends when the cart reaches the goal or when 200 steps have passed.  The states the agent receives are the (position, velocity) of the cart.  The actions the agent has is to either push the kart to the left, no push, or push the cart to the right.
     </div>
 
 
     <div class="col-sm-10 col-offset-2 textbox">
-        This environment is also episodic as there is a clear end state.  The problem in this environment is the
-        need for exploration at the start.  Since the kart has to go backwards first, it needs to remember that
-        those backward steps were important.  The reward landscape for MountainCart is the inverse of Cartpole as
-        it has a uniform negative landscape where every time step we haven't solved the problem we get an additional
-        negative reward of -1.  This environment tends towards longer episodes at the start
-        as the agent has not learned to first go backwards to gain momentum to go towards the goal, so it mostly
-        times out. Only after it reaches its goal for the first time trough random exploration, it will truly start learning.
+        This environment is also episodic as there is a clear end state.  The problem in this environment is the need for exploration at the start.  Since the kart has to go backwards first, it needs to remember that those backward steps were important.  The reward landscape for MountainCart is the inverse of Cartpole as it has a uniform negative landscape where every time step we haven't solved the problem we get an additional negative reward of -1.  This environment tends towards longer episodes at the start as the agent has not learned to first go backwards to gain momentum to go towards the goal, so it mostly times out.
+
     </div>
 </div>
 
@@ -270,11 +230,7 @@
         <h3 class="mt-3">LunarLander-v2</h3>
 
         In the lunar lander problem, an agent is attempting to land on a landing pad with 0 speed after being spawned
-        at the top of the screen with changing landscapes. Landing on the landing pad, between the flags, gives a
-        reward of +100 and doing so safely gives the agent an additional reward of +100. Crashing into the ground
-        gives a negative reward (-100). Landing (anywhere) or crashing both end the episode. The agent also gets
-        a bonus for landing safely, with +10 for each leg touching the ground and a quadratic penalty for its speed.
-        The agent has 4 possible actions to its disposal  to achieve this.
+        at the top of the screen with changing landscapes. Landing on the landing pad, between the flags, gives a reward of +100 and doing so safely gives the agent an additional reward of +100. Crashing into the ground gives a negative reward (-100). The agent also gets a bonus for landing safely, with +10 for each leg touching the ground and a quadratic penalty for its speed. Landing (anywhere) or crashing both end the episode. If the agent does not crash or land in 500 steps the epsiode is also terminated.The agent has 4 possible actions to its disposal  to achieve this.
     </div>
 
     <div class="col-sm-7" style="padding-top: 100px">
@@ -285,13 +241,7 @@
     </div>
 
     <div class="col-sm-10 textbox">
-        Doing nothing, firing one of its side
-        engines or firing the main engine, applying force from the bottom of the agent upwards (whatever may be
-        ‘up’ from the perspective of the agent).
-        Firing the engines has a cost however, although the engine has
-        infinite fuel, firing the main engine has a cost of 0.3 and firing any of the side engines a cost of 0.03.
-        The environment is considered solved when the agent reaches a return of 200 which happens when landing with
-        low velicity on the pad while spending little fuel.
+        Doing nothing, firing one of its side engines or firing the main engine, applying force from the bottom of the agent upwards (whatever may be ‘up’ from the perspective of the agent). Firing the engines has a cost however, although the engine has infinite fuel, firing the main engine has a cost of 0.3 and firing any of the side engines a cost of 0.03. The environment is considered solved when the agent reaches a return of 200 which happens when landing with low velicity on the pad while spending little fuel.
     </div>
 </div>
 
@@ -330,20 +280,18 @@
     <div class="col-sm-10 textbox">
         Now, let us say the agent tries to become good at whatever task is given by changing its actions according
         to what it encounters in its ventures, using the <a href="#dqn-update-formula">above update rule</a> to update the parameters
-        that determine its estimated Q-values. It could do so whenever it gets a new reward (or whenever it gets enough
-        data to perform a batch update) but this means the agent continually only is adjusting to what it has
-        encountered most recently. This problem was - according to
+        that determine its estimated Q-values. . It could do so whenever it gets a new reward (whenever it gets enough data to perform a batch update) but this means the agent continually only is adjusting to what it has encountered most recently. This problem was - according to
         <a href="http://incompleteideas.net/book/the-book-2nd.html"> Barto and Sutton </a>[<a href="#ref2">2</a>]  - first described by
         <a href="http://www.incompleteideas.net/lin-92.pdf"> Long-Ji Lin in 1992 </a>[<a href="#ref4">4</a>] . He made the observation that
         it might be wasteful to throw away experiences as some might be rare or costly to obtain in situations with
         physical agents. As a result he proposed to reuse experiences, which he defines as a pairing of state, the
         action taken, the reinforcement (reward) obtained and the following state. He calls reusing past experiences
-        Experience Replay. In the paper by Lin the 100 most recent episodes (lessons) are sampled randomly,
+        <i>Experience Replay</i>. In the original paper by Lin the 100 most recent episodes (lessons) are sampled randomly,
         with recent experiences being exponentially more likely. However, more recently the approach has been to
         either sample experiences uniformly with recency governed by the size of a replay buffer
         ( <a href="https://arxiv.org/pdf/1312.5602.pdf?"> see this paper for example </a>[<a href="#ref6">6</a>] ) or by using
         <a href="https://arxiv.org/pdf/1511.05952.pdf "> prioritization </a>[<a href="#ref7">7</a>]  to determine which experiences should
-        be replayed in this blog we will look at whether standard (uniform sampling) experience replay can improve the
+        be replayed. In this blog we will look at whether standard (uniform sampling) experience replay can improve the
         performance of DQNs through reducing divergence.
     </div>
 </div>
