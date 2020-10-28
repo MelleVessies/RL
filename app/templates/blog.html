@@ -297,7 +297,7 @@
         <h3 class="mt-3">LunarLander-v2</h3>
 
         In the lunar lander problem, an agent is attempting to land on a landing pad with 0 speed after being spawned
-        at the top of the screen with changing landscapes. Landing on the landing pad, between the flags, gives a reward of +100 and doing so safely gives the agent an additional reward of +100. Crashing into the ground gives a negative reward (-100). The agent also gets a bonus for landing safely, with +10 for each leg touching the ground and a quadratic penalty for its speed. Landing (anywhere) or crashing both end the episode. If the agent does not crash or land in 500 steps the epsiode is also terminated.The agent has 4 possible actions to its disposal  to achieve this.
+        at the top of the screen with changing landscapes. Landing on the landing pad, between the flags, gives a reward of +100 and doing so safely gives the agent an additional reward of +100. Crashing into the ground gives a negative reward (-100). The agent also gets a bonus for landing safely, with +10 for each leg touching the ground and a quadratic penalty for its speed. Landing (anywhere) or crashing both end the episode. If the agent does not crash or land in 500 steps the epsiode is also terminated. The agent has 4 possible actions to its disposal  to achieve this.
     </div>
 
     <div class="col-sm-7" >
@@ -596,7 +596,9 @@
     </div>
     <div class="col-sm-6 textbox">
         The heatmaps for the model setups can be seen in the figures above and show similar results as the cartpole setting. Without the tricks and with only the target network it is unable to train, seemingly not due to divergence.  Then once experience replay is added, the model is able to find solutions for some of the settings. There are however, three differences. Firstly there seems to be a more narrow range of hyperparameters for reliable good performance for this problem. Secondly, using a target network potentially does have *some* impact here, although its impact is not significant enough to draw any further conclusions about if it is helping to prevent divergence again as seen in the cartpole. Finally, using experience replay also seems to increase divergence rates for $\gamma=1$, which can be explained by the network having more updates when using experience replay, hence also more steps in which the MSTD can grow.   This appears to indicate that for this problem, the addition of the tricks does allow for  more stable learning, but unlike in the previous environment, the target network seems to only mitigate divergence slightly.
-When looking at the improvement over episodes we can see that on average convergence has not been reached yet. This means that, to further explore the divergence characteristics of this environment, we should in future experiments train longer.
+        <br/>
+        <br/>
+        When looking at the improvement over episodes we can see that on average convergence has not been reached yet. This means that, to further explore the divergence characteristics of this environment, we should in future experiments train longer.
 
     </div>
 </div>
