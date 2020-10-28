@@ -11,8 +11,8 @@ function create_line_graph(data, target, graph_id, title = "") {
     ];
 
     // set the dimensions and margins of the graph
-    var margin = {top: 40, right: 200, bottom: 30, left: 60},
-        width = 600 - margin.left - margin.right,
+    var margin = {top: 40, right: 200, bottom: 30, left: 70},
+        width = 610 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
@@ -33,6 +33,21 @@ function create_line_graph(data, target, graph_id, title = "") {
         .style("text-decoration", "underline")
         .style("fill", "black")
         .text(title + " Average Returns");
+
+    svg.append("text")
+        .attr("transform",
+            "translate( " + - (margin.left + 26)/2  +"," +
+                           (height/2) + ")")
+        .style("text-anchor", "middle")
+        .text("Return");
+
+    svg.append("text")
+        .attr("transform",
+            "translate(" + (width/2) + " ," +
+                           (height + margin.top) + ")")
+        .style("text-anchor", "middle")
+        .text("Number of episodes");
+
 
     let all_x = [];
     let all_y = [];
