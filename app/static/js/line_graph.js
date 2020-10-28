@@ -11,9 +11,9 @@ function create_line_graph(data, target, graph_id, title = "") {
     ];
 
     // set the dimensions and margins of the graph
-    var margin = {top: 40, right: 200, bottom: 30, left: 70},
+    var margin = {top: 40, right: 200, bottom: -50, left: 70},
         width = 610 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
+        height = 350 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
     var svg = d3.select(target.get(0))
