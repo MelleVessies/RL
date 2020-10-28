@@ -25,8 +25,9 @@
     <div class="col-sm-10 textbox">
         Deep Q Networks (DQN) is a family of deep Reinforcement Learning (RL) algorithms which leverage the flexibility of neural networks to handle reinforcement learning tasks which would be too difficult or impossible to solve with  tabular methods due to their large state space.  Instead of trying to learn a tabular Q-function, a DQN tries to learn a continuous mapping from the state to an estimate of the  value for each of the actions from that state.  DQN is a popular architecture that can be used to solve a wide variety of tasks, however, they are far from perfect. A problem which DQN's suffer from is a phenomenon known in RL as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad"</a>[<a href="#ref1">1</a>],which refers to reinforcement learning approaches where <b>off-policy learning</b>, <b>function approximation</b> and <b>bootstrapping</b>
         are used in tandem. The simultaneous appearance of the methods from deadly triad generally results in a highly unstable, volatile learning process caused by divergence of Q-value estimates.  To counter the issues caused by the deadly triad many "tricks" have been constructed to stabilize the learning process such that we can still profit from the benefits of DQN’s.
-
-In this blogpost we try to understand how some of the common tricks can be used to stabilize training. For this we have created a set of experiments to examine the performance and divergence of the DQN in different environments. We then visualize the results of our experiments in such a way that we can clearly show when each method diverges and what the effect of this divergence is.
+        <br/>
+        <br/>
+        In this blogpost we try to understand how some of the common tricks can be used to stabilize training. For this we have created a set of experiments to examine the performance and divergence of the DQN in different environments. We then visualize the results of our experiments in such a way that we can clearly show when each method diverges and what the effect of this divergence is.
     </div>
 </div>
 
@@ -48,8 +49,9 @@ In this blogpost we try to understand how some of the common tricks can be used 
         greedy policy. In off policy learning, we require a coverage assumption to be met for the behavioural
         policy.  This means that the behavioural policy must have a non zero probability to visit at least all
         the states that the target would.  Since at the start we do not know what the target policy should look like,
-        we must have some policy which is able to visit all states.  This is generally called an $\epsilon$-soft policy.
-
+        we must have some policy which is able to visit all states.
+        <br/>
+        <br/>
         Central to Q learning is the Q function.  The Q function maps every state-action pair to a “quality” value,
         which indicates the expected (discounted) return as a result of performing that action in that state under
         the current policy.  The Q-value of a state-action pair under a policy $\pi$ is defined as the expected (discounted)
@@ -63,6 +65,9 @@ In this blogpost we try to understand how some of the common tricks can be used 
 
         Where $Q_\pi(s, a)$ is the Q-value of state-action pair $s$ and $a$, $G_t$ is the (discounted) return at
         timestep $t$, $R_t$ is the observed reward at timestep $t$ and $\gamma$ is the discount factor.
+
+        <br/>
+        <br/>
         Q learning (<a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf">Watkins, 1989</a>[<a href="#ref2">2</a>] )
         is a Reinforcement Learning algorithm from the Temporal Difference family of
         algorithms. In Temporal Difference (TD) algorithms we use a bootstrapping method where,
@@ -472,7 +477,7 @@ Comparing these methods should be done in a way that has an equal playing field.
         It can be seen from the returns heatmap that the network begins to train once the experience replay is added, and trains better when the target network is added to that.  When taking a look at the divergence heatmap , it can be seen that when the model is failing it is because of divergence, and that when the target network is added it improves the training and reduces the divergence.  This can be interpreted as the trick helping, but only when the DQN is learning useful estimates to begin with. This may be attributed to target network fixing mitigating the estimate-target correlation (while experience replay also allows for using more data during training).
 
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-6">x
         <div class="line-graph" data-env="CartPole-v1"></div>
         <div class="row">
             <div class="col-sm-8 offset-sm-1">
