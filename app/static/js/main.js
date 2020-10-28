@@ -199,7 +199,9 @@ async function collect_graphs() {
         let heatmap_container_id = 'heatmap_' + env + "_" + trick + "_" + idx;
         let heatmap_container = $('<div />').attr({'id': heatmap_container_id})
 
-        init_heatmap(data, heatmap_container, 'return', [-10, 0, 20], ["#5263CF", "white", "#900C3F"], legend, trick);
+        // init_heatmap(data, heatmap_container, 'return', [-5, 0, 10], ["#5263CF", "white", "#900C3F"], legend, trick);
+        init_heatmap(data, heatmap_container, 'return', [-10, 0, 10], ["#5263CF", "white", "#ba6787"], legend, trick);
+
         item.replaceWith(heatmap_container.get(0));
     });
 

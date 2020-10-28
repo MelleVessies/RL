@@ -15,11 +15,11 @@
     <div class="col-sm-10 textbox">
         Deep Q Networks (DQN) is a family of deep Reinforcement Learning (RL) algorithms which leverage the flexibility
         of neural networks to handle reinforcement learning tasks which would be to difficult to solve
-        tabularly because of their large state space. Instead of trying to learn a tabular q-function, a DQN tries to
+        tabularly because of their large state space. Instead of trying to learn a tabular Q-function, a DQN tries to
         learn a continuous mapping from a state to a list of actions and their values. DQN is a popular architecture
         that can be used to solve a wide variety of tasks, however, they are far from perfect. A problem which DQN's suffer from
-        is a phenomenon known in RL as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad" [1]</a>, which refers to
-        reinforcement learning approaches where off-policy learning, function approximation and bootstrapping
+        is a phenomenon known in RL as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad"</a>[<a href="#ref1">1</a>], which refers to
+        reinforcement learning approaches where <b>off-policy learning</b>, <b>function approximation</b> and <b>bootstrapping</b>
         are used in tandem. The simultaneous use of these methods generally results
         in a highly unstable, volatile learning process which can cause divergence.
         As a result, many "tricks" have been constructed to stabilize the learning
@@ -36,7 +36,7 @@
 <div class="row">
     <div class="col-sm-10 textbox">
         Before we get into Deep Q Networks it’s important to give a brief overview of Q-learning.
-        Q learning is an off policy method for learning the Q-value function <a href="http://incompleteideas.net/book/the-book-2nd.html"> (Sutton and Barto 2020) [2] </a> .
+        Q learning is an off policy method for learning the Q-value function <a href="http://incompleteideas.net/book/the-book-2nd.html"> (Sutton and Barto 2020)</a>[<a href="#ref2">2</a>]  .
         An off policy method means that we have a behavioural policy to sample data from which is different
         from the target policy we are trying to learn.  In the case of Q learning, we are trying to learn a
         greedy policy. In off policy learning, we require a coverage assumption to be met for the behavioural
@@ -56,7 +56,7 @@
 
         Where $Q_\pi(s, a)$ is the Q-value of state-action pair $s$ and $a$, $G_t$ is the (discounted) return at
         timestep $t$, $R_t$ is the observed reward at timestep $t$ and $\gamma$ is the discount factor.
-        Q learning (<a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf">Watkins, 1989 [3] </a> )
+        Q learning (<a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf">Watkins, 1989</a>[<a href="#ref2">2</a>] )
         is a Reinforcement Learning algorithm from the Temporal Difference family of
         algorithms.  In Temporal Difference (TD) algorithms we use a bootstrapping method where, instead of the return
         from an episode ($R$), the update is based on the difference in rewards between $n$ steps (in our case $n=1$).
@@ -112,7 +112,7 @@
 <div class="row">
     <div class="col-sm-4 textbox">
         The difference between the two can
-        be seen in the image from <a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python" >Ankit Choudhary [10]</a>,
+        be seen in the image from <a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python" >Ankit Choudhary </a>[<a href="#ref10">10</a>],
         showing how the network input is just the state where the Q-Learning input would be the state action pair,
         and the output will be a list of Q-Values corresponding to the actions, where in Q-learning we would have
         the output be the specific Q-Value for the state action pair input.
@@ -182,7 +182,7 @@
             </li>
         </ul>
 
-        <a href="https://www.datascienceassn.org/sites/default/files/Human-level%20Control%20Through%20Deep%20Reinforcement%20Learning.pdf"> Mnih et al.[2015] </a>
+        <a href="https://www.datascienceassn.org/sites/default/files/Human-level%20Control%20Through%20Deep%20Reinforcement%20Learning.pdf"> Mnih et al. (2015) </a>[<a href="#ref12">12</a>]
         combined the DQN with some tricks to prevent divergence and allow it to complete the complicated tasks.
         In this blog we’ll look at the concrete effect of using “experience replay” and “target networks”.
         In order to gain a deeper understanding into why these tricks prevent divergence and when they are helpful.
@@ -212,10 +212,10 @@
         <h3 class="mt-3">CartPole-v1</h3>
 
         In the CartPole problem, a pole is attached to an unarticulated joint on a cart, moving along a frictionless
-        path.  The objective is to keep a pole upright, between a certain angle for as long as possible.
-        A reward of +1 is provided at every time step the pole remains upright.  The episode ends when the pole falls
-        below a 15 degree angle from the vertical axis, whenmoves 2.4 units from the center, or when 500 steps have
-        passed.  The state the agent receives is  (cart position, cart velocity, pole angle, pole velocity at tip).
+        path. The objective is to keep a pole upright, between a certain angle for as long as possible.
+        A reward of +1 is provided at every time step the pole remains upright. The episode ends when the pole falls
+        below a 15 degree angle from the vertical axis, when the cart moves 2.4 units from the center, or when 500 steps have
+        passed. The state the agent receives is (cart position, cart velocity, pole angle, pole velocity at tip).
         The actions the agent has are applying a force to either push the car to the left or the right to the kart to
         keep the pole upright.
     </div>
@@ -314,7 +314,7 @@
         to and determine how much the tricks help to improve the divergence, if it occurs.
         Now that the environments have been selected for their diverse reward landscapes, we can set up experiments
         to evaluate  the performance (Return) and divergence (growth in Mean Squared TD errors) of the models.
-        As <a href="https://arxiv.org/pdf/1709.06560.pdf"> Henderson et. al</a> find, different algorithms have
+        As <a href="https://arxiv.org/pdf/1709.06560.pdf"> Henderson et. al </a>[<a href="#ref8">8</a>] find, different algorithms have
         different hyperparameters where they perform well, as such to make an at least somewhat fair comparison where
         the model hyperparameters are not the (sole) reason for the divergence,  we will be doing a grid search over
         different values for the discount factor $\gamma$ and the exploration probability ($\epsilon$).
@@ -338,16 +338,16 @@
         that determine its estimated Q-values. It could do so whenever it gets a new reward (or whenever it gets enough
         data to perform a batch update) but this means the agent continually only is adjusting to what it has
         encountered most recently. This problem was - according to
-        <a href="http://incompleteideas.net/book/the-book-2nd.html"> Barto and Sutton </a> [2] - first described by
-        <a href="http://www.incompleteideas.net/lin-92.pdf"> Long-Ji Lin in 1992</a> [4]. He made the observation that
+        <a href="http://incompleteideas.net/book/the-book-2nd.html"> Barto and Sutton </a>[<a href="#ref2">2</a>]  - first described by
+        <a href="http://www.incompleteideas.net/lin-92.pdf"> Long-Ji Lin in 1992 </a>[<a href="#ref4">4</a>] . He made the observation that
         it might be wasteful to throw away experiences as some might be rare or costly to obtain in situations with
         physical agents. As a result he proposed to reuse experiences, which he defines as a pairing of state, the
         action taken, the reinforcement (reward) obtained and the following state. He calls reusing past experiences
         Experience Replay. In the paper by Lin the 100 most recent episodes (lessons) are sampled randomly,
         with recent experiences being exponentially more likely. However, more recently the approach has been to
         either sample experiences uniformly with recency governed by the size of a replay buffer
-        ( <a href="https://arxiv.org/pdf/1312.5602.pdf?"> see this paper for example</a> [6]) or by using
-        <a href="https://arxiv.org/pdf/1511.05952.pdf "> prioritization </a> [7] to determine which experiences should
+        ( <a href="https://arxiv.org/pdf/1312.5602.pdf?"> see this paper for example </a>[<a href="#ref6">6</a>] ) or by using
+        <a href="https://arxiv.org/pdf/1511.05952.pdf "> prioritization </a>[<a href="#ref7">7</a>]  to determine which experiences should
         be replayed in this blog we will look at whether standard (uniform sampling) experience replay can improve the
         performance of DQNs through reducing divergence.
     </div>
@@ -364,7 +364,7 @@
         trying to catch it but never catching up.  The target network, in combination with the experience replay, is
         what made the DQN in the
         <a href="https://www.datascienceassn.org/sites/default/files/Human-level%20Control%20Through%20Deep%20Reinforcement%20Learning.pdf">
-            paper by Mnih et. al. (2015)</a>  perform well on the Arati games.
+            paper by Mnih et. al. (2015)</a>[<a href="#ref12">12</a>]  perform well on the Arati games.
 
         The target network in our implantation starts at 0 updates and then every 2 episodes.  This
         is because we want the network to be dependent on more recent samples than those seen more than 2 episodes prior.
@@ -594,17 +594,18 @@
 <div class="row">
     <div class="col-sm-10 textbox">
         <ol>
-            <li><a href="https://arxiv.org/abs/1812.02648"> Van Hasselt, H., Doron, Y., Strub, F., Hessel, M., Sonnerat, N., & Modayil, J. (2018). Deep reinforcement learning and the deadly triad. arXiv preprint arXiv:1812.02648. </a></li>
-            <li> <a href="http://incompleteideas.net/book/the-book-2nd.html"> Sutton, R. S., & Barto, A. G. (2018). Reinforcement learning: An introduction. MIT press.</a> </li>
-            <li> <a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf"> Watkins, C. J., & Dayan, P. (1992). Q-learning. Machine learning, 8(3-4), 279-292.</a>
-            <li><a href="http://www.incompleteideas.net/lin-92.pdf"> Lin, L. J. (1992). Self-improving reactive agents based on reinforcement learning, planning and teaching. Machine learning, 8(3-4), 293-321. </a></li>
-            <li><a href="https://gym.openai.com/"> OpenAI Gym </a></li>
-            <li><a href="https://arxiv.org/pdf/1312.5602.pdf?"> Mnih, V., Kavukcuoglu, K., Silver, D., Graves, A., Antonoglou, I., Wierstra, D., & Riedmiller, M. (2013). Playing atari with deep reinforcement learning. arXiv preprint arXiv:1312.5602. </a></li>
-            <li><a href="https://arxiv.org/pdf/1511.05952.pdf "> Schaul, T., Quan, J., Antonoglou, I., & Silver, D. (2015). Prioritized experience replay. arXiv preprint arXiv:1511.05952. </a></li>
-            <li><a href="https://arxiv.org/pdf/1709.06560.pdf"> Henderson, P., Islam, R., Bachman, P., Pineau, J., Precup, D., & Meger, D. (2017). Deep reinforcement learning that matters. arXiv preprint arXiv:1709.06560. </a></li>
-            <li><a href="https://github.com/pytorch/pytorch"> https://github.com/pytorch </a></li>
-            <li><a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python" >Ankit Choudhary's A Hands-On Introduction to Deep Q-Learning using OpenAI Gym in Python </a></li>
-            <li><a href="https://www.youtube.com/watch?v=TmPfTpjtdgg."> Deepminds Atari Breakout Video </a></li>
+            <li><div class="reference" id="ref1"><a href="https://arxiv.org/abs/1812.02648"> Van Hasselt, H., Doron, Y., Strub, F., Hessel, M., Sonnerat, N., & Modayil, J. (2018). Deep reinforcement learning and the deadly triad. arXiv preprint arXiv:1812.02648. </a></div></li>
+            <li><div class="reference" id="ref2"><a href="http://incompleteideas.net/book/the-book-2nd.html"> Sutton, R. S., & Barto, A. G. (2018). Reinforcement learning: An introduction. MIT press.</a></div></li>
+            <li><div class="reference" id="ref3"><a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf"> Watkins, C. J., & Dayan, P. (1992). Q-learning. Machine learning, 8(3-4), 279-292.</a></div></li>
+            <li><div class="reference" id="ref4"><a href="http://www.incompleteideas.net/lin-92.pdf"> Lin, L. J. (1992). Self-improving reactive agents based on reinforcement learning, planning and teaching. Machine learning, 8(3-4), 293-321. </a></div></li>
+            <li><div class="reference" id="ref5"><a href="https://gym.openai.com/"> OpenAI Gym </a></div></li>
+            <li><div class="reference" id="ref6"><a href="https://arxiv.org/pdf/1312.5602.pdf?"> Mnih, V., Kavukcuoglu, K., Silver, D., Graves, A., Antonoglou, I., Wierstra, D., & Riedmiller, M. (2013). Playing atari with deep reinforcement learning. arXiv preprint arXiv:1312.5602. </a></div></li>
+            <li><div class="reference" id="ref7"><a href="https://arxiv.org/pdf/1511.05952.pdf "> Schaul, T., Quan, J., Antonoglou, I., & Silver, D. (2015). Prioritized experience replay. arXiv preprint arXiv:1511.05952. </a></div></li>
+            <li><div class="reference" id="ref8"><a href="https://arxiv.org/pdf/1709.06560.pdf"> Henderson, P., Islam, R., Bachman, P., Pineau, J., Precup, D., & Meger, D. (2017). Deep reinforcement learning that matters. arXiv preprint arXiv:1709.06560. </a></div></li>
+            <li><div class="reference" id="ref9"><a href="https://github.com/pytorch/pytorch"> https://github.com/pytorch </a></div></li>
+            <li><div class="reference" id="ref10"><a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python" >Ankit Choudhary's A Hands-On Introduction to Deep Q-Learning using OpenAI Gym in Python </a></div></li>
+            <li><div class="reference" id="ref11"><a href="https://www.youtube.com/watch?v=TmPfTpjtdgg."> Deepminds Atari Breakout Video </a></div></li>
+            <li><div class="reference" id="ref12"><a href="https://www.datascienceassn.org/sites/default/files/Human-level%20Control%20Through%20Deep%20Reinforcement%20Learning.pdf"> Mnih, V., Kavukcuoglu, K., Silver, D., Rusu, A. A., Veness, J., Bellemare, M. G., ... & Petersen, S. (2015). Human-level control through deep reinforcement learning. nature, 518(7540), 529-533.</a></div></li>
         </ol>
     </div>
 </div>
