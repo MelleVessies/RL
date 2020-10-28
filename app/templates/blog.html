@@ -683,7 +683,7 @@ In contrast with the CartPole-v1 and MountainCar-v0 experiments, target network 
 
 <h2 class="mt-3">Conclusion</h2>
 <div class="row">
-    <div class="col-sm-8 textbox">
+    <div class="col-sm-10 textbox">
         As the DQN approach suffers from highly unstable, volatile learning as a symptom of using the deadly triad, it is important to use methods to stabilize learning and mitigate the divergence of the estimates. We have looked at two common “tricks” that would tackle this problem: target network fixing and experience replay. We evaluated the overall influence these tricks have on the training process for environments with different reward landscapes and found that both experience replay and target network fixing appear to have general positive effects, where experience replay seems to have a large effect on the quality of the learned policies and target network fixing aids in mitigating divergence in settings where the agent is able to start learning.
     </div>
 </div>
