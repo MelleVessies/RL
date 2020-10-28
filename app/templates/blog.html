@@ -21,7 +21,7 @@
         Deep Q Networks (DQN) is a family of deep Reinforcement Learning (RL) algorithms which leverage the flexibility of neural networks to handle reinforcement learning tasks which would be too difficult or impossible to solve with  tabular methods due to their large state space.  Instead of trying to learn a tabular Q-function, a DQN tries to learn a continuous mapping from the state to an estimate of the  value for each of the actions from that state.  DQN is a popular architecture that can be used to solve a wide variety of tasks, however, they are far from perfect. A problem which DQN's suffer from is a phenomenon known in RL as the <a href="https://arxiv.org/abs/1812.02648">"deadly triad"</a>[<a href="#ref1">1</a>],which refers to reinforcement learning approaches where <b>off-policy learning</b>, <b>function approximation</b> and <b>bootstrapping</b>
         are used in tandem. The simultaneous appearance of the methods from deadly triad generally results in a highly unstable, volatile learning process caused by divergence of Q-value estimates.  To counter the issues caused by the deadly triad many "tricks" have been constructed to stabilize the learning process such that we can still profit from the benefits of DQN’s.
 
-In this blogpost we try to understand how some of the common tricks can be used to stabilize training. For this we have created a set of experiments to examine the performance and divergence of the DQN in different environments. s. We then visualize the results of our experiments in such a way that we can clearly show when each method diverges and what the effect of this divergence is.
+In this blogpost we try to understand how some of the common tricks can be used to stabilize training. For this we have created a set of experiments to examine the performance and divergence of the DQN in different environments. We then visualize the results of our experiments in such a way that we can clearly show when each method diverges and what the effect of this divergence is.
     </div>
 </div>
 
@@ -30,7 +30,7 @@ In this blogpost we try to understand how some of the common tricks can be used 
     <div class="col-sm-10 textbox">
         Before we get into Deep Q Networks it’s important to give a brief overview of Q-learning.
         Q learning is an off policy method for learning the Q-value function <a href="http://incompleteideas.net/book/the-book-2nd.html"> (Sutton and Barto 2020)</a>[<a href="#ref2">2</a>]  .
-        An off policy method means that we have a behavioural policy to sample data from which is different
+        An off-policy method means that we have a behavioural policy to sample data from which is different
         from the target policy we are trying to learn.  In the case of Q learning, we are trying to learn a
         greedy policy. In off policy learning, we require a coverage assumption to be met for the behavioural
         policy.  This means that the behavioural policy must have a non zero probability to visit at least all
@@ -39,8 +39,9 @@ In this blogpost we try to understand how some of the common tricks can be used 
 
         Central to Q learning is the Q function.  The Q function maps every state-action pair to a “quality” value,
         which indicates the expected (discounted) return as a result of performing that action in that state under
-        the current policy.  The Q-value of a state-action pair under a policy $\pi$ is defined as the expected
-        (discounted) return when performing the action in that state:
+        the current policy.  The Q-value of a state-action pair under a policy $\pi$ is defined as the expected (discounted)
+        return when performing the action in that state:
+
 
         <div class="formula">
             $$Q_{\pi}(S_t, A_t) = \mathbb{E}[G_t | S_t = s, A_t = a ] = \mathbb{E}[\sum^{\infty}_{k = 0} \gamma^k R_{t + k + 1} | S_t = s, A_t = a]$$
@@ -51,35 +52,41 @@ In this blogpost we try to understand how some of the common tricks can be used 
         timestep $t$, $R_t$ is the observed reward at timestep $t$ and $\gamma$ is the discount factor.
         Q learning (<a href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.80.7501&rep=rep1&type=pdf">Watkins, 1989</a>[<a href="#ref2">2</a>] )
         is a Reinforcement Learning algorithm from the Temporal Difference family of
-        algorithms.  In Temporal Difference (TD) algorithms we use a bootstrapping method where, instead of the return
-        from an episode ($R$), the update is based on the difference in rewards between $n$ steps (in our case $n=1$).
-        This allows us to improve our estimate every transition/step, rather than needing an entire episode.
+        algorithms. In Temporal Difference (TD) algorithms we use a bootstrapping method where,
+        instead of the return from an episode, the update is based on the difference in rewards
+        between $n$ steps (in our case $n=1$). This allows for training with single transitions rather than needing an entire episode.
 
-        If our estimate of the expected return is correct, we would expect that the only difference between our
-        current estimate and the estimate for the next step is the reward we would obtain. The TD error is a
-        quantification of how much the estimated value differs from the true return, in other words, how good
-        our prediction is.  Formally, the TD error is given by:
+
+        If our estimate of the expected return is correct, we would expect that the only difference between
+        our current estimate and the estimate for the next step is the reward we would obtain. The TD error is
+        a quantification of how much the estimated value differs from the true return, in other words, how good our
+        prediction is.  Formally, the TD error is given by:
 
         <div class="formula">
             $$\delta_t = R_t + \gamma max_a Q_\pi(S_{t+1}, a) - Q_\pi(S_t, A_t)$$
         </div>
 
-        Where $max_aQ(S_t, a)$ is the estimate of the expected return that we get after taking the estimated optimal
-        action from state $S_t$ under a certain policy $\pi$.  If we then minimize this TD error we are thus
-        effectively making our estimate more accurate.  This use of the max causes a maximization bias which means
-        the network may systematically overestimate the value of state-action pairs.  As can be seen in the defintion,
-        the TD error is a measurement of the predicted reward against the actual reward.   In Q learning these
-        TD-errors are used to update the Q value estimates.   By taking a step in the direction of the difference
-        between the real value of the reward and the estimated, we can closer approximate the true expected return.
-        This can also be seen in the Q-learning update equation, since the difference between the return $G_t$ and
-        $\gamma G_{t+1}$ should only be $R_{t+1}$.
+        Where $max_aQ(S_{t+1}, a)$ is the estimate of the expected return that we get after taking the
+        estimated optimal action from state $S_t$ under a certain policy $\pi$.  If we then minimize
+        this TD error we are thus effectively making our estimate more accurate.  This use of the max
+        operator causes a maximization bias which means the network will systematically overestimate
+        the value of state-action pairs. As can be seen in the defintion, the TD error is a measurement
+        of the predicted reward against the actual reward. In Q-learning these TD-errors are used to
+        update the Q value estimates. By taking a step in the direction of the difference between
+        the real value of the reward and the estimated, we can closer approximate the true expected return.
+        This can also be seen in the Q-learning update equation, since the difference between the return
+        $G_t$ and $\gamma G_{t+1}$ should only be $R_{t+1}.
 
-        By following a behaviour policy which is also based on the Q-function, we can estimate/learn the Q-values
-        iteratively while exploring acting in the environment . One such policy is $\epsilon$-greedy, which has a
-        probability of $\epsilon$ to do a random action rather than the predicted optimal action. In this way the agent
-        can learn what happens when performing the best actions according to the value function, while also still
-        exploring different options.  By following this policy we can update our Q-values using the TD error as
-        described above which gives rise to the following update rule:
+
+        By following a behaviour policy which is also based on the Q-function, we can
+        estimate/learn  the Q-values iteratively while exploring in the environment.
+        We will use epsilon-greedy in this blogpost, which has a probability of epsilon
+        to do a random action rather than the predicted optimal action, and anneals
+        linearly over the first 10 episodes. In this way the DQN can learn what happens
+        when performing the best actions according to the Q-function, while also still
+        exploring different options and therefore satisfying the coverage assumption.
+        By following this policy we can update our Q-values using the TD error as described
+        above which gives rise to the following update rule:
 
         <div class="formula">
             $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha[R_{t+1}+\gamma max_a Q(S_{t+1}, a) - Q(S_t, A_t)] $$
@@ -99,23 +106,25 @@ In this blogpost we try to understand how some of the common tricks can be used 
 
 <div class="row">
     <div class="col-sm-10 textbox">
-        A Deep Q Network (DQN) uses the same principle as Q learning. The agent takes the action with the currently
-        optimal value according to the current Q value function with some given $\epsilon$ chance of doing a random
-        action, and the rewards from this action are used to update the Q value function.  In the case of DQN though,
-        the Q value is no longer  represented as a table (a list of values corresponding to a state and action pair),
-        but as a deep neural network function with the state as input and the output being a vector with the
-        state-action values of possible actions. This allows us to have a much larger state and action space,
-        since the values are represented by the network, which requires less space for the weights  than would be
-        required for storing all of the state action pairs for complex problems.
+        A Deep Q Network (DQN) uses the same principle as Q-learning. The behaviour policy
+        takes the action with the currently optimal value according to the current Q value
+        function with some given epsilon chance of doing a random action, and the rewards
+        from this action are used to update the Q value function.  In the case of DQN however,
+        the Q value is no longer  represented as a table (a list of values corresponding to a
+        state and action pair), but as a deep neural network function with the state as input
+        and the output being a vector with the state-action values of possible actions.
+        This allows us to have a much higher state and action space, since the values are represented
+        by the network, which requires less space for the weights  than would be required for storing
+        all of the state action pairs for complex problems.
     </div>
 </div>
 <div class="row">
     <div class="col-sm-4 textbox">
         The difference between the two can
         be seen in the image from <a href="https://www.analyticsvidhya.com/blog/2019/04/introduction-deep-q-learning-python" >Ankit Choudhary </a>[<a href="#ref10">10</a>],
-        showing how the network input is just the state where the Q-Learning input would be the state action pair,
-        and the output will be a list of Q-Values corresponding to the actions, where in Q-learning we would have
-        the output be the specific Q-Value for the state action pair input.
+        showing that the network input is just the state where the Q-Learning input would be
+        the state action pair, and the output will be a list a Q-Values corresponding to the actions,
+        where the Q-learning would have the output be the specific Q-Value for the state action pair input.
 
         <br/>
         <br/>
@@ -147,7 +156,7 @@ In this blogpost we try to understand how some of the common tricks can be used 
 
     <div class="col-sm-10 textbox">
 
-        DQN is a powerful technique but it does require some tricks to work effectively. This is because the method has all the components of the deadly triad:
+        DQN is a powerful technique but it does require some tricks to work effectively since the method has all the components of the deadly triad:
 
         <ul>
             <li>
@@ -159,16 +168,19 @@ In this blogpost we try to understand how some of the common tricks can be used 
                 In this case we gather data using $\epsilon$-greedy to learn a greedy policy.
             </li>
             <li>
-                <b>Function Approximation</b>: generalizing the statespace to some approximate domain, rather than learning (action)
-                values for each distinct state, is the case for DQN as it does Q-learning where it represents the Q-values
-                for all states in a single neural network
+                <b>Function Approximation</b>: generalizing the statespace to some approximate domain,
+                rather than learning (action) values for each distinct state. This is the case
+                for DQN as it does Q-learning where it represents the Q-values for all state
+                action pairs in a single neural network
             </li>
         </ul>
 
         <a href="https://www.datascienceassn.org/sites/default/files/Human-level%20Control%20Through%20Deep%20Reinforcement%20Learning.pdf"> Mnih et al. (2015) </a>[<a href="#ref12">12</a>]
-        combined the DQN with some tricks to prevent divergence and allow it to complete the complicated tasks.
-        In this blog we’ll look at the concrete effect of using “experience replay” and “target networks”.
-        In order to gain a deeper understanding into why these tricks prevent divergence and when they are helpful.
+        combined the DQN with some tricks to prevent divergence and allow it to complete the complicated
+        tasks. In this blog we’ll look at the concrete effect of using “experience replay” and a
+        “target networks”.We further refer to either the target policy or behaviour policy acting
+        in the environment as the agent. Now before looking at the tricks, lets first dive into the
+        problems we want to investigate this issue on!
 
     </div>
 
@@ -249,6 +261,22 @@ In this blogpost we try to understand how some of the common tricks can be used 
 
 
 <h2 class="mt-3">Experimental Setup</h2>
+<h3 class="mt-3">DQN Base Model</h3>
+
+<div class="row">
+    <div class="col-sm-10 textbox">
+        Divergence can be seen when a value of a state action pair is grossly overestimated
+        and its estimation keeps growing over time.  This can cause instability in learning.
+        In order to examine the stability of the learning and the divergence, we selected
+        the above environments for their diverse reward landscapes.  In this blogpost,
+        we will be using a DQN network consisting of 2 hidden layers with size 128 and
+        relu activation (with no activation on the last layer). During training we
+        use a batch size of 64 and a learning rate of 0.001.
+    </div>
+</div>
+
+<h3 class="mt-3">Experiment Design</h3>
+
 <div class="row">
     <div class="col-sm-10 textbox">
         Comparing these methods should be done in a way that has an equal playing field. Since the tricks change how
@@ -272,10 +300,16 @@ In this blogpost we try to understand how some of the common tricks can be used 
     </div>
 </div>
 
+<h2 class="mt-3">DQN Tricks</h2>
+<div class="row">
+    <div class="col-sm-10 textbox">
+        Now that we have selected environments with diverse landscapes, we will now introduce
+        2 common tricks used to combat divergence and to increase stability.  These tricks are
+        the experience replay and the target network.
+    </div>
+</div>
 
-
-
-<h2 class="mt-3">Experience Replay</h2>
+<h3 class="mt-3">Experience Replay</h3>
 <div class="row">
     <div class="col-sm-10 textbox">
         Now, let us say the agent tries to become good at whatever task is given by changing its actions according
@@ -296,22 +330,20 @@ In this blogpost we try to understand how some of the common tricks can be used 
     </div>
 </div>
 
-<h2 class="mt-3">Target Network Fixing</h2>
+<h3 class="mt-3">Target Network Fixing</h3>
 <div class="row">
     <div class="col-sm-10 textbox">
-        In order to help with the problem of the target (TD error) containing what we are updating (the predicted Q
-        function from bootstrapping to replace the true expected return), the network is fixed at a certain time and is
-        used as the target for the TD error.  This fixed network is called the target network and allows for a more
-        stable update by ensuring the difference between the two Q functions is larger, so the network has a more
-        accurate direction to update in.  This can be seen as a dog chasing its own tail, getting faster and faster
-        trying to catch it but never catching up.  The target network, in combination with the experience replay, is
-        what made the DQN in the
+        In order to help with the problem of the target (TD error) constantly changing with each
+        update (making it hard to converge towards anything), the network parameters are saved
+        to be used in computing the target for the TD error during the next 2 episodes during sampling.
+        This fixed network is called the target network and allows for a more stable update by decreasing the
+        correlation between the network estimates and the target. The target network, in combination
+        with the experience replay, is part of what made the DQN in the
         <a href="https://www.datascienceassn.org/sites/default/files/Human-level%20Control%20Through%20Deep%20Reinforcement%20Learning.pdf">
-            paper by Mnih et. al. (2015)</a>[<a href="#ref12">12</a>]  perform well on the Arati games.
+            paper by Mnih et. al. (2015)</a>[<a href="#ref12">12</a>] perform well on the Arati games.
 
         The target network in our implantation starts at 0 updates and then every 2 episodes.  This
         is because we want the network to be dependent on more recent samples than those seen more than 2 episodes prior.
-
     </div>
 </div>
 
