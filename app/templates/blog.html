@@ -35,7 +35,13 @@
 
 <div class="row">
     <div class="col-sm-10 textbox">
-        We ideally want to have algorithms that do not only learn, but also learn consistently. This means we want an algorithm to be as independent as possible from factors such as hyper parameters and environments. We thus want stability in addition to just performance. The ultimate goal of the analysis done in this blog post is to understand one of the main factors that influences stability, divergence. Formally we define divergence as the continuously worsening estimation of the value of a state action pair or, in other words, the inverse of learning. This means that even though it is only one of the factors, it is an important one, as it may cause the performance of our algorithm to get increasingly worse.
+        We ideally want to have algorithms that do not only learn, but also learn consistently. This means we want
+        an algorithm to be as independent as possible from factors such as hyper parameters and environments. We
+        thus want stability in addition to just performance. The ultimate goal of the analysis done in this blog
+        post is to understand one of the main factors that influences stability, divergence. Formally we define
+        divergence as the continuously worsening estimation of the value of a state action pair or, in other words,
+        the inverse of learning. This means that even though it is only one of the factors, it is an important one,
+        as it will cause the performance of our algorithm to get increasingly worse.
     </div>
 </div>
 
@@ -74,7 +80,8 @@
         instead of the return from an episode, the update is based on the difference in rewards
         between $n$ steps (in our case $n=1$). This allows for training with single transitions rather than needing an entire episode.
 
-
+        <br/>
+        <br/>
         If our estimate of the expected return is correct, we would expect that the only difference between
         our current estimate and the estimate for the next step is the reward we would obtain. The TD error is
         a quantification of how much the estimated value differs from the true return, in other words, how good our
@@ -95,6 +102,8 @@
         This can also be seen in the Q-learning update equation, since the difference between the return
         $G_t$ and $\gamma G_{t+1}$ should only be $R_{t+1}.
 
+        <br/>
+        <br/>
 
         By following a behaviour policy which is also based on the Q-function, we can
         estimate/learn  the Q-values iteratively while exploring in the environment.
